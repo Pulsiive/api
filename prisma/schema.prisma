@@ -11,94 +11,94 @@ datasource db {
 }
 
 model User {
-  id   String @id @default(uuid())
-  firstName String
-  lastName String
-  email String @unique
-  dateOfBirth DateTime
-  balance Int
-  timeZone String
-  vehicles Vehicle[]
+  id              String           @id @default(uuid())
+  firstName       String
+  lastName        String
+  email           String           @unique
+  dateOfBirth     DateTime
+  balance         Int
+  timeZone        String
+  vehicles        Vehicle[]
   privateStations Station[]
-  comments StationComment[]
-  orders Order[]
+  comments        StationComment[]
+  orders          Order[]
 }
 
 model Vehicle {
-  id   String @id @default(uuid())
-  owner User @relation(fields: [ownerId], references: [id])
-  ownerId String
-  type VehicleType @default(CAR)
+  id        String      @id @default(uuid())
+  owner     User        @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  type      VehicleType @default(CAR)
   plugTypes PlugType[]
-  maxPower Decimal
+  maxPower  Decimal
 }
 
 model Station {
-  id   String @id @default(uuid())
-  owner User @relation(fields: [ownerId], references: [id])
-  ownerId String
-  order Order @relation(fields: [orderId], references: [id])
-  orderId String
-  rate Int
+  id          String              @id @default(uuid())
+  owner       User                @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  order       Order               @relation(fields: [orderId], references: [id])
+  orderId     String              @unique
+  rate        Int
   coordinates StationCoordinates?
-  properties StationProperties?
-  comments StationComment[]
+  properties  StationProperties?
+  comments    StationComment[]
 }
 
 model StationCoordinates {
-  id   String @id @default(uuid())
-  station Station @relation(fields: [stationId], references: [id])
-  stationId String
-  lat Decimal
-  long Decimal
-  address String
-  city String
-  country String
+  id          String  @id @default(uuid())
+  station     Station @relation(fields: [stationId], references: [id])
+  stationId   String  @unique
+  lat         Decimal
+  long        Decimal
+  address     String
+  city        String
+  country     String
   countryCode String
 }
 
 model StationProperties {
-  id   String @id @default(uuid())
-  station Station @relation(fields: [stationId], references: [id])
-  stationId String
-  isPublic Boolean
-  maxPower Decimal
-  price Int
+  id               String         @id @default(uuid())
+  station          Station        @relation(fields: [stationId], references: [id])
+  stationId        String         @unique
+  isPublic         Boolean
+  maxPower         Decimal
+  price            Int
   nbChargingPoints Int
-  isGreenEnergy Boolean
-  plugTypes PlugType[]
-  hours StationHours[]
+  isGreenEnergy    Boolean
+  plugTypes        PlugType[]
+  hours            StationHours[]
 }
 
 model StationHours {
-  id   String @id @default(uuid())
-  stationProperties StationProperties @relation(fields: [stationPropertiesId], references: [id])
+  id                  String            @id @default(uuid())
+  stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id])
   stationPropertiesId String
-  day Int
-  openTime DateTime
-  closeTime DateTime
+  day                 Int
+  openTime            DateTime
+  closeTime           DateTime
 }
 
 model StationComment {
-  id   String @id @default(uuid())
-  station Station @relation(fields: [stationId], references: [id])
+  id        String   @id @default(uuid())
+  station   Station  @relation(fields: [stationId], references: [id])
   stationId String
-  author User @relation(fields: [authorId], references: [id])
-  authorId String
-  rate Int
-  body String
-  pictures String[]
-  dates DateTime
-  likes Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  rate      Int
+  body      String
+  pictures  String[]
+  dates     DateTime
+  likes     Int
 }
 
 model Order {
-  id   String @id @default(uuid())
-  customer User @relation(fields: [customerId], references: [id])
+  id         String   @id @default(uuid())
+  customer   User     @relation(fields: [customerId], references: [id])
   customerId String
-  station Station?
-  date DateTime
-  price Int
+  station    Station?
+  date       DateTime
+  price      Int
 }
 
 enum VehicleType {
