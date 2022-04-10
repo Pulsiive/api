@@ -1,5 +1,11 @@
 #!/bin/bash
 
-npx prisma generate
-npx prisma migrate dev --name init
-npm start
+CONTAINER_ALREADY_STARTED="container_already_started"
+if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
+    touch $CONTAINER_ALREADY_STARTED
+    echo "-- First container startup --"
+    npm install -g ts-node
+    npx prisma migrate deploy
+    npx prisma generate
+fi
+npm run dev
