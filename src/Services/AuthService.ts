@@ -8,7 +8,7 @@ class AuthService {
         data: {
             email: string,
             password: string,
-            fistName: string,
+            firstName: string,
             lastName: string,
             dateOfBirth: Date,
             timeZone: string
@@ -28,17 +28,25 @@ class AuthService {
                 data: {
                     email: data.email,
                     password: hash,
-                    firstName: data.fistName,
+                    firstName: data.firstName,
                     lastName: data.lastName,
                     dateOfBirth: data.dateOfBirth,
                     timeZone: data.timeZone
                 },
             });
         } catch (e) {
+            console.log(e);
             throw new ApiError('Error: User registration failed', 422);
         }
 
         return await JWTService.signWrapper(user);
+    }
+
+    static async checkUserExist(userId: string) {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!user)
+            throw new ApiError('Error: User not found', 404);
     }
 }
 
