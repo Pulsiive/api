@@ -37,6 +37,7 @@ model Vehicle {
   ownerId   String
   type      VehicleType @default(CAR)
   plugTypes PlugType[]
+  electricalType VehicleElectricalType
   maxPower  Decimal
 }
 
@@ -113,6 +114,12 @@ enum VehicleType {
   SCOOTER
   MOTORBIKE
   BIKE
+}
+
+enum VehicleElectricalType {
+  BEV
+  HEV
+  PHEV
 }
 
 enum PlugType {
