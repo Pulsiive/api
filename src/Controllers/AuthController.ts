@@ -6,12 +6,12 @@ class AuthController {
     static async register(req: express.Request, res: express.Response) {
         try {
             const accessToken = await AuthService.register({
-                email: '',
-                password: '',
-                fistName: '',
-                lastName: '',
-                dateOfBirth: new Date(),
-                timeZone: ''
+                email: req.body.email,
+                password: req.body.password,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                dateOfBirth: new Date(req.body.dateOfBirth),
+                timeZone: req.body.timeZone
             });
 
             return res.json({
