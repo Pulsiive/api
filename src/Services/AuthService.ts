@@ -10,7 +10,7 @@ class AuthService {
             password: string,
             firstName: string,
             lastName: string,
-            dateOfBirth: Date,
+            dateOfBirth: string,
             timeZone: string
         }
     ) {
@@ -40,6 +40,21 @@ class AuthService {
         }
 
         return await JWTService.signWrapper(user);
+    }
+
+    static async login(data: any) {
+        const user = await prisma.user.findUnique({
+            where: {
+                email: data.email,
+            }
+        });
+        if (!user)
+            throw new ApiError('Error: User not registered', 404);
+
+        const isValid = await bcrypt.compare(data.password, user.password);
+        if (isValid)
+            return await JWTService.signWrapper(user);
+        throw new ApiError('Error: Email address or password invalid', 401);
     }
 
     static async checkUserExist(userId: string) {
