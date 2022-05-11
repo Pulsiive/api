@@ -31,6 +31,13 @@ model User {
   orders          Order[]
 }
 
+model PasswordReset {
+  id        String   @id @default(uuid())
+  token     String
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 model Vehicle {
   id        String      @id @default(uuid())
   owner     User        @relation(fields: [ownerId], references: [id])

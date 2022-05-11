@@ -2,6 +2,7 @@ import express from 'express';
 import AuthService from '../Services/AuthService';
 import {errorWrapper} from "../Utils/errorWrapper";
 import Validator from "validatorjs";
+import {ApiError} from "../Errors/ApiError";
 
 class AuthController {
     static async register(req: express.Request, res: express.Response) {
@@ -39,6 +40,26 @@ class AuthController {
                 accessToken
             });
         } catch (e: any) {
+            return errorWrapper(e, res);
+        }
+    }
+
+    static async reqPasswordReset(req: express.Request, res: express.Response) {
+        try {
+            const {email} = req.body;
+            const data = {email};
+
+            const validator = new Validator(data, {
+                email: 'required|email',
+            });
+
+            if (validator.fails())
+                throw new ApiError('Error: Unprocessable entity', 422);
+
+            const state = await AuthService.reqPasswordReset(email);
+
+            res.json({ success: state });
+        } catch(e: any) {
             return errorWrapper(e, res);
         }
     }
