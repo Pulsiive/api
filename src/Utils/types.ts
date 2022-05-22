@@ -28,3 +28,30 @@ export const VehicleElectricalTypes = [
   VehicleElectricalType.HEV,
   VehicleElectricalType.PHEV
 ];
+
+export interface OpeningHours {
+  day: number;
+  openTime: number;
+  closeTime: number;
+}
+
+export interface PublicStationProperties {
+  coordinates: {
+    lat: number;
+    long: number;
+    address: string;
+    city: string;
+    country: string;
+    countryCode: string;
+  };
+  properties: {
+    maxPower: number;
+    price: number;
+    isGreenEnergy: boolean;
+    plugTypes: [number];
+    hours: [OpeningHours];
+    nbChargingPoints: number;
+  };
+}
+
+export type PrivateStationProperties = Omit<PublicStationProperties, 'properties.nbChargingPoints'>;
