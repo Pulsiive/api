@@ -1,5 +1,5 @@
-import prisma from '../../prisma/client';
-import { ApiError } from '../Errors/ApiError';
+import prisma from '../../../prisma/client';
+import { ApiError } from '../../Errors/ApiError';
 import {
   VehicleInput,
   VehicleTypes,
@@ -7,7 +7,7 @@ import {
   VehicleElectricalTypes,
   PrivateStationProperties,
   StationAndPayload
-} from '../Utils/types';
+} from '../../Utils/types';
 import { PlugType, Vehicle, Station } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
 
@@ -160,7 +160,10 @@ class UserService {
     }
   }
 
-  static async createStation(props: PrivateStationProperties, userId: string): Promise<Station> {
+  static async createStation(
+    props: PrivateStationProperties,
+    userId: string
+  ): Promise<StationAndPayload> {
     try {
       const stationsPropertiesWithoutHours = {
         ...props.properties,
@@ -201,7 +204,8 @@ class UserService {
             include: {
               hours: true
             }
-          }
+          },
+          comments: true
         }
       });
       return createdStation;
@@ -217,7 +221,7 @@ class UserService {
     props: PrivateStationProperties,
     userId: string,
     stationId: string
-  ): Promise<Station> {
+  ): Promise<StationAndPayload> {
     try {
       //TODO: improve this - don't delete current hours
 
@@ -279,7 +283,7 @@ class UserService {
     }
   }
 
-  static async deleteStation(stationId: string, userId: string): Promise<Station> {
+  static async deleteStation(stationId: string, userId: string): Promise<StationAndPayload> {
     try {
       const station = await getUserStation(userId, stationId);
       if (station) {

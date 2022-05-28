@@ -61,10 +61,18 @@ export interface PublicStationProperties {
     maxPower: number;
     price: number;
     isGreenEnergy: boolean;
-    plugTypes: [number];
-    hours: [OpeningHours];
+    plugTypes: number[];
+    hours: OpeningHours[];
     nbChargingPoints: number;
   };
 }
 
-export type PrivateStationProperties = Omit<PublicStationProperties, 'properties.nbChargingPoints'>;
+export interface PrivateStationProperties extends Omit<PublicStationProperties, 'properties'> {
+  properties: {
+    maxPower: number;
+    price: number;
+    isGreenEnergy: boolean;
+    plugTypes: number[];
+    hours: OpeningHours[];
+  };
+}

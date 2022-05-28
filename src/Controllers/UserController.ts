@@ -1,5 +1,5 @@
 import express from 'express';
-import UserService from '../Services/UserService';
+import UserService from '../Services/User/UserService';
 import { VehicleInput } from '../Utils/types';
 import { errorWrapper } from '../Utils/errorWrapper';
 

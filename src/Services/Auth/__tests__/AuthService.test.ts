@@ -5,7 +5,7 @@ import { user } from '../__mocks__/AuthServiceMocks';
 afterAll(async () => {
   await prisma.user.delete({
     where: {
-      email: 'fakeAccount@test.com'
+      email: user.email
     }
   });
   await prisma.$disconnect();
