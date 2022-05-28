@@ -10,7 +10,6 @@ import {
 } from '../Utils/types';
 import { PlugType, Vehicle, Station } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
-import { stat } from 'fs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
