@@ -5,9 +5,12 @@ import {
   VehicleTypes,
   PlugTypes,
   VehicleElectricalTypes,
-  PrivateStationProperties
+  PrivateStationProperties,
+  StationAndPayload
 } from '../Utils/types';
 import { PlugType, Vehicle, Station } from '@prisma/client';
+import { PrismaClientValidationError } from '@prisma/client/runtime';
+import { stat } from 'fs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -18,10 +21,22 @@ const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefi
   return userVehicles.find((vehicle: Vehicle) => vehicle.id === vehicleId);
 };
 
-const getUserStation = async (userId: string, stationId: string): Promise<undefined | Station> => {
+const getUserStation = async (
+  userId: string,
+  stationId: string
+): Promise<undefined | StationAndPayload> => {
   const userStations = await prisma.station.findMany({
     where: {
       ownerId: userId
+    },
+    include: {
+      properties: {
+        include: {
+          hours: true
+        }
+      },
+      comments: true,
+      coordinates: true
     }
   });
   return userStations.find((station: Station) => station.id === stationId);
@@ -123,6 +138,15 @@ class UserService {
       const station = await prisma.station.findUnique({
         where: {
           id: stationId
+        },
+        include: {
+          coordinates: true,
+          properties: {
+            include: {
+              hours: true
+            }
+          },
+          comments: true
         }
       });
       if (station) {
@@ -174,11 +198,84 @@ class UserService {
         },
         include: {
           coordinates: true,
-          properties: true
+          properties: {
+            include: {
+              hours: true
+            }
+          }
         }
       });
       return createdStation;
     } catch (e) {
+      if (e instanceof PrismaClientValidationError) {
+        throw new ApiError('Error: Invalid properties');
+      }
+      throw new ApiError('Error: Failed to create a private station');
+    }
+  }
+
+  static async updateStation(
+    props: PrivateStationProperties,
+    userId: string,
+    stationId: string
+  ): Promise<Station> {
+    try {
+      //TODO: improve this - don't delete current hours
+
+      const station = await getUserStation(userId, stationId);
+
+      if (!station) throw new ApiError('Error: Invalid station ID');
+
+      const stationsPropertiesWithoutHours = {
+        ...props.properties,
+        plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
+      };
+      const stationHours = props.properties.hours.map(
+        (hour: { day: number; openTime: number; closeTime: number }) => ({
+          ...hour,
+          openTime: new Date(hour.openTime),
+          closeTime: new Date(hour.closeTime)
+        })
+      );
+      if (station.properties) {
+        await prisma.stationHours.deleteMany({
+          where: {
+            stationPropertiesId: station.properties.id
+          }
+        });
+      }
+      const updatedStation = await prisma.station.update({
+        where: {
+          id: stationId
+        },
+        data: {
+          coordinates: {
+            update: props.coordinates
+          },
+          properties: {
+            update: {
+              ...stationsPropertiesWithoutHours,
+              hours: {
+                create: stationHours
+              }
+            }
+          }
+        },
+        include: {
+          coordinates: true,
+          properties: {
+            include: {
+              hours: true
+            }
+          },
+          comments: true
+        }
+      });
+      return updatedStation;
+    } catch (e) {
+      if (e instanceof ApiError) {
+        throw e;
+      }
       throw new ApiError('Error: Failed to create a private station');
     }
   }
@@ -193,7 +290,11 @@ class UserService {
           },
           include: {
             coordinates: true,
-            properties: true,
+            properties: {
+              include: {
+                hours: true
+              }
+            },
             comments: true
           }
         });

@@ -1,4 +1,17 @@
-import { VehicleType, PlugType, VehicleElectricalType } from '@prisma/client';
+import { VehicleType, PlugType, VehicleElectricalType, Prisma } from '@prisma/client';
+
+export type StationAndPayload = Prisma.StationGetPayload<{
+  include: {
+    properties: {
+      include: {
+        hours: true;
+      };
+    };
+    comments: true;
+    coordinates: true;
+  };
+}>;
+//See https://github.com/prisma/prisma/discussions/10928
 
 export interface VehicleInput {
   type: number;

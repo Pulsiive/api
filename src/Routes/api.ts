@@ -25,11 +25,12 @@ router.get(
 
 router.get('/api/v1/profile/vehicle/:id', UserController.getVehicle);
 router.post('/api/v1/profile/vehicle', UserController.createVehicle);
-router.post('/api/v1/profile/vehicle/:id', UserController.updateVehicle);
+router.put('/api/v1/profile/vehicle/:id', UserController.updateVehicle);
 router.delete('/api/v1/profile/vehicle/:id', UserController.deleteVehicle);
 
 router.get('/api/v1/profile/station/:id', UserController.getStation);
 router.post('/api/v1/profile/station', UserController.createStation);
+router.put('/api/v1/profile/station/:id', UserController.updateStation);
 router.delete('/api/v1/profile/station/:id', UserController.deleteStation);
 
 export = router;
