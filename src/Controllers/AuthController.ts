@@ -61,6 +61,28 @@ class AuthController {
       return errorWrapper(e, res);
     }
   }
+
+  static async resetPassword(req: express.Request, res: express.Response) {
+    try {
+      const { email, password, password_confirmation } = req.body;
+      const data = { email, token: req.params.token, password, password_confirmation };
+
+      const validator = new Validator(data, {
+        email: 'required|email',
+        token: 'required|string',
+        password: 'required|string|min:8|confirmed',
+        password_confirmation: 'required|string'
+      });
+
+      if (validator.fails()) throw new ApiError('Error: Unprocessable entity', 422);
+
+      const state = await AuthService.resetPassword(email, data.token, data.password);
+
+      res.json({ success: state });
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
 }
 
 export default AuthController;

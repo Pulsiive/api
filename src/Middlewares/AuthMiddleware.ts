@@ -25,7 +25,6 @@ export async function AuthMiddleware(
 
   try {
     req.body.user = await JWTService.verifyWrapper(bearerToken);
-    console.log(req.body.user);
     await AuthService.checkUserExist(req.body.user.payload.id);
     next();
   } catch (e: any) {
