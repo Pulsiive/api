@@ -1,4 +1,17 @@
-import { VehicleType, PlugType, VehicleElectricalType } from '@prisma/client';
+import { VehicleType, PlugType, VehicleElectricalType, Prisma } from '@prisma/client';
+
+export type StationAndPayload = Prisma.StationGetPayload<{
+  include: {
+    properties: {
+      include: {
+        hours: true;
+      };
+    };
+    comments: true;
+    coordinates: true;
+  };
+}>;
+//See https://github.com/prisma/prisma/discussions/10928
 
 export interface VehicleInput {
   type: number;
@@ -28,3 +41,30 @@ export const VehicleElectricalTypes = [
   VehicleElectricalType.HEV,
   VehicleElectricalType.PHEV
 ];
+
+export interface OpeningHours {
+  day: number;
+  openTime: number;
+  closeTime: number;
+}
+
+export interface PublicStationProperties {
+  coordinates: {
+    lat: number;
+    long: number;
+    address: string;
+    city: string;
+    country: string;
+    countryCode: string;
+  };
+  properties: {
+    maxPower: number;
+    price: number;
+    isGreenEnergy: boolean;
+    plugTypes: [number];
+    hours: [OpeningHours];
+    nbChargingPoints: number;
+  };
+}
+
+export type PrivateStationProperties = Omit<PublicStationProperties, 'properties.nbChargingPoints'>;
