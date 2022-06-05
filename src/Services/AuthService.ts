@@ -69,6 +69,18 @@ class AuthService {
             throw new ApiError('Error: User not found', 404);
     }
 
+    static async checkEmail(email: string, userId: string) {
+        const user = await prisma.user.findFirst({ where: { email: email }, });
+
+        return !user || user.id === userId;
+    }
+
+    static async checkPassword(password: string, userId: string) {
+        const user = await prisma.user.findUnique({ where: { id: userId, } });
+
+        return user && (await bcrypt.compare(password, user.password));
+    }
+
     static async reqPasswordReset(email: string) {
         const resetToken = crypto.randomBytes(64).toString('hex');
         const hash = await bcrypt.hash(resetToken, 10);

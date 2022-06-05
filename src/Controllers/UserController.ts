@@ -2,6 +2,10 @@ import express from 'express';
 import UserService from '../Services/UserService';
 import { VehicleInput } from '../Utils/types';
 import { errorWrapper } from '../Utils/errorWrapper';
+import prisma from "../../prisma/client";
+import Validator from "validatorjs";
+import AuthService from "../Services/AuthService";
+import updateProfileRules from "../Rules/updateProfileRules";
 
 class UserController {
   static async getVehicle(req: express.Request, res: express.Response) {
@@ -9,8 +13,8 @@ class UserController {
       const vehicleId = req.params.id;
       const userId = '12734e5f-2d24-491c-acaf-52310ed9188f';
 
-      const vehicule = await UserService.getVehicle(vehicleId, userId);
-      return res.json({ vehicule });
+      const vehicle = await UserService.getVehicle(vehicleId, userId);
+      return res.json({ vehicle });
     } catch (e: any) {
       return errorWrapper(e, res);
     }
@@ -21,8 +25,8 @@ class UserController {
       const vehicle: VehicleInput = req.body.vehicle;
       const userId = '12734e5f-2d24-491c-acaf-52310ed9188f';
 
-      const createdVehicule = await UserService.createVehicle(vehicle, userId);
-      return res.json({ createdVehicule });
+      const createdVehicle = await UserService.createVehicle(vehicle, userId);
+      return res.json({ createdVehicle });
     } catch (e: any) {
       return errorWrapper(e, res);
     }
@@ -34,8 +38,8 @@ class UserController {
       const vehicleConfig = req.body.vehicle;
       const userId = '12734e5f-2d24-491c-acaf-52310ed9188f';
 
-      const createdVehicule = await UserService.updateVehicle(vehicleId, vehicleConfig, userId);
-      return res.json({ createdVehicule });
+      const createdVehicle = await UserService.updateVehicle(vehicleId, vehicleConfig, userId);
+      return res.json({ createdVehicle });
     } catch (e: any) {
       return errorWrapper(e, res);
     }
@@ -46,8 +50,8 @@ class UserController {
       const vehicleId = req.params.id;
       const userId = '12734e5f-2d24-491c-acaf-52310ed9188f';
 
-      const deletedVehicule = await UserService.deleteVehicle(vehicleId, userId);
-      return res.json({ deletedVehicule });
+      const deletedVehicle = await UserService.deleteVehicle(vehicleId, userId);
+      return res.json({ deletedVehicle });
     } catch (e: any) {
       return errorWrapper(e, res);
     }
@@ -95,6 +99,57 @@ class UserController {
       return res.json({ deletedStation });
     } catch (e: any) {
       return errorWrapper(e, res);
+    }
+  }
+
+  static async index(req: express.Request, res: express.Response) {
+    try {
+      const id = req.body.user.payload.id;
+      const user = await prisma.user.findUnique({
+        where: {
+          id: id
+        },
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          dateOfBirth: true,
+          balance: true
+        }
+      });
+
+      return res.json(user);
+    } catch(e: any) {
+      return res.status(422).json({
+        message: 'Unprocessable entity'
+      });
+    }
+  }
+
+  static async update(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const {firstName, lastName, dateOfBirth, email, password, new_password, new_password_confirmation} = req.body;
+      const data = {firstName, lastName, dateOfBirth, email, password, new_password, new_password_confirmation};
+      const validator = new Validator(data, updateProfileRules);
+
+      if (validator.fails())
+        return res.status(422).json({ error: 'unexpected-error' });
+      if (data.email && !(await AuthService.checkEmail(data.email, userId)))
+        return res.status(422).json({ error: 'email-already-taken' });
+      if (data.password && !(await AuthService.checkPassword(data.password, userId)))
+        return res.status(422).json({ error: 'bad-password' });
+
+      const state = await UserService.update(userId, data);
+
+      return res.json({
+        success: state
+      });
+    } catch(e: any) {
+      console.log(e);
+      return res.status(422).json({
+        error: 'unexpected-error'
+      });
     }
   }
 }

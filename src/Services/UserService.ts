@@ -11,6 +11,7 @@ import {
 import { PlugType, Vehicle, Station } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
 import { stat } from 'fs';
+import bcrypt from "bcryptjs";
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -43,6 +44,21 @@ const getUserStation = async (
 };
 
 class UserService {
+  static async update(userId: string, data: any) {
+    await prisma.user.update({
+      where: {id: userId},
+      data: {
+        ...(data.email && { email: data.email }),
+        ...(data.firstName && { firstName: data.firstName }),
+        ...(data.lastName && { lastName: data.lastName }),
+        ...(data.new_password && { password: await bcrypt.hash(data.new_password, 10)})
+      },
+      select: { email: true, firstName: true, lastName: true }
+    });
+
+    return true;
+  }
+
   static async getVehicle(vehicleId: string, userId: string): Promise<Vehicle> {
     try {
       const vehicle = await getUserVehicle(userId, vehicleId);
