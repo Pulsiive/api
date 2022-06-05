@@ -2,6 +2,9 @@ import prisma from '../../../prisma/client';
 import bcrypt from 'bcryptjs';
 import JWTService from '../JWTService';
 import { ApiError } from '../../Errors/ApiError';
+import crypto from 'crypto';
+import MailService from '../MailService';
+import Site from '../Site';
 
 class AuthService {
   static async register(data: {
@@ -9,8 +12,7 @@ class AuthService {
     password: string;
     firstName: string;
     lastName: string;
-    dateOfBirth: Date;
-    timeZone: string;
+    dateOfBirth: string;
   }) {
     let user = await prisma.user.findFirst({
       where: { email: data.email }
@@ -27,8 +29,7 @@ class AuthService {
           password: hash,
           firstName: data.firstName,
           lastName: data.lastName,
-          dateOfBirth: data.dateOfBirth,
-          timeZone: data.timeZone
+          dateOfBirth: data.dateOfBirth
         }
       });
     } catch (e) {
@@ -39,10 +40,46 @@ class AuthService {
     return await JWTService.signWrapper(user);
   }
 
+  static async login(data: any) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: data.email
+      }
+    });
+    if (!user) throw new ApiError('Error: User not registered', 404);
+
+    const isValid = await bcrypt.compare(data.password, user.password);
+    if (isValid) return await JWTService.signWrapper(user);
+    throw new ApiError('Error: Email address or password invalid', 401);
+  }
+
   static async checkUserExist(userId: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
     if (!user) throw new ApiError('Error: User not found', 404);
+  }
+
+  static async reqPasswordReset(email: string) {
+    const resetToken = crypto.randomBytes(64).toString('hex');
+    const hash = await bcrypt.hash(resetToken, 10);
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) throw new ApiError('Error: User not found', 404);
+
+    const passwordReset = await prisma.passwordReset.findUnique({ where: { email } });
+    if (passwordReset) await prisma.passwordReset.delete({ where: { email } });
+
+    await prisma.passwordReset.create({ data: { token: hash, email } });
+    const link = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    await MailService.send(
+      Site.resetPasswordEmail,
+      email,
+      'Password Reset Request',
+      { name: user.firstName, email, link },
+      '../Resources/Mails/forgotPassword.handlebars'
+    );
+
+    return true;
   }
 }
 

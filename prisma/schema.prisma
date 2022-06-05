@@ -24,11 +24,17 @@ model User {
   password        String
   dateOfBirth     DateTime
   balance         Int              @default(0)
-  timeZone        String
   vehicles        Vehicle[]
   privateStations Station[]
   comments        StationComment[]
   orders          Order[]
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  token     String
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 model Vehicle {
