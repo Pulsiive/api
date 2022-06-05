@@ -45,9 +45,8 @@ model Station {
   id          String              @id @default(uuid())
   owner       User                @relation(fields: [ownerId], references: [id])
   ownerId     String
-  order       Order               @relation(fields: [orderId], references: [id])
-  orderId     String              @unique
-  rate        Int
+  orders       Order[]
+  rate        Int @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
   comments    StationComment[]
@@ -55,7 +54,7 @@ model Station {
 
 model StationCoordinates {
   id          String  @id @default(uuid())
-  station     Station @relation(fields: [stationId], references: [id])
+  station     Station @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId   String  @unique
   lat         Decimal
   long        Decimal
@@ -67,7 +66,7 @@ model StationCoordinates {
 
 model StationProperties {
   id               String         @id @default(uuid())
-  station          Station        @relation(fields: [stationId], references: [id])
+  station          Station        @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId        String         @unique
   isPublic         Boolean
   maxPower         Decimal
@@ -80,7 +79,7 @@ model StationProperties {
 
 model StationHours {
   id                  String            @id @default(uuid())
-  stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id])
+  stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
   day                 Int
   openTime            DateTime
@@ -89,7 +88,7 @@ model StationHours {
 
 model StationComment {
   id        String   @id @default(uuid())
-  station   Station  @relation(fields: [stationId], references: [id])
+  station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId String
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
@@ -104,7 +103,8 @@ model Order {
   id         String   @id @default(uuid())
   customer   User     @relation(fields: [customerId], references: [id])
   customerId String
-  station    Station?
+  station    Station  @relation(fields: [stationId], references: [id])
+  stationId  String
   date       DateTime
   price      Int
 }
