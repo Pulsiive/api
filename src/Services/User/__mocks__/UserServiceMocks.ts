@@ -3,8 +3,7 @@ export const user = {
   password: '123',
   firstName: 'UserService',
   lastName: 'Test',
-  dateOfBirth: new Date(1653754919),
-  timeZone: 'UTC+1'
+  dateOfBirth: '2022-03-02T18:11:29.003Z'
 };
 
 export const vehicle = {

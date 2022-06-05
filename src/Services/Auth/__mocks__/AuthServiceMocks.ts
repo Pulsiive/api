@@ -3,6 +3,5 @@ export const user = {
   password: '123',
   firstName: 'Fake',
   lastName: 'Account',
-  dateOfBirth: new Date(1653754919),
-  timeZone: 'UTC+1'
+  dateOfBirth: '2022-03-02T18:11:29.003Z'
 };
