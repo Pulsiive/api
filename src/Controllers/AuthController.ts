@@ -7,15 +7,14 @@ import {ApiError} from "../Errors/ApiError";
 class AuthController {
     static async register(req: express.Request, res: express.Response) {
         try {
-            const {email, password, firstName, lastName, dateOfBirth, timeZone} = req.body;
-            const data = {email, password, firstName, lastName, dateOfBirth, timeZone};
+            const {email, password, firstName, lastName, dateOfBirth} = req.body;
+            const data = {email, password, firstName, lastName, dateOfBirth};
             const validator = new Validator(data, {
                 email: `required|email`,
                 password: 'required|string|min:8',
                 firstName: 'required|string|max:300',
                 lastName: 'required|string|max:300',
-                dateOfBirth: 'required|date',
-                timeZone: 'required|string|in:UTC',
+                dateOfBirth: 'required|date'
             });
 
             if (validator.fails()) {
