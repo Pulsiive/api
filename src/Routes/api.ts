@@ -15,6 +15,7 @@ router.get('/api/v1', (req: express.Request, res: express.Response) => {
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
 
+router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);
 
 router.get(
