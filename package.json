@@ -7,11 +7,9 @@
     "build": "npx tsc",
     "start": "node ./dist/index.js",
     "dev": "nodemon ./src/index.ts",
-    "db-dev-test-up": "npm run db-up && npm run db-test-up",
-    "db-up": "docker-compose up -d postgres && npm run generate-db-models",
-    "db-test-up": "docker-compose up -d postgres_test && npm run generate-db-test-models",
+    "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
-    "docker-generate-db-test-models": "npx dotenv -e .env.test -- npx prisma migrate deploy",
+    "docker-generate-db-test-models": "dotenv -e .env.test -- prisma migrate deploy",
     "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest"
   },
   "repository": {
