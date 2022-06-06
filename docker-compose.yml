@@ -25,8 +25,7 @@ services:
       - '3000:3000'
     depends_on:
       - postgres
-    env_file:
-      - ./.env
+      - postgres_test
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
