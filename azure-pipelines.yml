@@ -1,17 +1,12 @@
 trigger:
-- main
-
+  - master
+  - releases/*
 pool:
-  vmImage: "ubuntu-18.04"
+  vmImage: 'ubuntu-18.04'
 
 steps:
 - script: |
-    pwd
-    displayName:  'pwd'
-
-- script: |
-    cd api
     git pull
     npm run build
     sudo systemctl restart pulsive_api
-  displayName: 'cd api and git pull and npm run build and sudo systemctl restart pulsive_api'
+  displayName: 'git pull and npm run build and sudo systemctl restart pulsive_api'
