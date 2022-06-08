@@ -1,10 +1,10 @@
 import express from 'express';
-import UserService from '../Services/UserService';
+import UserService from '../Services/User/UserService';
 import { VehicleInput } from '../Utils/types';
 import { errorWrapper } from '../Utils/errorWrapper';
 import prisma from '../../prisma/client';
 import Validator from 'validatorjs';
-import AuthService from '../Services/AuthService';
+import AuthService from '../Services/Auth/AuthService';
 import updateProfileRules from '../Rules/updateProfileRules';
 
 class UserController {

@@ -1,5 +1,5 @@
-import prisma from '../../prisma/client';
-import { ApiError } from '../Errors/ApiError';
+import prisma from '../../../prisma/client';
+import { ApiError } from '../../Errors/ApiError';
 import {
   VehicleInput,
   VehicleTypes,
@@ -7,11 +7,10 @@ import {
   VehicleElectricalTypes,
   PrivateStationProperties,
   StationAndPayload
-} from '../Utils/types';
+} from '../../Utils/types';
 import { PlugType, Vehicle, Station } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
-import { stat } from 'fs';
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -46,12 +45,12 @@ const getUserStation = async (
 class UserService {
   static async update(userId: string, data: any) {
     await prisma.user.update({
-      where: {id: userId},
+      where: { id: userId },
       data: {
         ...(data.email && { email: data.email }),
         ...(data.firstName && { firstName: data.firstName }),
         ...(data.lastName && { lastName: data.lastName }),
-        ...(data.new_password && { password: await bcrypt.hash(data.new_password, 10)})
+        ...(data.new_password && { password: await bcrypt.hash(data.new_password, 10) })
       },
       select: { email: true, firstName: true, lastName: true }
     });
@@ -177,7 +176,10 @@ class UserService {
     }
   }
 
-  static async createStation(props: PrivateStationProperties, userId: string): Promise<Station> {
+  static async createStation(
+    props: PrivateStationProperties,
+    userId: string
+  ): Promise<StationAndPayload> {
     try {
       const stationsPropertiesWithoutHours = {
         ...props.properties,
@@ -218,7 +220,8 @@ class UserService {
             include: {
               hours: true
             }
-          }
+          },
+          comments: true
         }
       });
       return createdStation;
@@ -234,7 +237,7 @@ class UserService {
     props: PrivateStationProperties,
     userId: string,
     stationId: string
-  ): Promise<Station> {
+  ): Promise<StationAndPayload> {
     try {
       //TODO: improve this - don't delete current hours
 
@@ -296,7 +299,7 @@ class UserService {
     }
   }
 
-  static async deleteStation(stationId: string, userId: string): Promise<Station> {
+  static async deleteStation(stationId: string, userId: string): Promise<StationAndPayload> {
     try {
       const station = await getUserStation(userId, stationId);
       if (station) {

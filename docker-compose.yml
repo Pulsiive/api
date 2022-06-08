@@ -10,6 +10,14 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+  postgres_test:
+    image: postgres:10.3
+    restart: always
+    container_name: db_test
+    env_file:
+      - ./.env.test
+    ports:
+      - '5433:5432'
   api:
     container_name: api
     build: ./
@@ -17,8 +25,7 @@ services:
       - '3000:3000'
     depends_on:
       - postgres
-    env_file:
-      - ./.env
+      - postgres_test
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
