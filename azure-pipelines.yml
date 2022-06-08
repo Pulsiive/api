@@ -6,7 +6,7 @@ pool:
 
 steps:
 - script: |
-    git checkout
+    git checkout main
     git pull
     npm run build
     sudo systemctl restart pulsive_api
