@@ -6,6 +6,10 @@ pool:
 
 steps:
 - script: |
+    pwd
+    displayName:  'pwd'
+
+- script: |
     cd api
     git pull
     npm run build
