@@ -1,11 +1,12 @@
 trigger:
   - master
-  - releases/*
+
 pool:
   vmImage: 'ubuntu-18.04'
 
 steps:
 - script: |
+    git checkout
     git pull
     npm run build
     sudo systemctl restart pulsive_api
