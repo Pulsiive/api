@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc && npm run copy-resources",
     "copy-resources": "cp -r ./src/Resources ./dist/src/",
-    "start": "node ./dist/index.js",
+    "start": "node ./dist/src/index.js",
     "dev": "nodemon ./src/index.ts",
     "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
