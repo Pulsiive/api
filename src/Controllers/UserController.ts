@@ -172,7 +172,6 @@ class UserController {
   static async getMessages(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      console.log('gettings messags');
       const messages = await UserService.getMessages(userId);
       return res.json(messages);
     } catch (e: any) {
