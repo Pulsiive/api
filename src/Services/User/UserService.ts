@@ -6,9 +6,10 @@ import {
   PlugTypes,
   VehicleElectricalTypes,
   PrivateStationProperties,
-  StationAndPayload
+  StationAndPayload,
+  MessageInput
 } from '../../Utils/types';
-import { PlugType, Vehicle, Station } from '@prisma/client';
+import { PlugType, Vehicle, Station, Message } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
 import bcrypt from 'bcryptjs';
 
@@ -57,6 +58,8 @@ class UserService {
 
     return true;
   }
+
+  //TODO: remove useless try catch
 
   static async getVehicle(vehicleId: string, userId: string): Promise<Vehicle> {
     try {
@@ -326,6 +329,69 @@ class UserService {
       }
       throw new ApiError('Error: Station deletion failed');
     }
+  }
+
+  static async getMessage(messageId: string, userId: string): Promise<Message> {
+    const message = await prisma.message.findUnique({
+      where: {
+        id: messageId
+      }
+    });
+    if (message?.authorId === userId || message?.receiverId === userId) {
+      return message;
+    }
+    throw new ApiError('Error: Invalid message ID', 400);
+  }
+
+  static async getMessages(
+    userId: string
+  ): Promise<{ sentMessages: Message[]; receivedMessages: Message[] } | null> {
+    return prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        sentMessages: true,
+        receivedMessages: true
+      }
+    });
+  }
+
+  static async deleteMessage(messageId: string, userId: string): Promise<Message> {
+    const message = await prisma.message.findUnique({
+      where: {
+        id: messageId
+      }
+    });
+    if (message?.authorId !== userId) {
+      throw new ApiError('Error: Invalid message ID', 400);
+    }
+    await prisma.message.delete({
+      where: {
+        id: messageId
+      }
+    });
+    return message;
+  }
+
+  static async createMessage(messageObject: MessageInput, userId: string): Promise<Message> {
+    const { receiverId, body, createdAt } = messageObject;
+    return await prisma.message.create({
+      data: {
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        receiver: {
+          connect: {
+            id: receiverId
+          }
+        },
+        body,
+        createdAt
+      }
+    });
   }
 }
 

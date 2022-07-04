@@ -28,6 +28,8 @@ model User {
   privateStations Station[]
   comments        StationComment[]
   orders          Order[]
+  sentMessages Message[] @relation(name: "Author")
+  receivedMessages Message[] @relation(name: "Receiver")
 }
 
 model PasswordReset {
@@ -113,6 +115,17 @@ model Order {
   stationId  String
   date       DateTime
   price      Int
+}
+
+model Message {
+  id String @id @default(uuid())
+  author User @relation(fields: [authorId], references: [id], name: "Author")
+  authorId String
+  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+  receiverId String
+  body String
+  createdAt DateTime
+  read Boolean? @default(false)
 }
 
 enum VehicleType {

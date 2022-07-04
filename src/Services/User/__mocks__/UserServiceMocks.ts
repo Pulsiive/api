@@ -6,6 +6,14 @@ export const user = {
   dateOfBirth: '2022-03-02T18:11:29.003Z'
 };
 
+export const secondUser = {
+  email: 'seconduserservice@test.com',
+  password: '123',
+  firstName: 'SecondeUserService',
+  lastName: 'SecondTest',
+  dateOfBirth: '2022-03-02T18:11:29.003Z'
+};
+
 export const vehicle = {
   type: 2,
   plugTypes: [2, 3],

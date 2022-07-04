@@ -76,3 +76,9 @@ export interface PrivateStationProperties extends Omit<PublicStationProperties, 
     hours: OpeningHours[];
   };
 }
+
+export interface MessageInput {
+  receiverId: string;
+  createdAt: string;
+  body: string;
+}
