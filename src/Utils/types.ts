@@ -4,7 +4,7 @@ export type StationAndPayload = Prisma.StationGetPayload<{
   include: {
     properties: {
       include: {
-        hours: true;
+        slots: true;
       };
     };
     comments: true;
@@ -42,10 +42,10 @@ export const VehicleElectricalTypes = [
   VehicleElectricalType.PHEV
 ];
 
-export interface OpeningHours {
+export interface Slot {
   day: number;
-  openTime: number;
-  closeTime: number;
+  opensAt: string;
+  closesAt: string;
 }
 
 export interface PublicStationProperties {
@@ -62,7 +62,7 @@ export interface PublicStationProperties {
     price: number;
     isGreenEnergy: boolean;
     plugTypes: number[];
-    hours: OpeningHours[];
+    slots: Slot[];
     nbChargingPoints: number;
   };
 }
@@ -73,6 +73,6 @@ export interface PrivateStationProperties extends Omit<PublicStationProperties, 
     price: number;
     isGreenEnergy: boolean;
     plugTypes: number[];
-    hours: OpeningHours[];
+    slots: Slot[];
   };
 }
