@@ -1,39 +1,174 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="16" failures="0" errors="0" time="8.716">
-  <testsuite name="AuthService" errors="0" failures="0" skipped="0" timestamp="2022-07-06T21:04:24" time="5.77" tests="2">
-    <testcase classname="AuthService should create user" name="AuthService should create user" time="0.577">
+<testsuites name="jest tests" tests="16" failures="15" errors="0" time="8.785">
+  <testsuite name="AuthService" errors="0" failures="1" skipped="0" timestamp="2022-07-06T21:31:10" time="7.121" tests="2">
+    <testcase classname="AuthService should create user" name="AuthService should create user" time="0.597">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/__tests__/AuthService.test.ts:16:25)</failure>
     </testcase>
-    <testcase classname="AuthService should throw because user already exists" name="AuthService should throw because user already exists" time="0.018">
+    <testcase classname="AuthService should throw because user already exists" name="AuthService should throw because user already exists" time="0.019">
     </testcase>
   </testsuite>
-  <testsuite name="UserService - Vehicle" errors="0" failures="0" skipped="0" timestamp="2022-07-06T21:04:24" time="7.881" tests="14">
-    <testcase classname="UserService - Vehicle should create vehicle" name="UserService - Vehicle should create vehicle" time="0.266">
+  <testsuite name="UserService - Vehicle" errors="0" failures="14" skipped="0" timestamp="2022-07-06T21:31:10" time="7.553" tests="14">
+    <testcase classname="UserService - Vehicle should create vehicle" name="UserService - Vehicle should create vehicle" time="0.001">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Vehicle should return vehicle" name="UserService - Vehicle should return vehicle" time="0.044">
+    <testcase classname="UserService - Vehicle should return vehicle" name="UserService - Vehicle should return vehicle" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Vehicle should throw because vehicle does not exists" name="UserService - Vehicle should throw because vehicle does not exists" time="0.021">
+    <testcase classname="UserService - Vehicle should throw because vehicle does not exists" name="UserService - Vehicle should throw because vehicle does not exists" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Vehicle should update vehicle" name="UserService - Vehicle should update vehicle" time="0.147">
+    <testcase classname="UserService - Vehicle should update vehicle" name="UserService - Vehicle should update vehicle" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Vehicle should throw because vehicle does not exists" name="UserService - Vehicle should throw because vehicle does not exists" time="0.022">
+    <testcase classname="UserService - Vehicle should throw because vehicle does not exists" name="UserService - Vehicle should throw because vehicle does not exists" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Vehicle should delete vehicle" name="UserService - Vehicle should delete vehicle" time="0.145">
+    <testcase classname="UserService - Vehicle should delete vehicle" name="UserService - Vehicle should delete vehicle" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Vehicle should throw because vehicle does not exists" name="UserService - Vehicle should throw because vehicle does not exists" time="0.02">
+    <testcase classname="UserService - Vehicle should throw because vehicle does not exists" name="UserService - Vehicle should throw because vehicle does not exists" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station sould create station" name="UserService - Station sould create station" time="0.344">
+    <testcase classname="UserService - Station sould create station" name="UserService - Station sould create station" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station sould get station" name="UserService - Station sould get station" time="0.076">
+    <testcase classname="UserService - Station sould get station" name="UserService - Station sould get station" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station should throw because station does not exists" name="UserService - Station should throw because station does not exists" time="0.035">
+    <testcase classname="UserService - Station should throw because station does not exists" name="UserService - Station should throw because station does not exists" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station should update station" name="UserService - Station should update station" time="0.591">
+    <testcase classname="UserService - Station should update station" name="UserService - Station should update station" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station should throw because station does not exists" name="UserService - Station should throw because station does not exists" time="0.078">
+    <testcase classname="UserService - Station should throw because station does not exists" name="UserService - Station should throw because station does not exists" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station should delete station" name="UserService - Station should delete station" time="0.243">
+    <testcase classname="UserService - Station should delete station" name="UserService - Station should delete station" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
-    <testcase classname="UserService - Station should throw because station does not exists" name="UserService - Station should throw because station does not exists" time="0.016">
+    <testcase classname="UserService - Station should throw because station does not exists" name="UserService - Station should throw because station does not exists" time="0">
+      <failure>Error: Error: Invalid Token
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:9:28
+    at failure (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:101:14)
+    at Object.&lt;anonymous&gt;.module.exports [as sign] (/home/bachh/Desktop/eip/pulsive/api2/api/node_modules/jsonwebtoken/sign.js:107:12)
+    at /home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:7:17
+    at new Promise (&lt;anonymous&gt;)
+    at Function.signWrapper (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/JWTService.ts:6:16)
+    at Function.register (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/Auth/AuthService.ts:43:29)
+    at Object.&lt;anonymous&gt; (/home/bachh/Desktop/eip/pulsive/api2/api/src/Services/User/__tests__/UserService.test.ts:20:3)</failure>
     </testcase>
   </testsuite>
 </testsuites>
