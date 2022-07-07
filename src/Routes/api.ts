@@ -2,6 +2,7 @@ import express from 'express';
 import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
+import SlotController from "../Controllers/SlotController";
 
 const router = express.Router();
 
@@ -23,5 +24,10 @@ router.get('/api/v1/profile/station/:id', UserController.getStation);
 router.post('/api/v1/profile/station', AuthMiddleware, UserController.createStation);
 router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateStation);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
+
+router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
+router.get('/api/v1/slot', AuthMiddleware, SlotController.index);
+router.get('/api/v1/slot/:id', AuthMiddleware, SlotController.show);
+router.delete('/api/v1/slot/:id', AuthMiddleware, SlotController.delete);
 
 export = router;

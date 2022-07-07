@@ -11,3 +11,4 @@ import bcrypt from "bcryptjs";
 
     console.log('Seeding admins done');
 })();
+
