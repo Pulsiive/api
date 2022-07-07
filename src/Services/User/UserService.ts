@@ -250,13 +250,7 @@ class UserService {
         ...props.properties,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
-      const slots = props.properties.slots.map(
-        (slot: { day: number; opensAt: string; closesAt: string }) => ({
-          ...slot,
-          opensAt: slot.opensAt,
-          closesAt: slot.closesAt
-        })
-      );
+
       if (station.properties) {
         await prisma.slot.deleteMany({
           where: {
@@ -276,7 +270,7 @@ class UserService {
             update: {
               ...stationsPropertiesWithoutSlots,
               slots: {
-                create: slots
+                create: props.properties.slots
               }
             }
           }
