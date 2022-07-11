@@ -24,7 +24,6 @@ model User {
   password        String
   dateOfBirth     DateTime
   balance         Int              @default(0)
-  timeZone        String
   vehicles        Vehicle[]
   privateStations Station[]
   comments        StationComment[]

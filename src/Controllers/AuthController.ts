@@ -11,9 +11,7 @@ class AuthController {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 dateOfBirth: new Date(req.body.dateOfBirth),
-                timeZone: req.body.timeZone
             });
-
             return res.json({
                 accessToken
             });

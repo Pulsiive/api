@@ -11,7 +11,6 @@ class AuthService {
             firstName: string,
             lastName: string,
             dateOfBirth: Date,
-            timeZone: string
         }
     ) {
         let user = await prisma.user.findFirst({
@@ -31,7 +30,6 @@ class AuthService {
                     firstName: data.firstName,
                     lastName: data.lastName,
                     dateOfBirth: data.dateOfBirth,
-                    timeZone: data.timeZone
                 },
             });
         } catch (e) {
