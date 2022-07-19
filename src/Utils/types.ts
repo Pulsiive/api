@@ -7,7 +7,7 @@ export type StationAndPayload = Prisma.StationGetPayload<{
         hours: true;
       };
     };
-    comments: true;
+    rates: true;
     coordinates: true;
   };
 }>;

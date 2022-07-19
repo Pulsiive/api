@@ -26,7 +26,7 @@ model User {
   balance         Int              @default(0)
   vehicles        Vehicle[]
   privateStations Station[]
-  comments        StationComment[]
+  stationRatings StationRating[]
   orders          Order[]
 }
 
@@ -52,10 +52,11 @@ model Station {
   owner       User                @relation(fields: [ownerId], references: [id])
   ownerId     String
   orders       Order[]
-  rate        Int @default(0)
+  rate        Float @default(0)
+  rateNumber  Int @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
-  comments    StationComment[]
+  rates    StationRating[]
 }
 
 model StationCoordinates {
@@ -92,17 +93,17 @@ model StationHours {
   closeTime           DateTime
 }
 
-model StationComment {
+model StationRating {
   id        String   @id @default(uuid())
   station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId String
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   rate      Int
-  body      String
+  comment String?
   pictures  String[]
-  dates     DateTime
-  likes     Int
+  date     DateTime
+  likes     Int @default(0)
 }
 
 model Order {

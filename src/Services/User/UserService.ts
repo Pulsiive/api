@@ -35,7 +35,7 @@ const getUserStation = async (
           hours: true
         }
       },
-      comments: true,
+      rates: true,
       coordinates: true
     }
   });
@@ -161,7 +161,7 @@ class UserService {
               hours: true
             }
           },
-          comments: true
+          rates: true
         }
       });
       if (station) {
@@ -221,7 +221,7 @@ class UserService {
               hours: true
             }
           },
-          comments: true
+          rates: true
         }
       });
       return createdStation;
@@ -287,7 +287,7 @@ class UserService {
               hours: true
             }
           },
-          comments: true
+          rates: true
         }
       });
       return updatedStation;
@@ -314,7 +314,7 @@ class UserService {
                 hours: true
               }
             },
-            comments: true
+            rates: true
           }
         });
         return deletedStation;
