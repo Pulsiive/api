@@ -26,5 +26,11 @@ router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateS
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
 
 router.post('/api/v1/station/rate', AuthMiddleware, PublicStationController.rate);
+router.post('/api/v1/station/rate/like/:id', AuthMiddleware, PublicStationController.likeComment);
+router.post(
+  '/api/v1/station/rate/dislike/:id',
+  AuthMiddleware,
+  PublicStationController.dislikeComment
+);
 
 export = router;

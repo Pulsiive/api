@@ -30,6 +30,30 @@ class PublicStationController {
       return errorWrapper(e, res);
     }
   }
+
+  static async likeComment(req: express.Request, res: express.Response) {
+    try {
+      const ratingId = req.params.id;
+      const userId = req.body.user.payload.id;
+
+      const updatedRating = await PublicStationService.likeComment(ratingId, userId);
+      return res.json({ rate: updatedRating });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async dislikeComment(req: express.Request, res: express.Response) {
+    try {
+      const ratingId = req.params.id;
+      const userId = req.body.user.payload.id;
+
+      const updatedRating = await PublicStationService.dislikeComment(ratingId, userId);
+      return res.json({ rate: updatedRating });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
 }
 
 export default PublicStationController;

@@ -27,6 +27,8 @@ model User {
   vehicles        Vehicle[]
   privateStations Station[]
   stationRatings StationRating[]
+  likedRatings StationRating[] @relation(name: "likedRatings")
+  dislikedRatings StationRating[] @relation(name: "dislikedRatings")
   orders          Order[]
 }
 
@@ -99,11 +101,14 @@ model StationRating {
   stationId String
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+  likedBy User[] @relation(name: "likedRatings")
+  dislikedBy User[] @relation(name: "dislikedRatings")
   rate      Int
   comment String?
   pictures  String[]
   date     DateTime
   likes     Int @default(0)
+  dislikes Int @default(0)
 }
 
 model Order {
