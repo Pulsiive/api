@@ -2,6 +2,7 @@ import express from 'express';
 import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
+import EmailVerificationController from "../Controllers/EmailVerificationController";
 
 const router = express.Router();
 
@@ -23,5 +24,8 @@ router.get('/api/v1/profile/station/:id', UserController.getStation);
 router.post('/api/v1/profile/station', AuthMiddleware, UserController.createStation);
 router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateStation);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
+
+router.post('/api/v1/emailVerification', EmailVerificationController.request);
+router.post('/api/v1/requestEmailVerification/:token', EmailVerificationController.verify);
 
 export = router;

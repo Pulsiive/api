@@ -23,6 +23,7 @@ model User {
   email           String           @unique
   password        String
   dateOfBirth     DateTime
+  emailVerifiedAt DateTime?
   balance         Int              @default(0)
   vehicles        Vehicle[]
   privateStations Station[]
@@ -113,6 +114,13 @@ model Order {
   stationId  String
   date       DateTime
   price      Int
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  token     String
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 enum VehicleType {
