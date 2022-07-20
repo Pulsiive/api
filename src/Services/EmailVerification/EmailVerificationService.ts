@@ -7,6 +7,7 @@ import moment from 'moment';
 import Site from '../Site';
 
 class EmailVerificationService {
+
   static async request(email: string) {
     const token = crypto.randomBytes(64).toString('hex');
     const hash = await bcrypt.hash(token, 10);
@@ -33,16 +34,16 @@ class EmailVerificationService {
   static async verify(email: string, token: string) {
     const emailVerification = await prisma.emailVerification.findUnique({ where: { email } });
 
-    if (!emailVerification) throw new ApiError('Error: Invalid or expired token', 422);
+    if (!emailVerification) throw new ApiError('Error: Invalid or expired token', 401);
     const now = moment();
     const expiresAt = moment(emailVerification.createdAt).add(3, 'hour');
 
     if (now.isAfter(expiresAt)) {
       await prisma.emailVerification.delete({ where: { id: emailVerification.id } });
-      throw new ApiError('Error: Invalid or expired token', 422);
+      throw new ApiError('Error: Invalid or expired token', 401);
     }
     const isValid = await bcrypt.compare(token, emailVerification.token);
-    if (!isValid) throw new ApiError('Error: Invalid or expired token', 422);
+    if (!isValid) throw new ApiError('Error: Invalid or expired token', 401);
     await prisma.user.update({
       where: { email },
       data: {

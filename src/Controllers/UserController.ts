@@ -113,6 +113,7 @@ class UserController {
           firstName: true,
           lastName: true,
           email: true,
+          emailVerifiedAt: true,
           dateOfBirth: true,
           balance: true
         }
