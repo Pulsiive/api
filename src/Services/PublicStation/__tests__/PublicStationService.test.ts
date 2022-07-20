@@ -65,4 +65,110 @@ describe('Testing the rating of a public station', () => {
     });
     expect(station?.rateNumber).toBe(3);
   });
+
+  test('should like the given rating', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.likeComment(fakeRate.id, userId);
+    const rating = await prisma.stationRating.findUnique({
+      where: {
+        id: fakeRate.id
+      }
+    });
+    expect(rating?.likes).toBe(1);
+  });
+
+  test('should link the liked rating to the associated user', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.likeComment(fakeRate.id, userId);
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        likedRatings: true
+      }
+    });
+    const likedRate = user?.likedRatings.find((rating) => rating.id === fakeRate.id);
+    expect(likedRate).toBeDefined();
+  });
+
+  test('should toogle the rating from disliked to liked ', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.dislikeComment(fakeRate.id, userId);
+    await PublicStationService.likeComment(fakeRate.id, userId);
+    const rating = await prisma.stationRating.findUnique({
+      where: {
+        id: fakeRate.id
+      }
+    });
+    expect(rating?.likes).toBe(1);
+    expect(rating?.dislikes).toBe(0);
+  });
+
+  test('should dislike the given rating', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.dislikeComment(fakeRate.id, userId);
+    const rating = await prisma.stationRating.findUnique({
+      where: {
+        id: fakeRate.id
+      }
+    });
+    expect(rating?.dislikes).toBe(1);
+  });
+
+  test('should link the disliked rating to the associated user', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.dislikeComment(fakeRate.id, userId);
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        dislikedRatings: true
+      }
+    });
+    const likedRate = user?.dislikedRatings.find((rating) => rating.id === fakeRate.id);
+    expect(likedRate).toBeDefined();
+  });
+
+  test('should toogle the rating from liked to disliked', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.likeComment(fakeRate.id, userId);
+    await PublicStationService.dislikeComment(fakeRate.id, userId);
+    const rating = await prisma.stationRating.findUnique({
+      where: {
+        id: fakeRate.id
+      }
+    });
+    expect(rating?.likes).toBe(0);
+    expect(rating?.dislikes).toBe(1);
+  });
+
+  test('should throw because the rating is already liked', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.likeComment(fakeRate.id, userId);
+    await expect(PublicStationService.likeComment(fakeRate.id, userId)).rejects.toThrow(
+      'Error: User already liked this comment'
+    );
+  });
+
+  test('should throw because the rating is already disliked', async () => {
+    const fakeRate = await PublicStationService.rate(createFakeRate(stationId, userId));
+    await PublicStationService.dislikeComment(fakeRate.id, userId);
+    await expect(PublicStationService.dislikeComment(fakeRate.id, userId)).rejects.toThrow(
+      'Error: User already disliked this comment'
+    );
+  });
+
+  test('should throw because the rating to like does not exist', async () => {
+    await expect(PublicStationService.likeComment('666', userId)).rejects.toThrow(
+      'Error: Invalid rating ID'
+    );
+  });
+
+  test('should throw because the rating to dislike does not exist', async () => {
+    await expect(PublicStationService.dislikeComment('666', userId)).rejects.toThrow(
+      'Error: Invalid rating ID'
+    );
+  });
 });
