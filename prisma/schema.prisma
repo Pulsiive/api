@@ -51,8 +51,8 @@ model Vehicle {
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User                @relation(fields: [ownerId], references: [id])
-  ownerId     String
+  owner       User?                @relation(fields: [ownerId], references: [id])
+  ownerId     String?
   orders       Order[]
   rate        Int @default(0)
   coordinates StationCoordinates?
