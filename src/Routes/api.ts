@@ -24,4 +24,9 @@ router.post('/api/v1/profile/station', AuthMiddleware, UserController.createStat
 router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateStation);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
 
+router.get('/api/v1/profile/message/:id', AuthMiddleware, UserController.getMessage);
+router.get('/api/v1/profile/messages', AuthMiddleware, UserController.getMessages);
+router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.deleteMessage);
+router.post('/api/v1/profile/message', AuthMiddleware, UserController.createMessage);
+
 export = router;
