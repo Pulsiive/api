@@ -1,6 +1,8 @@
 import express from 'express';
 import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
+import StationController from '../Controllers/StationController';
+import PrivateStationController from '../Controllers/PrivateStationController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 
 const router = express.Router();
@@ -19,10 +21,10 @@ router.post('/api/v1/profile/vehicle', AuthMiddleware, UserController.createVehi
 router.put('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.updateVehicle);
 router.delete('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.deleteVehicle);
 
-router.get('/api/v1/profile/station/:id', UserController.getStation);
-router.post('/api/v1/profile/station', AuthMiddleware, UserController.createStation);
-router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateStation);
-router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
+router.get('/api/v1/profile/station/:id', StationController.getFromId);
+router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.create);
+router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
+router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);
 
 router.get('/api/v1/profile/message/:id', AuthMiddleware, UserController.getMessage);
 router.get('/api/v1/profile/messages', AuthMiddleware, UserController.getMessages);
