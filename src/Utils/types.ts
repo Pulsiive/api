@@ -44,8 +44,8 @@ export const VehicleElectricalTypes = [
 
 export interface OpeningHours {
   day: number;
-  openTime: number;
-  closeTime: number;
+  openTime: string;
+  closeTime: string;
 }
 
 export interface PublicStationProperties {

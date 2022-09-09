@@ -24,18 +24,18 @@ export const station = {
     hours: [
       {
         day: 1,
-        openTime: 8,
-        closeTime: 17
+        openTime: '08:00',
+        closeTime: '17:00'
       },
       {
         day: 2,
-        openTime: 10,
-        closeTime: 15
+        openTime: '10:00',
+        closeTime: '15:00'
       },
       {
         day: 3,
-        openTime: 11,
-        closeTime: 19
+        openTime: '11:00',
+        closeTime: '19:00'
       }
     ]
   }

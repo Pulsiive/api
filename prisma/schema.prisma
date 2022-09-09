@@ -90,8 +90,8 @@ model StationHours {
   stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
   day                 Int
-  openTime            DateTime
-  closeTime           DateTime
+  openTime            String
+  closeTime           String
 }
 
 model StationComment {
@@ -148,4 +148,5 @@ enum PlugType {
   CCS
   CHADEMO
   GREENUP
+  EF
 }

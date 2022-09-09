@@ -34,13 +34,6 @@ class PrivateStationService {
         nbChargingPoints: 1,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
-      const stationHours = props.properties.hours.map(
-        (hour: { day: number; openTime: number; closeTime: number }) => ({
-          ...hour,
-          openTime: new Date(hour.openTime),
-          closeTime: new Date(hour.closeTime)
-        })
-      );
 
       const createdStation = await prisma.station.create({
         data: {
@@ -56,7 +49,7 @@ class PrivateStationService {
             create: {
               ...stationsPropertiesWithoutHours,
               hours: {
-                create: stationHours
+                create: props.properties.hours
               }
             }
           }
@@ -96,13 +89,6 @@ class PrivateStationService {
         ...props.properties,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
-      const stationHours = props.properties.hours.map(
-        (hour: { day: number; openTime: number; closeTime: number }) => ({
-          ...hour,
-          openTime: new Date(hour.openTime),
-          closeTime: new Date(hour.closeTime)
-        })
-      );
       if (station.properties) {
         await prisma.stationHours.deleteMany({
           where: {
@@ -122,7 +108,7 @@ class PrivateStationService {
             update: {
               ...stationsPropertiesWithoutHours,
               hours: {
-                create: stationHours
+                create: props.properties.hours
               }
             }
           }
