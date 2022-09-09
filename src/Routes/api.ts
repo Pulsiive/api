@@ -26,6 +26,8 @@ router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.
 router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);
 
+router.get('/api/v1/stations', AuthMiddleware, StationController.getFromParams);
+
 router.get('/api/v1/profile/message/:id', AuthMiddleware, UserController.getMessage);
 router.get('/api/v1/profile/messages', AuthMiddleware, UserController.getMessages);
 router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.deleteMessage);

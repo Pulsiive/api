@@ -5,12 +5,10 @@ import {
   VehicleTypes,
   PlugTypes,
   VehicleElectricalTypes,
-  PrivateStationProperties,
   StationAndPayload,
   MessageInput
 } from '../../Utils/types';
 import { PlugType, Vehicle, Station, Message } from '@prisma/client';
-import { PrismaClientValidationError } from '@prisma/client/runtime';
 import bcrypt from 'bcryptjs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
@@ -20,27 +18,6 @@ const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefi
     }
   });
   return userVehicles.find((vehicle: Vehicle) => vehicle.id === vehicleId);
-};
-
-const getUserStation = async (
-  userId: string,
-  stationId: string
-): Promise<undefined | StationAndPayload> => {
-  const userStations = await prisma.station.findMany({
-    where: {
-      ownerId: userId
-    },
-    include: {
-      properties: {
-        include: {
-          hours: true
-        }
-      },
-      comments: true,
-      coordinates: true
-    }
-  });
-  return userStations.find((station: Station) => station.id === stationId);
 };
 
 class UserService {

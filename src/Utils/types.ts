@@ -82,3 +82,13 @@ export interface MessageInput {
   createdAt: string;
   body: string;
 }
+
+export interface GetStationFromParams {
+  minPrice: number;
+  maxPrice: number;
+  plugTypes?: number[];
+  range?: number;
+  type?: number;
+  userLat: number;
+  userLong: number;
+}
