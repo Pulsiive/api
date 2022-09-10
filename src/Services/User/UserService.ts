@@ -5,7 +5,6 @@ import {
   VehicleTypes,
   PlugTypes,
   VehicleElectricalTypes,
-  StationAndPayload,
   MessageInput
 } from '../../Utils/types';
 import { PlugType, Vehicle, Station, Message } from '@prisma/client';

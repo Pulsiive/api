@@ -18,7 +18,7 @@ describe('Testing public station data', () => {
         coordinates: true
       }
     });
-    const existingStationAddress = '35 RUE DE ROUBAIX';
+    const existingStationAddress = '1 Rue Baltard 75001 Paris';
     expect(
       stations.find((station) => station.coordinates?.address === existingStationAddress)
     ).toBeDefined();
