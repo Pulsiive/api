@@ -42,6 +42,18 @@ class AuthController {
       return errorWrapper(e, res);
     }
   }
+  
+  static async googleLogin(req: express.Request, res: express.Response) {
+    const { tokenId } = req.body;
+
+    try {
+        const user = await AuthService.googleLogin(tokenId);
+
+        return res.json(user)
+    } catch (e: any) {
+        return errorWrapper(e, res)
+    }
+}
 
   static async reqPasswordReset(req: express.Request, res: express.Response) {
     try {
