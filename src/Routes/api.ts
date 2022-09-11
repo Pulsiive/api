@@ -26,6 +26,7 @@ router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateS
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
+router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);
 router.get('/api/v1/slot', AuthMiddleware, SlotController.index);
 router.get('/api/v1/slot/:id', AuthMiddleware, SlotController.show);
 router.delete('/api/v1/slot/:id', AuthMiddleware, SlotController.delete);

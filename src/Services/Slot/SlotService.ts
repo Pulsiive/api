@@ -40,6 +40,22 @@ class SlotService {
       return createdSlot;
   }
 
+  static async update(
+      slotId: string,
+      data: {day: number, opensAt: string, closesAt: string},
+  ): Promise<any> {
+    const slot = await prisma.slot.update({
+      where: { id: slotId },
+      data: {
+        ...(data.day && { day: data.day }),
+        ...(data.opensAt && { opensAt: new Date(data.opensAt) }),
+        ...(data.closesAt && { closesAt: new Date(data.closesAt) }),
+      }
+    });
+
+    return slot;
+  }
+
   static async index(
       userId: string
   ) {
