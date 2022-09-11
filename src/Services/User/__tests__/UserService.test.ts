@@ -105,7 +105,7 @@ describe('UserService - Station', () => {
     expect(createdStation).toEqual(stationComparisonObject);
   });
 
-  test('sould get station', async () => {
+  test('should get station', async () => {
     const stationObject = await UserService.getStation(stationId);
     expect(stationObject).toEqual(stationComparisonObject);
   });

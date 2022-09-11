@@ -39,7 +39,7 @@ model PasswordReset {
 
 model Vehicle {
   id             String                @id @default(uuid())
-  owner          User                  @relation(fields: [ownerId], references: [id])
+  owner          User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId        String
   type           VehicleType           @default(CAR)
   plugTypes      PlugType[]
@@ -49,7 +49,7 @@ model Vehicle {
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User                @relation(fields: [ownerId], references: [id])
+  owner       User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
   orders      Order[]
   rate        Int                 @default(0)
@@ -96,7 +96,7 @@ model StationComment {
   id        String   @id @default(uuid())
   station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId String
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
   rate      Int
   body      String
@@ -107,9 +107,9 @@ model StationComment {
 
 model Order {
   id         String   @id @default(uuid())
-  customer   User     @relation(fields: [customerId], references: [id])
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
-  station    Station  @relation(fields: [stationId], references: [id])
+  station    Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId  String
   date       DateTime
   price      Int
