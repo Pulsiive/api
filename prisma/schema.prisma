@@ -30,6 +30,8 @@ model User {
   likedRatings StationRating[] @relation(name: "likedRatings")
   dislikedRatings StationRating[] @relation(name: "dislikedRatings")
   orders          Order[]
+  sentMessages Message[] @relation(name: "Author")
+  receivedMessages Message[] @relation(name: "Receiver")
 }
 
 model PasswordReset {
@@ -51,8 +53,8 @@ model Vehicle {
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User                @relation(fields: [ownerId], references: [id])
-  ownerId     String
+  owner       User?                @relation(fields: [ownerId], references: [id])
+  ownerId     String?
   orders       Order[]
   rate        Float @default(0)
   rateNumber  Int @default(0)
@@ -91,8 +93,8 @@ model StationHours {
   stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
   day                 Int
-  openTime            DateTime
-  closeTime           DateTime
+  openTime            String
+  closeTime           String
 }
 
 model StationRating {
@@ -121,6 +123,17 @@ model Order {
   price      Int
 }
 
+model Message {
+  id String @id @default(uuid())
+  author User @relation(fields: [authorId], references: [id], name: "Author")
+  authorId String
+  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+  receiverId String
+  body String
+  createdAt DateTime
+  read Boolean? @default(false)
+}
+
 enum VehicleType {
   CAR
   SCOOTER
@@ -141,4 +154,5 @@ enum PlugType {
   CCS
   CHADEMO
   GREENUP
+  EF
 }

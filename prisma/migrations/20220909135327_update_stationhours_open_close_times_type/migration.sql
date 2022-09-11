@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "StationHours" ALTER COLUMN "openTime" SET DATA TYPE TEXT,
+ALTER COLUMN "closeTime" SET DATA TYPE TEXT;

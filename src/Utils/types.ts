@@ -44,8 +44,8 @@ export const VehicleElectricalTypes = [
 
 export interface OpeningHours {
   day: number;
-  openTime: number;
-  closeTime: number;
+  openTime: string;
+  closeTime: string;
 }
 
 export interface PublicStationProperties {
@@ -75,4 +75,20 @@ export interface PrivateStationProperties extends Omit<PublicStationProperties, 
     plugTypes: number[];
     hours: OpeningHours[];
   };
+}
+
+export interface MessageInput {
+  receiverId: string;
+  createdAt: string;
+  body: string;
+}
+
+export interface GetStationFromParams {
+  minPrice: number;
+  maxPrice: number;
+  plugTypes?: number[];
+  range?: number;
+  type?: number;
+  userLat: number;
+  userLong: number;
 }

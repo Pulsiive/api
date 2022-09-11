@@ -6,6 +6,7 @@ import prisma from '../../prisma/client';
 import Validator from 'validatorjs';
 import AuthService from '../Services/Auth/AuthService';
 import updateProfileRules from '../Rules/updateProfileRules';
+import { ApiError } from '../Errors/ApiError';
 
 class UserController {
   static async getVehicle(req: express.Request, res: express.Response) {
@@ -52,51 +53,6 @@ class UserController {
 
       const deletedVehicle = await UserService.deleteVehicle(vehicleId, userId);
       return res.json({ deletedVehicle });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async getStation(req: express.Request, res: express.Response) {
-    try {
-      const stationId = req.params.id;
-      const station = await UserService.getStation(stationId);
-      return res.json({ station });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async createStation(req: express.Request, res: express.Response) {
-    try {
-      const stationsProperties = req.body.station;
-      const userId = req.body.user.payload.id;
-      const station = await UserService.createStation(stationsProperties, userId);
-      return res.json({ station });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async updateStation(req: express.Request, res: express.Response) {
-    try {
-      const stationId = req.params.id;
-      const stationsProperties = req.body.station;
-      const userId = req.body.user.payload.id;
-      const station = await UserService.updateStation(stationsProperties, userId, stationId);
-      return res.json({ station });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async deleteStation(req: express.Request, res: express.Response) {
-    try {
-      const stationId = req.params.id;
-      const userId = req.body.user.payload.id;
-
-      const deletedStation = await UserService.deleteStation(stationId, userId);
-      return res.json({ deletedStation });
     } catch (e: any) {
       return errorWrapper(e, res);
     }
@@ -165,6 +121,59 @@ class UserController {
       return res.status(422).json({
         error: 'unexpected-error'
       });
+    }
+  }
+
+  static async getMessages(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const messages = await UserService.getMessages(userId);
+      return res.json(messages);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async getMessage(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const messageId = req.params.id;
+
+      const message = await UserService.getMessage(messageId, userId);
+      return res.json(message);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async deleteMessage(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const messageId = req.params.id;
+
+      const deletedMessage = await UserService.deleteMessage(messageId, userId);
+      return res.json(deletedMessage);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async createMessage(req: express.Request, res: express.Response) {
+    try {
+      const message = req.body.message;
+      const userId = req.body.user.payload.id;
+      const validator = new Validator(message, {
+        receiverId: 'required|string',
+        body: 'required|string|min:1|max:300',
+        createdAt: 'required|date'
+      });
+      if (validator.passes() && req.body.user.payload.id !== message.receiverId) {
+        const newMessage = await UserService.createMessage(message, userId);
+        return res.json(newMessage);
+      }
+      throw new ApiError('Invalid input', 400);
+    } catch (e: any) {
+      return errorWrapper(e, res);
     }
   }
 }
