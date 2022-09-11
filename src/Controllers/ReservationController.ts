@@ -25,6 +25,9 @@ class ReservationController {
         throw new ApiError('Error: Unprocessable entity', 422);
       }
 
+      if (new Date(data.from) >= new Date(data.to))
+        throw new ApiError('Error: [Unprocessable entity]: "from" dateTime needs to be before "to" dateTime', 422);
+
       const reservation = await ReservationService.create(userId, slotId, data);
 
       return res.json(reservation);

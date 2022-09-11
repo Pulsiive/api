@@ -10,11 +10,20 @@ class ReservationService {
       const slot = await prisma.slot.findFirst({
         where: {
           id: slotId,
+        },
+        include: {
+          reservations: true
         }
       });
 
       if (!slot)
         throw new ApiError('Error: reservation not found', 404);
+
+      for (const reservation of slot.reservations) {
+        if ((reservation.from <= new Date(data.to)) && (reservation.to >= new Date(data.from))) {
+          throw new ApiError('Error: A slot is already reserved at this time', 409);
+        }
+      }
 
       const createdReservation = await prisma.reservation.create({
         data: {

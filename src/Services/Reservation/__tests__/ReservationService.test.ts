@@ -12,8 +12,9 @@ import {
   reservation,
   reservationComparisonObject,
   reservationShowComparisonObject,
-  reservationDeletedComparisonObject
+  reservationDeletedComparisonObject, alreadyReservedObject
 } from "../__mocks__/ReservationServiceMocks";
+import {ApiError} from "../../../Errors/ApiError";
 
 let userId: string;
 let ownerId: string;
@@ -68,29 +69,27 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe('ReservationService - Create', () => {
+describe('ReservationService', () => {
   test('should create reservation', async () => {
     const createdReservation = await ReservationService.create(userId, slotId, reservation);
     reservationId = createdReservation.id;
     expect(createdReservation).toEqual(reservationComparisonObject);
   });
-});
 
-describe('ReservationService - Show', () => {
+  test('should throw error slot already reserved', async () => {
+    await expect(ReservationService.create(userId, slotId, alreadyReservedObject)).rejects.toThrow(new ApiError('Error: A slot is already reserved at this time', 409));
+  });
+
   test('should get one reservation', async () => {
     const reservations = await ReservationService.show(reservationId, userId);
     expect(reservations).toEqual(reservationShowComparisonObject);
   });
-});
 
-describe('ReservationService - Index', () => {
   test('should get all reservations', async () => {
     const reservations = await ReservationService.index(userId);
     expect(reservations).toEqual(expect.any(Array));
   });
-});
 
-describe('ReservationService - Delete', () => {
   test('should delete one reservation', async () => {
     const reservations = await ReservationService.delete(reservationId, userId);
     expect(reservations).toEqual(reservationDeletedComparisonObject);

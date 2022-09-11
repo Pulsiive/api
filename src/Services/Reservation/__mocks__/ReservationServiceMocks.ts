@@ -15,8 +15,13 @@ export const user = {
 };
 
 export const reservation = {
-    from: "1970-03-02T08:15:00.003Z",
-    to: "1970-03-02T09:15:00.003Z"
+    from: "1970-01-01T08:15:00.003Z",
+    to: "1970-01-01T09:15:00.003Z"
+};
+
+export const alreadyReservedObject = {
+    from: "1970-01-01T09:20:00.003Z",
+    to: "1970-01-01T09:00:00.003Z"
 };
 
 export const reservationComparisonObject = {
