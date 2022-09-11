@@ -3,6 +3,7 @@ import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 import SlotController from "../Controllers/SlotController";
+import ReservationController from "../Controllers/ReservationController";
 
 const router = express.Router();
 
@@ -30,5 +31,10 @@ router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);
 router.get('/api/v1/slot', AuthMiddleware, SlotController.index);
 router.get('/api/v1/slot/:id', AuthMiddleware, SlotController.show);
 router.delete('/api/v1/slot/:id', AuthMiddleware, SlotController.delete);
+
+router.post('/api/v1/reservation', AuthMiddleware, ReservationController.create);
+router.get('/api/v1/reservation', AuthMiddleware, ReservationController.index);
+router.get('/api/v1/reservation/:id', AuthMiddleware, ReservationController.show);
+router.delete('/api/v1/reservation/:id', AuthMiddleware, ReservationController.delete);
 
 export = router;
