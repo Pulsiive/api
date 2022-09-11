@@ -5,7 +5,13 @@ import prisma from '../../../../prisma/client';
 import {
   station,
 } from '../../User/__mocks__/UserServiceMocks';
-import {user, slot, slotComparisonObject} from "../__mocks__/SlotServiceMocks";
+import {
+  user,
+  slot,
+  slotComparisonObject,
+  slotShowComparisonObject,
+  slotDeletedComparisonObject
+} from "../__mocks__/SlotServiceMocks";
 
 let userId: string;
 let stationId: string;
@@ -39,6 +45,27 @@ describe('SlotService - Create', () => {
     const createdSlot = await SlotService.create(userId, stationId, slot);
     slotId = createdSlot.id;
     expect(createdSlot).toEqual(slotComparisonObject);
+  });
+});
+
+describe('SlotService - Show', () => {
+  test('should get one slot', async () => {
+    const slots = await SlotService.show(slotId, userId);
+    expect(slots).toEqual(slotShowComparisonObject);
+  });
+});
+
+describe('SlotService - Index', () => {
+  test('should get all slots', async () => {
+    const slots = await SlotService.index(userId);
+    expect(slots).toEqual(expect.any(Array));
+  });
+});
+
+describe('SlotService - Delete', () => {
+  test('should delete one slot', async () => {
+    const slots = await SlotService.delete(slotId, userId);
+    expect(slots).toEqual(slotDeletedComparisonObject);
   });
 });
 

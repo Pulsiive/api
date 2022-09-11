@@ -115,13 +115,13 @@ class SlotService {
       throw new ApiError('Error: slot ID not found', 404);
     }
 
-    await prisma.slot.delete({
+    const deletedSlot = await prisma.slot.delete({
       where: {
         id: slot.id
       }
     });
 
-    return slot;
+    return deletedSlot;
   }
 }
 

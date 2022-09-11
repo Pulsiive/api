@@ -19,3 +19,29 @@ export const slotComparisonObject = {
   opensAt: expect.any(Date),
   closesAt: expect.any(Date)
 };
+
+export const slotShowComparisonObject = {
+    id: expect.any(String),
+    stationPropertiesId: expect.any(String),
+    day: expect.any(Number),
+    opensAt: expect.any(Date),
+    closesAt: expect.any(Date),
+    stationProperties: {
+        maxPower: expect.any(Object),
+        id: expect.any(String),
+        stationId: expect.any(String),
+        isPublic: false,
+        plugTypes: ['TYPE2'],
+        price: 2,
+        isGreenEnergy: false,
+        nbChargingPoints: 1,
+    }
+};
+
+export const slotDeletedComparisonObject = {
+    id: expect.any(String),
+    stationPropertiesId: expect.any(String),
+    day: expect.any(Number),
+    opensAt: expect.any(Date),
+    closesAt: expect.any(Date)
+};
