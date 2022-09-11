@@ -149,7 +149,7 @@ describe('Testing the rating of a public station', () => {
   test('should like the given rating', async () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
     await StationService.likeComment(fakeRate.id, userId);
-    const rating = await prisma.stationRating.findUnique({
+    const rating = await prisma.rating.findUnique({
       where: {
         id: fakeRate.id
       }
@@ -176,7 +176,7 @@ describe('Testing the rating of a public station', () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
     await StationService.dislikeComment(fakeRate.id, userId);
     await StationService.likeComment(fakeRate.id, userId);
-    const rating = await prisma.stationRating.findUnique({
+    const rating = await prisma.rating.findUnique({
       where: {
         id: fakeRate.id
       }
@@ -188,7 +188,7 @@ describe('Testing the rating of a public station', () => {
   test('should dislike the given rating', async () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
     await StationService.dislikeComment(fakeRate.id, userId);
-    const rating = await prisma.stationRating.findUnique({
+    const rating = await prisma.rating.findUnique({
       where: {
         id: fakeRate.id
       }
@@ -215,7 +215,7 @@ describe('Testing the rating of a public station', () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
     await StationService.likeComment(fakeRate.id, userId);
     await StationService.dislikeComment(fakeRate.id, userId);
-    const rating = await prisma.stationRating.findUnique({
+    const rating = await prisma.rating.findUnique({
       where: {
         id: fakeRate.id
       }

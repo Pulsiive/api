@@ -37,4 +37,6 @@ router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
 router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
 
+router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
+
 export = router;

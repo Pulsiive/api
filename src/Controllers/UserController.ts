@@ -176,6 +176,28 @@ class UserController {
       return errorWrapper(e, res);
     }
   }
+
+  static async rate(req: express.Request, res: express.Response) {
+    try {
+      const input = req.body.input;
+      const userId = req.body.user.payload.id;
+
+      const validator = new Validator(input, {
+        userId: 'required|string',
+        rate: 'required|numeric|min:1|max:5',
+        creationDate: 'required|date',
+        comment: 'string|min:10|max:300'
+      });
+
+      if (validator.fails()) {
+        throw new ApiError('Invalid input', 400);
+      }
+      const rate = await UserService.rate(input, userId);
+      res.json({ rate });
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
 }
 
 export default UserController;

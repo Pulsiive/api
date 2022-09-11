@@ -26,9 +26,10 @@ model User {
   balance         Int              @default(0)
   vehicles        Vehicle[]
   privateStations Station[]
-  stationRatings StationRating[]
-  likedRatings StationRating[] @relation(name: "likedRatings")
-  dislikedRatings StationRating[] @relation(name: "dislikedRatings")
+  wroteRatings Rating[]
+  receivedRatings Rating[] @relation(name: "Recipient")
+  likedRatings Rating[] @relation(name: "likedRatings")
+  dislikedRatings Rating[] @relation(name: "dislikedRatings")
   orders          Order[]
   sentMessages Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
@@ -60,7 +61,7 @@ model Station {
   rateNumber  Int @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
-  rates    StationRating[]
+  rates    Rating[]
 }
 
 model StationCoordinates {
@@ -97,10 +98,12 @@ model StationHours {
   closeTime           String
 }
 
-model StationRating {
+model Rating {
   id        String   @id @default(uuid())
-  station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId String
+  recipient User? @relation(fields: [recipientId], references: [id], name: "Recipient")
+  recipientId String?
+  station   Station?  @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId String?
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   likedBy User[] @relation(name: "likedRatings")

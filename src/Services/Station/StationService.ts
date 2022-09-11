@@ -3,15 +3,7 @@ import { Station, PlugType } from '@prisma/client';
 
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
-import { GetStationFromParams, PlugTypes } from '../../Utils/types';
-
-interface StationRatingInput {
-  stationId: string;
-  userId: string;
-  rate: number;
-  creationDate: string;
-  comment?: string;
-}
+import { GetStationFromParams, PlugTypes, StationRatingInput } from '../../Utils/types';
 
 class StationService {
   // will fetch public OR private station from given ID
@@ -112,7 +104,7 @@ class StationService {
     const newStationScore =
       (station.rates.reduce((previous, current) => previous + current.rate, 0) + rate) /
       (station.rateNumber + 1);
-    const rating = await prisma.stationRating.create({
+    const rating = await prisma.rating.create({
       data: {
         station: {
           connect: {
@@ -147,7 +139,7 @@ class StationService {
   }
 
   static async likeComment(ratingId: string, userId: string) {
-    const rating = await prisma.stationRating.findUnique({
+    const rating = await prisma.rating.findUnique({
       where: {
         id: ratingId
       },
@@ -182,7 +174,7 @@ class StationService {
         }
       };
     }
-    return prisma.stationRating.update({
+    return prisma.rating.update({
       where: {
         id: rating.id
       },
@@ -191,7 +183,7 @@ class StationService {
   }
 
   static async dislikeComment(ratingId: string, userId: string) {
-    const rating = await prisma.stationRating.findUnique({
+    const rating = await prisma.rating.findUnique({
       where: {
         id: ratingId
       },
@@ -227,7 +219,7 @@ class StationService {
         }
       };
     }
-    return prisma.stationRating.update({
+    return prisma.rating.update({
       where: {
         id: rating.id
       },
