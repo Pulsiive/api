@@ -51,8 +51,8 @@ model Vehicle {
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User                @relation(fields: [ownerId], references: [id])
-  ownerId     String
+  owner       User?                @relation(fields: [ownerId], references: [id])
+  ownerId     String?
   orders       Order[]
   rate        Int @default(0)
   coordinates StationCoordinates?
@@ -90,8 +90,8 @@ model StationHours {
   stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
   day                 Int
-  openTime            DateTime
-  closeTime           DateTime
+  openTime            String
+  closeTime           String
 }
 
 model StationComment {
@@ -148,4 +148,5 @@ enum PlugType {
   CCS
   CHADEMO
   GREENUP
+  EF
 }
