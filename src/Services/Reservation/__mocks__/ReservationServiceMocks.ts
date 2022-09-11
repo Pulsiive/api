@@ -20,7 +20,7 @@ export const reservation = {
 };
 
 export const alreadyReservedObject = {
-    from: "1970-01-01T09:20:00.003Z",
+    from: "1970-01-01T08:20:00.003Z",
     to: "1970-01-01T09:00:00.003Z"
 };
 
