@@ -4,6 +4,7 @@ import UserController from '../Controllers/UserController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 import SlotController from "../Controllers/SlotController";
 import ReservationController from "../Controllers/ReservationController";
+import PhoneNumberVerificationController from "../Controllers/PhoneNumberVerificationController";
 
 const router = express.Router();
 
@@ -12,6 +13,9 @@ router.post('/api/v1/auth/login', AuthController.login);
 
 router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);
+
+router.post('/api/v1/phone-number/request', PhoneNumberVerificationController.request);
+router.post('/api/v1/phone-number/verify', PhoneNumberVerificationController.verify);
 
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);

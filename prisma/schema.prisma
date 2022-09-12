@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider     = "prisma-client-js"
+  binaryTarget = ["linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
@@ -17,18 +18,18 @@ model Admin {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  firstName       String
-  lastName        String
-  email           String           @unique
-  password        String
-  dateOfBirth     DateTime
-  balance         Int              @default(0)
-  vehicles        Vehicle[]
-  privateStations Station[]
-  comments        StationComment[]
-  orders          Order[]
-  Reservation     Reservation[]
+  id                    String           @id @default(uuid())
+  firstName             String
+  lastName              String
+  email                 String           @unique
+  password              String
+  dateOfBirth           DateTime
+  balance               Int              @default(0)
+  vehicles              Vehicle[]
+  privateStations       Station[]
+  comments              StationComment[]
+  orders                Order[]
+  Reservation           Reservation[]
 }
 
 model PasswordReset {
@@ -36,6 +37,13 @@ model PasswordReset {
   token     String
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+model PhoneNumberVerification {
+  id          String   @id @default(uuid())
+  otp         String
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
 }
 
 model Vehicle {
