@@ -53,21 +53,21 @@ export const station = {
     isGreenEnergy: false,
     plugTypes: [1],
     nbChargingPoints: 1,
-    hours: [
+    slots: [
       {
         day: 1,
-        openTime: 8,
-        closeTime: 17
+        opensAt: '1970-03-02T10:00:00.003Z',
+        closesAt: '1970-03-02T12:00:00.003Z'
       },
       {
         day: 2,
-        openTime: 10,
-        closeTime: 15
+        opensAt: '1970-03-02T17:00:00.003Z',
+        closesAt: '1970-03-02T19:00:00.003Z'
       },
       {
         day: 3,
-        openTime: 11,
-        closeTime: 19
+        opensAt: '1970-03-02T22:00:00.003Z',
+        closesAt: '1970-03-02T00:00:00.003Z'
       }
     ]
   }
@@ -91,7 +91,7 @@ export const stationComparisonObject = {
     stationId: expect.any(String),
     isPublic: false,
     plugTypes: ['TYPE2'],
-    hours: expect.any(Array)
+    slots: expect.any(Array)
   },
   comments: []
 };

@@ -33,7 +33,7 @@ const getUserStation = async (
     include: {
       properties: {
         include: {
-          hours: true
+          slots: true
         }
       },
       comments: true,
@@ -161,7 +161,7 @@ class UserService {
           coordinates: true,
           properties: {
             include: {
-              hours: true
+              slots: true
             }
           },
           comments: true
@@ -184,17 +184,17 @@ class UserService {
     userId: string
   ): Promise<StationAndPayload> {
     try {
-      const stationsPropertiesWithoutHours = {
+      const stationsPropertiesWithoutSlots = {
         ...props.properties,
         isPublic: false,
         nbChargingPoints: 1,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
-      const stationHours = props.properties.hours.map(
-        (hour: { day: number; openTime: number; closeTime: number }) => ({
-          ...hour,
-          openTime: new Date(hour.openTime),
-          closeTime: new Date(hour.closeTime)
+      const slots = props.properties.slots.map(
+        (slot: { day: number; opensAt: string; closesAt: string }) => ({
+          day: slot.day,
+          opensAt: slot.opensAt,
+          closesAt: slot.closesAt
         })
       );
 
@@ -210,9 +210,9 @@ class UserService {
           },
           properties: {
             create: {
-              ...stationsPropertiesWithoutHours,
-              hours: {
-                create: stationHours
+              ...stationsPropertiesWithoutSlots,
+              slots: {
+                create: slots
               }
             }
           }
@@ -221,7 +221,7 @@ class UserService {
           coordinates: true,
           properties: {
             include: {
-              hours: true
+              slots: true
             }
           },
           comments: true
@@ -229,6 +229,7 @@ class UserService {
       });
       return createdStation;
     } catch (e) {
+      console.log(e);
       if (e instanceof PrismaClientValidationError) {
         throw new ApiError('Error: Invalid properties');
       }
@@ -242,25 +243,19 @@ class UserService {
     stationId: string
   ): Promise<StationAndPayload> {
     try {
-      //TODO: improve this - don't delete current hours
+      //TODO: improve this - don't delete current slots
 
       const station = await getUserStation(userId, stationId);
 
       if (!station) throw new ApiError('Error: Invalid station ID');
 
-      const stationsPropertiesWithoutHours = {
+      const stationsPropertiesWithoutSlots = {
         ...props.properties,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
-      const stationHours = props.properties.hours.map(
-        (hour: { day: number; openTime: number; closeTime: number }) => ({
-          ...hour,
-          openTime: new Date(hour.openTime),
-          closeTime: new Date(hour.closeTime)
-        })
-      );
+
       if (station.properties) {
-        await prisma.stationHours.deleteMany({
+        await prisma.slot.deleteMany({
           where: {
             stationPropertiesId: station.properties.id
           }
@@ -276,9 +271,9 @@ class UserService {
           },
           properties: {
             update: {
-              ...stationsPropertiesWithoutHours,
-              hours: {
-                create: stationHours
+              ...stationsPropertiesWithoutSlots,
+              slots: {
+                create: props.properties.slots
               }
             }
           }
@@ -287,7 +282,7 @@ class UserService {
           coordinates: true,
           properties: {
             include: {
-              hours: true
+              slots: true
             }
           },
           comments: true
@@ -314,7 +309,7 @@ class UserService {
             coordinates: true,
             properties: {
               include: {
-                hours: true
+                slots: true
               }
             },
             comments: true
