@@ -3,6 +3,7 @@ import AuthService from '../Services/Auth/AuthService';
 import { errorWrapper } from '../Utils/errorWrapper';
 import Validator from 'validatorjs';
 import { ApiError } from '../Errors/ApiError';
+import EmailVerificationService from "../Services/EmailVerification/EmailVerificationService";
 
 class AuthController {
   static async register(req: express.Request, res: express.Response) {
@@ -22,6 +23,7 @@ class AuthController {
       }
 
       const accessToken = await AuthService.register(data);
+      await EmailVerificationService.request(data.email);
 
       return res.json({
         accessToken
