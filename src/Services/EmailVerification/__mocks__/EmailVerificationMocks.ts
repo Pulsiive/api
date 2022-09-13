@@ -1,5 +1,5 @@
 export const user = {
-  email: 'fakeAccount@test.com',
+  email: 'serviceemailverification@test.com',
   password: '123',
   firstName: 'Fake',
   lastName: 'Account',
