@@ -34,11 +34,12 @@ class PhoneNumberVerificationController {
     static async verify(req: express.Request, res: express.Response) {
         try {
             const otp = req.query.otp as any;
+            console.log(otp);
             const data = { phoneNumber: req.body.phoneNumber, otp };
 
             const validator = new Validator(data, {
                 phoneNumber: 'required|phone_number',
-                otp: 'required|numeric|size:4'
+                otp: 'required|numeric'
             });
 
             if (validator.fails()) {
