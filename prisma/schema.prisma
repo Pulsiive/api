@@ -24,6 +24,7 @@ model User {
   password        String
   dateOfBirth     DateTime
   balance         Int              @default(0)
+  contacts        Contacts[]
   vehicles        Vehicle[]
   privateStations Station[]
   comments        StationComment[]
@@ -37,6 +38,13 @@ model PasswordReset {
   token     String
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+model Contacts {
+  id              String       @id @default(uuid())
+  contactName     String       @unique
+  author          User         @relation(fields: [authorId], references: [id])
+  authorId        String      
 }
 
 model Vehicle {

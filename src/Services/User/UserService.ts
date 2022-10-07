@@ -12,6 +12,8 @@ import {
 import { PlugType, Vehicle, Station, Message } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
 import bcrypt from 'bcryptjs';
+import { connect } from 'http2';
+import { userInfo } from 'os';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -392,6 +394,63 @@ class UserService {
         createdAt
       }
     });
+  }
+
+  static async createContact(userId: any, contactName: any) {
+    const res = await prisma.contacts.create({
+      data: {
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        contactName
+      }
+    });
+    return res;
+  }
+
+  static async updateContact(userId: any, contactName: any, newName: any) {
+    const res = await prisma.contacts.update({
+      where: {
+        contactName: contactName
+      },
+      data: {
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        contactName: newName
+      }
+    });
+    console.log('res --> ', res);
+    return res;
+  }
+  static async deleteContactById(userId: any) {
+    const contactDeleted = await prisma.contacts.delete({
+      where: {
+        id: userId
+      }
+    });
+    console.log('contact deleted => ', contactDeleted);
+    return contactDeleted;
+  }
+
+  static async getContactsById(userId: any) {
+    const getContacts = await prisma.user.findMany({
+      where: {
+        id: userId
+      },
+      select: {
+        contacts: {
+          select: {
+            contactName: true
+          }
+        }
+      }
+    });
+    return getContacts;
   }
 }
 

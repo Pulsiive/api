@@ -221,6 +221,52 @@ class UserController {
       return errorWrapper(e, res);
     }
   }
+
+  static async createContact(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.userId;
+      const contactName = req.body.contactName;
+
+      const newContact = await UserService.createContact(userId, contactName);
+
+      return res.json(newContact);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+  static async updateContact(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.userId;
+      const contactName = req.body.contactName;
+      const newName = req.body.newName;
+
+      const updateContact = await UserService.updateContact(userId, contactName, newName);
+      return res.json(updateContact);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async removeContact(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.userId;
+      const contactDeleted = await UserService.deleteContactById(userId);
+      return res.json(contactDeleted);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async getContacts(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.userId;
+
+      const contacts = await UserService.getContactsById(userId);
+      return res.json(contacts);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
 }
 
 export default UserController;
