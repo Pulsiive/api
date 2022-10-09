@@ -8,7 +8,7 @@ import {
   MessageInput,
   UserRatingInput
 } from '../../Utils/types';
-import { PlugType, Vehicle, Message, Rating } from '@prisma/client';
+import {PlugType, Vehicle, Message, Rating} from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {

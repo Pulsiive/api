@@ -2,7 +2,6 @@ import StationService from '../StationService';
 import AuthService from '../../Auth/AuthService';
 import UserService from '../../User/UserService';
 import prisma from '../../../../prisma/client';
-import { StationAndPayload } from '../../../Utils/types';
 import { user, createFakeRate } from '../__mocks__/StationServiceMocks';
 
 let stationId: string;
@@ -31,11 +30,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.station.delete({
-    where: {
-      id: stationId
-    }
-  });
   await prisma.user.delete({
     where: {
       email: user.email
@@ -159,6 +153,7 @@ describe('Testing the rating of a public station', () => {
 
   test('should link the liked rating to the associated user', async () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
+    console.log(fakeRate);
     await StationService.likeComment(fakeRate.id, userId);
     const user = await prisma.user.findUnique({
       where: {
@@ -168,6 +163,7 @@ describe('Testing the rating of a public station', () => {
         likedRatings: true
       }
     });
+    console.log(user);
     const likedRate = user?.likedRatings.find((rating) => rating.id === fakeRate.id);
     expect(likedRate).toBeDefined();
   });

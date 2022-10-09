@@ -23,6 +23,7 @@ model User {
   email           String           @unique
   password        String
   dateOfBirth     DateTime
+  emailVerifiedAt DateTime?
   balance         Int              @default(0)
   vehicles        Vehicle[]
   privateStations Station[]
@@ -33,6 +34,7 @@ model User {
   orders          Order[]
   sentMessages Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
+  Reservation           Reservation[]
 }
 
 model PasswordReset {
@@ -42,19 +44,26 @@ model PasswordReset {
   createdAt DateTime @default(now())
 }
 
+model PhoneNumberVerification {
+  id          String   @id @default(uuid())
+  otp         String
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+}
+
 model Vehicle {
-  id        String      @id @default(uuid())
-  owner     User        @relation(fields: [ownerId], references: [id])
-  ownerId   String
-  type      VehicleType @default(CAR)
-  plugTypes PlugType[]
+  id             String                @id @default(uuid())
+  owner          User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        String
+  type           VehicleType           @default(CAR)
+  plugTypes      PlugType[]
   electricalType VehicleElectricalType
-  maxPower  Decimal
+  maxPower       Decimal
 }
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User?                @relation(fields: [ownerId], references: [id])
+  owner       User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String?
   orders       Order[]
   rate        Float @default(0)
@@ -77,34 +86,45 @@ model StationCoordinates {
 }
 
 model StationProperties {
-  id               String         @id @default(uuid())
-  station          Station        @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId        String         @unique
+  id               String     @id @default(uuid())
+  station          Station    @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId        String     @unique
   isPublic         Boolean
   maxPower         Decimal
   price            Int
   nbChargingPoints Int
   isGreenEnergy    Boolean
   plugTypes        PlugType[]
-  hours            StationHours[]
+  slots            Slot[]
 }
 
-model StationHours {
+model Slot {
   id                  String            @id @default(uuid())
   stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
-  day                 Int
-  openTime            String
-  closeTime           String
+  reservations        Reservation[]
+  day                 Int               @db.SmallInt
+  opensAt             DateTime          @db.Time(0)
+  closesAt            DateTime          @db.Time(0)
+}
+
+model Reservation {
+  id     String   @id @default(uuid())
+  slot   Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  from   DateTime @db.Time(0)
+  to     DateTime @db.Time(0)
 }
 
 model Rating {
   id        String   @id @default(uuid())
-  recipient User? @relation(fields: [recipientId], references: [id], name: "Recipient")
+  recipient User? @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
   recipientId String?
   station   Station?  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId String?
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
   likedBy User[] @relation(name: "likedRatings")
   dislikedBy User[] @relation(name: "dislikedRatings")
@@ -118,9 +138,9 @@ model Rating {
 
 model Order {
   id         String   @id @default(uuid())
-  customer   User     @relation(fields: [customerId], references: [id])
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
-  station    Station  @relation(fields: [stationId], references: [id])
+  station    Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId  String
   date       DateTime
   price      Int
@@ -128,13 +148,20 @@ model Order {
 
 model Message {
   id String @id @default(uuid())
-  author User @relation(fields: [authorId], references: [id], name: "Author")
+  author User @relation(fields: [authorId], references: [id], name: "Author", onDelete: Cascade)
   authorId String
-  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver", onDelete: Cascade)
   receiverId String
   body String
   createdAt DateTime
   read Boolean? @default(false)
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  token     String
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 enum VehicleType {

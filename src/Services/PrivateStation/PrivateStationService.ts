@@ -15,7 +15,7 @@ const getUserStation = async (
     include: {
       properties: {
         include: {
-          hours: true
+          slots: true
         }
       },
       rates: true,
@@ -28,12 +28,19 @@ const getUserStation = async (
 class PrivateStationService {
   static async create(props: PrivateStationProperties, userId: string): Promise<StationAndPayload> {
     try {
-      const stationsPropertiesWithoutHours = {
+      const stationsPropertiesWithoutSlots = {
         ...props.properties,
         isPublic: false,
         nbChargingPoints: 1,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
+      const slots = props.properties.slots.map(
+          (slot: { day: number; opensAt: string; closesAt: string }) => ({
+            day: slot.day,
+            opensAt: slot.opensAt,
+            closesAt: slot.closesAt
+          })
+      );
 
       const createdStation = await prisma.station.create({
         data: {
@@ -47,9 +54,9 @@ class PrivateStationService {
           },
           properties: {
             create: {
-              ...stationsPropertiesWithoutHours,
-              hours: {
-                create: props.properties.hours
+              ...stationsPropertiesWithoutSlots,
+              slots: {
+                create: slots
               }
             }
           }
@@ -58,7 +65,7 @@ class PrivateStationService {
           coordinates: true,
           properties: {
             include: {
-              hours: true
+              slots: true
             }
           },
           rates: true
@@ -66,6 +73,7 @@ class PrivateStationService {
       });
       return createdStation;
     } catch (e) {
+      console.log(e);
       if (e instanceof PrismaClientValidationError) {
         throw new ApiError('Error: Invalid properties');
       }
@@ -85,12 +93,21 @@ class PrivateStationService {
 
       if (!station) throw new ApiError('Error: Invalid station ID');
 
-      const stationsPropertiesWithoutHours = {
+      const stationsPropertiesWithoutSlots = {
         ...props.properties,
+        isPublic: false,
+        nbChargingPoints: 1,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
+      const slots = props.properties.slots.map(
+          (slot: { day: number; opensAt: string; closesAt: string }) => ({
+            day: slot.day,
+            opensAt: slot.opensAt,
+            closesAt: slot.closesAt
+          })
+      );
       if (station.properties) {
-        await prisma.stationHours.deleteMany({
+        await prisma.slot.deleteMany({
           where: {
             stationPropertiesId: station.properties.id
           }
@@ -106,9 +123,9 @@ class PrivateStationService {
           },
           properties: {
             update: {
-              ...stationsPropertiesWithoutHours,
-              hours: {
-                create: props.properties.hours
+              ...stationsPropertiesWithoutSlots,
+              slots: {
+                create: slots
               }
             }
           }
@@ -117,7 +134,7 @@ class PrivateStationService {
           coordinates: true,
           properties: {
             include: {
-              hours: true
+              slots: true
             }
           },
           rates: true
@@ -144,7 +161,7 @@ class PrivateStationService {
             coordinates: true,
             properties: {
               include: {
-                hours: true
+                slots: true
               }
             },
             rates: true
@@ -158,6 +175,34 @@ class PrivateStationService {
         throw e;
       }
       throw new ApiError('Error: Station deletion failed');
+    }
+  }
+
+  static async get(stationId: string): Promise<Station> {
+    try {
+      const station = await prisma.station.findUnique({
+        where: {
+          id: stationId
+        },
+        include: {
+          coordinates: true,
+          properties: {
+            include: {
+              slots: true
+            }
+          },
+          rates: true
+        }
+      });
+      if (station) {
+        return station;
+      }
+      throw new ApiError('Error: Invalid station ID', 400);
+    } catch (e) {
+      if (e instanceof ApiError) {
+        throw e;
+      }
+      throw new ApiError('Error: Invalid station ID');
     }
   }
 }
