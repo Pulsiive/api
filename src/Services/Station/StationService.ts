@@ -1,3 +1,6 @@
+import fs from 'fs';
+import axios from 'axios';
+import FormData from 'form-data';
 import { getDistance } from 'geolib';
 import { Station, PlugType } from '@prisma/client';
 
@@ -136,6 +139,53 @@ class StationService {
       }
     });
     return rating;
+  }
+
+  static async attachPicturesToRating(pictures: any, commentId: string, userId: string) {
+    const filesThatFailedUpload = [];
+    const successResponses = [];
+
+    let rating = await prisma.rating.findUnique({
+      where: {
+        id: commentId
+      }
+    });
+    if (!rating || rating.authorId !== userId) {
+      throw new ApiError('Error: Invalid comment ID');
+    }
+
+    if (rating.pictures.length === 3) {
+      throw new ApiError('Error: You already submited three pictures to that comment');
+    }
+
+    for (const picture of pictures) {
+      try {
+        const formData = new FormData();
+        formData.append('UPLOADCARE_PUB_KEY', process.env.UPLOADCARE_PUBLIC_KEY);
+        formData.append('file', fs.readFileSync(picture.path), picture.filename);
+        const uploadResult = await axios.post('https://upload.uploadcare.com/base/', formData, {
+          headers: {
+            ...formData.getHeaders()
+          }
+        });
+        successResponses.push(uploadResult.data);
+        rating = await prisma.rating.update({
+          where: {
+            id: commentId
+          },
+          data: {
+            pictures: [...rating.pictures, uploadResult.data.file]
+          }
+        });
+      } catch (e) {
+        filesThatFailedUpload.push(picture.originalname);
+      }
+    }
+
+    if (filesThatFailedUpload.length === 0) {
+      return successResponses;
+    }
+    throw new ApiError(`Error: Failed to upload file ${filesThatFailedUpload.join(' ')}`);
   }
 
   static async likeComment(ratingId: string, userId: string) {

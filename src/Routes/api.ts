@@ -1,4 +1,7 @@
 import express from 'express';
+import multer from 'multer';
+import os from 'os';
+
 import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
 import StationController from '../Controllers/StationController';
@@ -10,6 +13,7 @@ import ReservationController from "../Controllers/ReservationController";
 import PhoneNumberVerificationController from "../Controllers/PhoneNumberVerificationController";
 
 const router = express.Router();
+const upload = multer({ dest: os.tmpdir() });
 
 router.get('/api/v1/status', (req, res) => {
   res.status(200).json({ message: 'Service is up and running' });
@@ -63,5 +67,12 @@ router.post('/api/v1/reservation', AuthMiddleware, ReservationController.create)
 router.get('/api/v1/reservation', AuthMiddleware, ReservationController.index);
 router.get('/api/v1/reservation/:id', AuthMiddleware, ReservationController.show);
 router.delete('/api/v1/reservation/:id', AuthMiddleware, ReservationController.delete);
+
+router.post(
+  '/api/v1/picture',
+  upload.array('file', 3),
+  AuthMiddleware,
+  StationController.attachPicturesToRating
+);
 
 export = router;
