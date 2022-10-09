@@ -2,7 +2,6 @@ import StationService from '../StationService';
 import AuthService from '../../Auth/AuthService';
 import UserService from '../../User/UserService';
 import prisma from '../../../../prisma/client';
-import { StationAndPayload } from '../../../Utils/types';
 import { user, createFakeRate } from '../__mocks__/StationServiceMocks';
 
 let stationId: string;
@@ -31,11 +30,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.station.delete({
-    where: {
-      id: stationId
-    }
-  });
   await prisma.user.delete({
     where: {
       email: user.email

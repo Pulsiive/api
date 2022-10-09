@@ -130,12 +130,7 @@ class StationService {
       },
       data: {
         rate: parseFloat(newStationScore.toPrecision(2)),
-        rateNumber: station.rateNumber + 1,
-        rates: {
-          connect: {
-            id: rating.id
-          }
-        }
+        rateNumber: station.rateNumber + 1
       }
     });
     return rating;
@@ -199,6 +194,7 @@ class StationService {
       }
     });
     if (!rating) {
+      console.log(ratingId, userId, rating);
       throw new ApiError('Error: Invalid rating ID', 404);
     }
     if (rating.likedBy.find((user) => user.id === userId) !== undefined) {
