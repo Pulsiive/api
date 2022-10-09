@@ -18,7 +18,7 @@ const getUserStation = async (
           hours: true
         }
       },
-      comments: true,
+      rates: true,
       coordinates: true
     }
   });
@@ -61,7 +61,7 @@ class PrivateStationService {
               hours: true
             }
           },
-          comments: true
+          rates: true
         }
       });
       return createdStation;
@@ -120,7 +120,7 @@ class PrivateStationService {
               hours: true
             }
           },
-          comments: true
+          rates: true
         }
       });
       return updatedStation;
@@ -147,7 +147,7 @@ class PrivateStationService {
                 hours: true
               }
             },
-            comments: true
+            rates: true
           }
         });
         return deletedStation;

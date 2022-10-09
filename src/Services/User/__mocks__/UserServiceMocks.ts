@@ -37,3 +37,10 @@ export const vehicleNumeroDosDBFormat = {
   ...vehicleDBFormat,
   type: 'SCOOTER'
 };
+
+export const createUserRating = (userId: string) => ({
+  userId,
+  rate: 4,
+  creationDate: '2022-03-02T18:11:29.003Z',
+  comment: 'what a nice station !'
+});

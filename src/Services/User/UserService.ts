@@ -5,9 +5,10 @@ import {
   VehicleTypes,
   PlugTypes,
   VehicleElectricalTypes,
-  MessageInput
+  MessageInput,
+  UserRatingInput
 } from '../../Utils/types';
-import { PlugType, Vehicle, Station, Message } from '@prisma/client';
+import { PlugType, Vehicle, Message, Rating } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
@@ -186,6 +187,29 @@ class UserService {
         },
         body,
         createdAt
+      }
+    });
+  }
+
+  static async rate(input: UserRatingInput, userId: string): Promise<Rating> {
+    if (input.userId === userId) {
+      throw new ApiError('Error: Invalid user ID', 400);
+    }
+    return await prisma.rating.create({
+      data: {
+        recipient: {
+          connect: {
+            id: input.userId
+          }
+        },
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        rate: input.rate,
+        comment: input.comment,
+        date: input.creationDate
       }
     });
   }

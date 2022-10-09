@@ -61,7 +61,8 @@ export const stationComparisonObject = {
     plugTypes: ['TYPE2'],
     hours: expect.any(Array)
   },
-  comments: []
+  rateNumber: 0,
+  rates: []
 };
 
 export const stationNumeroDos = {

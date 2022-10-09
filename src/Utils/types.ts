@@ -7,7 +7,7 @@ export type StationAndPayload = Prisma.StationGetPayload<{
         hours: true;
       };
     };
-    comments: true;
+    rates: true;
     coordinates: true;
   };
 }>;
@@ -92,3 +92,13 @@ export interface GetStationFromParams {
   userLat: number;
   userLong: number;
 }
+
+export interface StationRatingInput {
+  stationId: string;
+  userId: string;
+  rate: number;
+  creationDate: string;
+  comment?: string;
+}
+
+export type UserRatingInput = Omit<StationRatingInput, 'stationId'>;

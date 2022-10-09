@@ -7,6 +7,10 @@ import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 
 const router = express.Router();
 
+router.get('/api/v1/status', (req, res) => {
+  res.status(200).json({ message: 'Service is up and running' });
+});
+
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
 
@@ -32,5 +36,11 @@ router.get('/api/v1/profile/message/:id', AuthMiddleware, UserController.getMess
 router.get('/api/v1/profile/messages', AuthMiddleware, UserController.getMessages);
 router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.deleteMessage);
 router.post('/api/v1/profile/message', AuthMiddleware, UserController.createMessage);
+
+router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
+router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
+router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
+
+router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
 
 export = router;

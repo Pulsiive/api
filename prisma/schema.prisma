@@ -26,7 +26,10 @@ model User {
   balance         Int              @default(0)
   vehicles        Vehicle[]
   privateStations Station[]
-  comments        StationComment[]
+  wroteRatings Rating[]
+  receivedRatings Rating[] @relation(name: "Recipient")
+  likedRatings Rating[] @relation(name: "likedRatings")
+  dislikedRatings Rating[] @relation(name: "dislikedRatings")
   orders          Order[]
   sentMessages Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
@@ -54,10 +57,11 @@ model Station {
   owner       User?                @relation(fields: [ownerId], references: [id])
   ownerId     String?
   orders       Order[]
-  rate        Int @default(0)
+  rate        Float @default(0)
+  rateNumber  Int @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
-  comments    StationComment[]
+  rates    Rating[]
 }
 
 model StationCoordinates {
@@ -94,17 +98,22 @@ model StationHours {
   closeTime           String
 }
 
-model StationComment {
+model Rating {
   id        String   @id @default(uuid())
-  station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId String
+  recipient User? @relation(fields: [recipientId], references: [id], name: "Recipient")
+  recipientId String?
+  station   Station?  @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId String?
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+  likedBy User[] @relation(name: "likedRatings")
+  dislikedBy User[] @relation(name: "dislikedRatings")
   rate      Int
-  body      String
+  comment String?
   pictures  String[]
-  dates     DateTime
-  likes     Int
+  date     DateTime
+  likes     Int @default(0)
+  dislikes Int @default(0)
 }
 
 model Order {
