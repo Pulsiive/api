@@ -102,3 +102,14 @@ export interface StationRatingInput {
 }
 
 export type UserRatingInput = Omit<StationRatingInput, 'stationId'>;
+
+export interface UploadedPicture {
+  fieldName: string;
+  originalName: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+}
