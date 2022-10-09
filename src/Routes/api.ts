@@ -7,6 +7,10 @@ import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 
 const router = express.Router();
 
+router.get('/api/v1/status', (req, res) => {
+  res.status(200).json({ message: 'Service is up and running' });
+});
+
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
 
