@@ -42,42 +42,22 @@ import { PlugType } from '@prisma/client';
             nbChargingPoints: station.nbre_pdc,
             isGreenEnergy: false,
             plugTypes: stationPlugTypes,
-            hours: {
+            slots: {
               create: [
                 {
                   day: 1,
-                  openTime: '00:00',
-                  closeTime: '00:00'
+                  opensAt: '1970-03-02T10:00:00.003Z',
+                  closesAt: '1970-03-02T12:00:00.003Z'
                 },
                 {
                   day: 2,
-                  openTime: '00:00',
-                  closeTime: '00:00'
+                  opensAt: '1970-03-02T17:00:00.003Z',
+                  closesAt: '1970-03-02T19:00:00.003Z'
                 },
                 {
                   day: 3,
-                  openTime: '00:00',
-                  closeTime: '00:00'
-                },
-                {
-                  day: 4,
-                  openTime: '00:00',
-                  closeTime: '00:00'
-                },
-                {
-                  day: 5,
-                  openTime: '00:00',
-                  closeTime: '00:00'
-                },
-                {
-                  day: 6,
-                  openTime: '00:00',
-                  closeTime: '00:00'
-                },
-                {
-                  day: 7,
-                  openTime: '00:00',
-                  closeTime: '00:00'
+                  opensAt: '1970-03-02T22:00:00.003Z',
+                  closesAt: '1970-03-02T00:00:00.003Z'
                 }
               ]
             }

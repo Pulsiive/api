@@ -4,7 +4,7 @@ import AuthService from '../../Auth/AuthService';
 import prisma from '../../../../prisma/client';
 import {
   station,
-} from '../../User/__mocks__/UserServiceMocks';
+} from '../../PrivateStation/__mocks__/PrivateStationMocks';
 import {
   user,
   slot,
@@ -12,6 +12,7 @@ import {
   slotShowComparisonObject,
   slotDeletedComparisonObject
 } from "../__mocks__/SlotServiceMocks";
+import PrivateStationService from "../../PrivateStation/PrivateStationService";
 
 let userId: string;
 let stationId: string;
@@ -27,7 +28,7 @@ beforeAll(async () => {
   if (userObject) {
     userId = userObject.id;
   }
-  const createdStation = await UserService.createStation(station, userId);
+  const createdStation = await PrivateStationService.create(station, userId);
   stationId = createdStation.id;
 });
 

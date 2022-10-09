@@ -3,7 +3,7 @@ import SlotService from '../../Slot/SlotService';
 import ReservationService from '../../Reservation/ReservationService';
 import AuthService from '../../Auth/AuthService';
 import prisma from '../../../../prisma/client';
-import { station } from '../../User/__mocks__/UserServiceMocks';
+import { station } from '../../PrivateStation/__mocks__/PrivateStationMocks';
 import { slot } from '../../Slot/__mocks__/SlotServiceMocks';
 
 import {
@@ -15,6 +15,7 @@ import {
   reservationDeletedComparisonObject, alreadyReservedObject
 } from "../__mocks__/ReservationServiceMocks";
 import {ApiError} from "../../../Errors/ApiError";
+import PrivateStationService from "../../PrivateStation/PrivateStationService";
 
 let userId: string;
 let ownerId: string;
@@ -47,7 +48,7 @@ beforeAll(async () => {
     ownerId = ownerObject.id;
   }
 
-  const createdStation = await UserService.createStation(station, ownerId);
+  const createdStation = await PrivateStationService.create(station, ownerId);
   stationId = createdStation.id;
   const createdSlot = await SlotService.create(ownerId, stationId, slot);
   slotId = createdSlot.id;

@@ -17,7 +17,7 @@ class StationService {
           coordinates: true,
           properties: {
             include: {
-              hours: true
+              slots: true
             }
           },
           rates: true

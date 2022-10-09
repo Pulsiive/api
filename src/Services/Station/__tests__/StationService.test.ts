@@ -159,6 +159,7 @@ describe('Testing the rating of a public station', () => {
 
   test('should link the liked rating to the associated user', async () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
+    console.log(fakeRate);
     await StationService.likeComment(fakeRate.id, userId);
     const user = await prisma.user.findUnique({
       where: {
@@ -168,6 +169,7 @@ describe('Testing the rating of a public station', () => {
         likedRatings: true
       }
     });
+    console.log(user);
     const likedRate = user?.likedRatings.find((rating) => rating.id === fakeRate.id);
     expect(likedRate).toBeDefined();
   });

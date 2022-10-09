@@ -34,13 +34,13 @@ afterAll(async () => {
 });
 
 describe('UserService - Station', () => {
-  test('sould create station', async () => {
+  test('should create station', async () => {
     const createdStation = await PrivateStationService.create(station, userId);
     stationId = createdStation.id;
     expect(createdStation).toEqual(stationComparisonObject);
   });
 
-  test('sould get station', async () => {
+  test('should get station', async () => {
     const stationObject = await StationService.getFromId(stationId);
     expect(stationObject).toEqual(stationComparisonObject);
   });
