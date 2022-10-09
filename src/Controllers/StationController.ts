@@ -2,6 +2,7 @@ import express from 'express';
 import { errorWrapper } from '../Utils/errorWrapper';
 import StationService from '../Services/Station/StationService';
 import Validator from 'validatorjs';
+import { ApiError } from '../Errors/ApiError';
 
 class StationController {
   static async getFromId(req: express.Request, res: express.Response) {
@@ -63,6 +64,25 @@ class StationController {
       return res.json({ rate });
     } catch (e) {
       console.log(e);
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async attachPicturesToRating(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const pictures = req.files;
+
+      if (!pictures) {
+        throw new ApiError('Error: Please provide one or more picture', 400);
+      }
+      const uploadResponses = await StationService.attachPicturesToRating(
+        pictures,
+        req.body.commentId,
+        userId
+      );
+      res.json({ uploads: uploadResponses });
+    } catch (e) {
       return errorWrapper(e, res);
     }
   }

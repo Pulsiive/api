@@ -1,4 +1,7 @@
 import express from 'express';
+import multer from 'multer';
+import os from 'os';
+
 import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
 import StationController from '../Controllers/StationController';
@@ -6,6 +9,7 @@ import PrivateStationController from '../Controllers/PrivateStationController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 
 const router = express.Router();
+const upload = multer({ dest: os.tmpdir() });
 
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
@@ -38,5 +42,12 @@ router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.l
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
 
 router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
+
+router.post(
+  '/api/v1/picture',
+  upload.array('file', 3),
+  AuthMiddleware,
+  StationController.attachPicturesToRating
+);
 
 export = router;

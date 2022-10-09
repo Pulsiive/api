@@ -195,6 +195,14 @@ class UserService {
     if (input.userId === userId) {
       throw new ApiError('Error: Invalid user ID', 400);
     }
+    const user = await prisma.user.findUnique({
+      where: {
+        id: input.userId
+      }
+    });
+    if (!user) {
+      throw new ApiError('Error: Invalid user ID', 400);
+    }
     return await prisma.rating.create({
       data: {
         recipient: {
