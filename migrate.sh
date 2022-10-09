@@ -8,5 +8,6 @@ if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
     npm run docker-generate-db-models
     npm run docker-generate-db-test-models
     npx prisma generate
+    npm run seed
 fi
 npm run dev

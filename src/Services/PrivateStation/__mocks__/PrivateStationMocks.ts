@@ -1,41 +1,9 @@
 export const user = {
-  email: 'userservice@test.com',
+  email: 'privatestationservice@test.com',
   password: '123',
-  firstName: 'UserService',
+  firstName: 'PrivateStationService',
   lastName: 'Test',
   dateOfBirth: '2022-03-02T18:11:29.003Z'
-};
-
-export const secondUser = {
-  email: 'seconduserservice@test.com',
-  password: '123',
-  firstName: 'SecondeUserService',
-  lastName: 'SecondTest',
-  dateOfBirth: '2022-03-02T18:11:29.003Z'
-};
-
-export const vehicle = {
-  type: 2,
-  plugTypes: [2, 3],
-  electricalType: 1,
-  maxPower: 56.66
-};
-
-export const vehicleNumeroDos = {
-  ...vehicle,
-  type: 1
-};
-
-export const vehicleDBFormat = {
-  type: 'MOTORBIKE',
-  plugTypes: ['TYPE3', 'CCS'],
-  electricalType: 'HEV',
-  maxPower: '56.66'
-};
-
-export const vehicleNumeroDosDBFormat = {
-  ...vehicleDBFormat,
-  type: 'SCOOTER'
 };
 
 export const station = {
@@ -53,21 +21,21 @@ export const station = {
     isGreenEnergy: false,
     plugTypes: [1],
     nbChargingPoints: 1,
-    slots: [
+    hours: [
       {
         day: 1,
-        opensAt: '1970-03-02T10:00:00.003Z',
-        closesAt: '1970-03-02T12:00:00.003Z'
+        openTime: '08:00',
+        closeTime: '17:00'
       },
       {
         day: 2,
-        opensAt: '1970-03-02T17:00:00.003Z',
-        closesAt: '1970-03-02T19:00:00.003Z'
+        openTime: '10:00',
+        closeTime: '15:00'
       },
       {
         day: 3,
-        opensAt: '1970-03-02T22:00:00.003Z',
-        closesAt: '1970-03-02T00:00:00.003Z'
+        openTime: '11:00',
+        closeTime: '19:00'
       }
     ]
   }
@@ -91,9 +59,10 @@ export const stationComparisonObject = {
     stationId: expect.any(String),
     isPublic: false,
     plugTypes: ['TYPE2'],
-    slots: expect.any(Array)
+    hours: expect.any(Array)
   },
-  comments: []
+  rateNumber: 0,
+  rates: []
 };
 
 export const stationNumeroDos = {
@@ -107,10 +76,3 @@ export const stationNumeroDos = {
     countryCode: '123'
   }
 };
-
-export const createUserRating = (userId: string) => ({
-  userId,
-  rate: 4,
-  creationDate: '2022-03-02T18:11:29.003Z',
-  comment: 'what a nice station !'
-});

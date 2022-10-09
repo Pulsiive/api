@@ -58,51 +58,6 @@ class UserController {
     }
   }
 
-  static async getStation(req: express.Request, res: express.Response) {
-    try {
-      const stationId = req.params.id;
-      const station = await UserService.getStation(stationId);
-      return res.json({ station });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async createStation(req: express.Request, res: express.Response) {
-    try {
-      const stationsProperties = req.body.station;
-      const userId = req.body.user.payload.id;
-      const station = await UserService.createStation(stationsProperties, userId);
-      return res.json({ station });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async updateStation(req: express.Request, res: express.Response) {
-    try {
-      const stationId = req.params.id;
-      const stationsProperties = req.body.station;
-      const userId = req.body.user.payload.id;
-      const station = await UserService.updateStation(stationsProperties, userId, stationId);
-      return res.json({ station });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
-  static async deleteStation(req: express.Request, res: express.Response) {
-    try {
-      const stationId = req.params.id;
-      const userId = req.body.user.payload.id;
-
-      const deletedStation = await UserService.deleteStation(stationId, userId);
-      return res.json({ deletedStation });
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-
   static async index(req: express.Request, res: express.Response) {
     try {
       const id = req.body.user.payload.id;
@@ -218,6 +173,28 @@ class UserController {
         return res.json(newMessage);
       }
       throw new ApiError('Invalid input', 400);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async rate(req: express.Request, res: express.Response) {
+    try {
+      const input = req.body.input;
+      const userId = req.body.user.payload.id;
+
+      const validator = new Validator(input, {
+        userId: 'required|string',
+        rate: 'required|numeric|min:1|max:5',
+        creationDate: 'required|date',
+        comment: 'string|min:10|max:300'
+      });
+
+      if (validator.fails()) {
+        throw new ApiError('Invalid input', 400);
+      }
+      const rate = await UserService.rate(input, userId);
+      res.json({ rate });
     } catch (e: any) {
       return errorWrapper(e, res);
     }

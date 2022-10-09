@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider     = "prisma-client-js"
-  binaryTarget = ["linux-arm64-openssl-1.1.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -28,7 +27,10 @@ model User {
   balance         Int              @default(0)
   vehicles        Vehicle[]
   privateStations Station[]
-  comments        StationComment[]
+  wroteRatings Rating[]
+  receivedRatings Rating[] @relation(name: "Recipient")
+  likedRatings Rating[] @relation(name: "likedRatings")
+  dislikedRatings Rating[] @relation(name: "dislikedRatings")
   orders          Order[]
   sentMessages Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
@@ -61,13 +63,14 @@ model Vehicle {
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId     String
-  orders      Order[]
-  rate        Int                 @default(0)
+  owner       User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String?
+  orders       Order[]
+  rate        Float @default(0)
+  rateNumber  Int @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
-  comments    StationComment[]
+  rates    Rating[]
 }
 
 model StationCoordinates {
@@ -115,17 +118,22 @@ model Reservation {
   to     DateTime @db.Time(0)
 }
 
-model StationComment {
+model Rating {
   id        String   @id @default(uuid())
-  station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId String
+  recipient User? @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
+  recipientId String?
+  station   Station?  @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId String?
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
+  likedBy User[] @relation(name: "likedRatings")
+  dislikedBy User[] @relation(name: "dislikedRatings")
   rate      Int
-  body      String
+  comment String?
   pictures  String[]
-  dates     DateTime
-  likes     Int
+  date     DateTime
+  likes     Int @default(0)
+  dislikes Int @default(0)
 }
 
 model Order {
@@ -140,9 +148,9 @@ model Order {
 
 model Message {
   id String @id @default(uuid())
-  author User @relation(fields: [authorId], references: [id], name: "Author")
+  author User @relation(fields: [authorId], references: [id], name: "Author", onDelete: Cascade)
   authorId String
-  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver", onDelete: Cascade)
   receiverId String
   body String
   createdAt DateTime
@@ -176,4 +184,5 @@ enum PlugType {
   CCS
   CHADEMO
   GREENUP
+  EF
 }

@@ -1,6 +1,8 @@
 import express from 'express';
 import AuthController from '../Controllers/AuthController';
 import UserController from '../Controllers/UserController';
+import StationController from '../Controllers/StationController';
+import PrivateStationController from '../Controllers/PrivateStationController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
 import EmailVerificationController from "../Controllers/EmailVerificationController";
 import SlotController from "../Controllers/SlotController";
@@ -8,6 +10,10 @@ import ReservationController from "../Controllers/ReservationController";
 import PhoneNumberVerificationController from "../Controllers/PhoneNumberVerificationController";
 
 const router = express.Router();
+
+router.get('/api/v1/status', (req, res) => {
+  res.status(200).json({ message: 'Service is up and running' });
+});
 
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
@@ -26,10 +32,12 @@ router.post('/api/v1/profile/vehicle', AuthMiddleware, UserController.createVehi
 router.put('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.updateVehicle);
 router.delete('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.deleteVehicle);
 
-router.get('/api/v1/profile/station/:id', UserController.getStation);
-router.post('/api/v1/profile/station', AuthMiddleware, UserController.createStation);
-router.put('/api/v1/profile/station/:id', AuthMiddleware, UserController.updateStation);
-router.delete('/api/v1/profile/station/:id', AuthMiddleware, UserController.deleteStation);
+router.get('/api/v1/profile/station/:id', StationController.getFromId);
+router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.create);
+router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
+router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);
+
+router.get('/api/v1/stations', AuthMiddleware, StationController.getFromParams);
 
 router.post('/api/v1/emailVerification', EmailVerificationController.request);
 router.post('/api/v1/requestEmailVerification/:token', EmailVerificationController.verify);
@@ -38,6 +46,12 @@ router.get('/api/v1/profile/message/:id', AuthMiddleware, UserController.getMess
 router.get('/api/v1/profile/messages', AuthMiddleware, UserController.getMessages);
 router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.deleteMessage);
 router.post('/api/v1/profile/message', AuthMiddleware, UserController.createMessage);
+
+router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
+router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
+router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
+
+router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
 router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);

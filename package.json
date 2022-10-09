@@ -11,7 +11,9 @@
     "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
     "docker-generate-db-test-models": "dotenv -e .env.test -- prisma migrate deploy",
-    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest",
+    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest ./src",
+    "test-production": "npx dotenv -e .env.production -- npx jest ./prod_testing/",
+    "seed": "prisma db seed && npx dotenv -e .env.test -- npx prisma db seed",
     "prepare": "husky install"
   },
   "repository": {
@@ -32,6 +34,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "geolib": "^3.3.3",
     "handlebars": "^4.7.7",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
@@ -65,5 +68,8 @@
     "modulePathIgnorePatterns": [
       ".*__mocks__.*"
     ]
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seeders/publicStations.ts"
   }
 }

@@ -7,7 +7,7 @@ export type StationAndPayload = Prisma.StationGetPayload<{
         slots: true;
       };
     };
-    comments: true;
+    rates: true;
     coordinates: true;
   };
 }>;
@@ -82,3 +82,23 @@ export interface MessageInput {
   createdAt: string;
   body: string;
 }
+
+export interface GetStationFromParams {
+  minPrice: number;
+  maxPrice: number;
+  plugTypes?: number[];
+  range?: number;
+  type?: number;
+  userLat: number;
+  userLong: number;
+}
+
+export interface StationRatingInput {
+  stationId: string;
+  userId: string;
+  rate: number;
+  creationDate: string;
+  comment?: string;
+}
+
+export type UserRatingInput = Omit<StationRatingInput, 'stationId'>;
