@@ -5,10 +5,11 @@ import prisma from "../../../prisma/client";
 
 class AuthService {
     static async login(data: any) {
+        console.log(data);
         const admin = await prisma.admin.findUnique({
             where: {
                 email: data.email,
-            }
+            },
         });
         if (!admin) {
             throw new ApiError('Error: Admin not registered', 401);

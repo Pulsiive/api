@@ -44,7 +44,7 @@ class AuthController {
       return errorWrapper(e, res);
     }
   }
-  
+
   static async googleLogin(req: express.Request, res: express.Response) {
     const { tokenId } = req.body;
 
