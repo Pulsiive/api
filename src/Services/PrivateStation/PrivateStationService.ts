@@ -32,14 +32,16 @@ class PrivateStationService {
         ...props.properties,
         isPublic: false,
         nbChargingPoints: 1,
-        plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
+        plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId]),
+        slots: null
       };
+
       const slots = props.properties.slots.map(
-          (slot: { day: number; opensAt: string; closesAt: string }) => ({
-            day: slot.day,
-            opensAt: slot.opensAt,
-            closesAt: slot.closesAt
-          })
+        (slot: { day: number; opensAt: string; closesAt: string }) => ({
+          day: slot.day,
+          opensAt: slot.opensAt,
+          closesAt: slot.closesAt
+        })
       );
 
       const createdStation = await prisma.station.create({
@@ -100,11 +102,11 @@ class PrivateStationService {
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
       const slots = props.properties.slots.map(
-          (slot: { day: number; opensAt: string; closesAt: string }) => ({
-            day: slot.day,
-            opensAt: slot.opensAt,
-            closesAt: slot.closesAt
-          })
+        (slot: { day: number; opensAt: string; closesAt: string }) => ({
+          day: slot.day,
+          opensAt: slot.opensAt,
+          closesAt: slot.closesAt
+        })
       );
       if (station.properties) {
         await prisma.slot.deleteMany({

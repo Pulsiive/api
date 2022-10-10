@@ -33,7 +33,8 @@ export const PlugTypes = [
   PlugType.TYPE3,
   PlugType.CCS,
   PlugType.CHADEMO,
-  PlugType.GREENUP
+  PlugType.GREENUP,
+  PlugType.EF
 ];
 
 export const VehicleElectricalTypes = [
