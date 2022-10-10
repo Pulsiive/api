@@ -22,6 +22,8 @@ router.get('/api/v1/status', (req, res) => {
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
 
+router.post('/api/v1/auth/google', AuthController.googleLogin);
+
 router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);
 
