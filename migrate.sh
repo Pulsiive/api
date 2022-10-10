@@ -5,8 +5,9 @@ if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
     touch $CONTAINER_ALREADY_STARTED
     echo "-- First container startup --"
     npm install -g ts-node
-    npx prisma migrate dev
-    npx prisma generate 
-    npx prisma db seed
+    npm run docker-generate-db-models
+    npm run docker-generate-db-test-models
+    npx prisma generate
+    npm run seed
 fi
 npm run dev

@@ -12,6 +12,11 @@ router.post('/api/v1/admin/updateUser', AuthMiddleware, AdminController.updateUs
 router.post('/api/v1/admin/deleteUser', AuthMiddleware, AdminController.deleteUser);
 router.post('/api/v1/admin/addUser', AuthMiddleware, AdminController.addUser);
 
+router.get('/api/v1/admin/users', async (req: express.Request, res: express.Response) => {
+    const users = await prisma.user.findMany({});
+    res.json(users);
+});
+
 //router.get('/api/v1/admin/example', AuthMiddleware, test);
 
 export = router;
