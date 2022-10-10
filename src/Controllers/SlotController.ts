@@ -27,6 +27,9 @@ class SlotController {
       if (validator.fails())
         throw new ApiError('Error: Unprocessable entity', 422);
 
+      if (new Date(data.opensAt) >= new Date(data.closesAt))
+        throw new ApiError('Error: [Unprocessable entity]: "opensAt" dateTime needs to be before "closesAt" dateTime', 422);
+
       const slot = await SlotService.create(userId, stationId, data);
 
       return res.json(slot);
@@ -58,7 +61,7 @@ class SlotController {
       if (validator.fails())
         throw new ApiError('Error: [Unprocessable entity]: Bad slot update payload', 422);
 
-      if (data.opensAt >= data.closesAt)
+      if (new Date(data.opensAt) >= new Date(data.closesAt))
         throw new ApiError('Error: [Unprocessable entity]: opensAt dateTime needs to be before closesAt dateTime', 422);
 
       let slot = await prisma.slot.findFirst({

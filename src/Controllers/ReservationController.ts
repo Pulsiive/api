@@ -21,7 +21,6 @@ class ReservationController {
       const validator = new Validator(data, reservationRules);
 
       if (validator.fails()) {
-        console.log(validator.errors);
         throw new ApiError('Error: Unprocessable entity', 422);
       }
 
