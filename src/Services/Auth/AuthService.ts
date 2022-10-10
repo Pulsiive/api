@@ -164,7 +164,3 @@ class AuthService {
 }
 
 export default AuthService;
-function now(): any {
-  throw new Error('Function not implemented.');
-}
-
