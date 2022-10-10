@@ -12,10 +12,10 @@ class SlotService {
           id: stationId,
           ownerId: userId
         },
-        select: {
+        include: {
           properties: {
-            select: {
-              id: true
+            include: {
+              slots: true
             }
           },
         }
@@ -23,6 +23,12 @@ class SlotService {
 
       if (!station || !station.properties)
         throw new ApiError('Error: Station with properties not found', 404);
+
+    for (const slot of station.properties.slots) {
+      if (slot.day === data.day && ((new Date(slot.opensAt) <= new Date(data.closesAt)) && (new Date(slot.closesAt) >= new Date(data.opensAt)))) {
+        throw new ApiError('Error: A slot is already created at this time', 409);
+      }
+    }
 
       const createdSlot = await prisma.slot.create({
         data: {
@@ -66,9 +72,6 @@ class SlotService {
             ownerId: userId
           }
         },
-      },
-      include: {
-        stationProperties: true
       }
     });
 

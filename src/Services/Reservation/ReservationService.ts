@@ -19,8 +19,10 @@ class ReservationService {
       if (!slot)
         throw new ApiError('Error: reservation not found', 404);
 
+      if ((new Date(data.from) < new Date(slot.opensAt)) || (new Date(data.to) > new Date(slot.closesAt)))
+        throw new ApiError('Error: Reservation not in range of the selected slot', 422);
       for (const reservation of slot.reservations) {
-        if ((reservation.from <= new Date(data.to)) && (reservation.to >= new Date(data.from))) {
+        if ((new Date(reservation.from) <= new Date(data.to)) && (new Date(reservation.to) >= new Date(data.from))) {
           throw new ApiError('Error: A slot is already reserved at this time', 409);
         }
       }
@@ -49,10 +51,7 @@ class ReservationService {
       userId: string
   ) {
     const reservations = await prisma.reservation.findMany({
-      where: { userId },
-      include: {
-        slot: true
-      }
+      where: { userId }
     });
 
     return reservations;

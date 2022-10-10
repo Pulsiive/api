@@ -39,7 +39,7 @@ class PhoneNumberVerificationController {
 
             const validator = new Validator(data, {
                 phoneNumber: 'required|phone_number',
-                otp: 'required|numeric'
+                otp: 'required|digits:4'
             });
 
             if (validator.fails()) {
