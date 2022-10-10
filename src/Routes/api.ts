@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
+router.post('/api/v1/auth/facebookLogin', AuthController.facebookLogin);
 
 router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);

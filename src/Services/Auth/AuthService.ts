@@ -43,6 +43,38 @@ class AuthService {
     return await JWTService.signWrapper(user);
   }
 
+  static async facebookLogin(data: {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    birthday: string;
+  }) {
+    let user = await prisma.user.findFirst({
+      where: { email: data.email }
+    });
+
+    if (user) {
+      throw new ApiError('Error: User already exist', 409);
+    }
+    const passHash = await bcrypt.hash(data.id, 10);
+
+    try {
+      user = await prisma.user.create({
+        data: {
+          email: data.email,
+          password: passHash,
+          firstName: data.first_name,
+          lastName: data.last_name,
+          dateOfBirth: new Date(data.birthday)
+        }
+      });
+      return user;
+    } catch (e) {
+      throw new ApiError('Error: User registration failed', 422);
+    }
+  }
+
   static async login(data: any) {
     const user = await prisma.user.findUnique({
       where: {

@@ -3,6 +3,7 @@ import AuthService from '../Services/Auth/AuthService';
 import { errorWrapper } from '../Utils/errorWrapper';
 import Validator from 'validatorjs';
 import { ApiError } from '../Errors/ApiError';
+import axios from 'axios';
 
 class AuthController {
   static async register(req: express.Request, res: express.Response) {
@@ -25,6 +26,31 @@ class AuthController {
 
       return res.json({
         accessToken
+      });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async facebookLogin(req: express.Request, res: express.Response) {
+    try {
+      const accessToken = req.body.accessToken;
+
+      const { data } = await axios({
+        url: 'https://graph.facebook.com/me',
+        method: 'get',
+        params: {
+          fields: ['id', 'email', 'first_name', 'last_name', 'birthday'].join(','),
+          access_token: accessToken
+        }
+      });
+
+      const UserData = await AuthService.facebookLogin(data);
+      console.log(UserData);
+      return res.json({
+        email: data.email,
+        firstName: UserData.firstName,
+        lastname: UserData.lastName
       });
     } catch (e) {
       return errorWrapper(e, res);
