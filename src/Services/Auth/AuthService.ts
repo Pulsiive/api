@@ -44,11 +44,11 @@ class AuthService {
   }
 
   static async facebookLogin(data: {
-    id: string;
     email: string;
+    password: string;
     first_name: string;
     last_name: string;
-    birthday: string;
+    dateOfBirth: string;
   }) {
     let user = await prisma.user.findFirst({
       where: { email: data.email }
@@ -57,7 +57,7 @@ class AuthService {
     if (user) {
       throw new ApiError('Error: User already exist', 409);
     }
-    const passHash = await bcrypt.hash(data.id, 10);
+    const passHash = await bcrypt.hash(data.password, 10);
 
     try {
       user = await prisma.user.create({
@@ -66,13 +66,46 @@ class AuthService {
           password: passHash,
           firstName: data.first_name,
           lastName: data.last_name,
-          dateOfBirth: new Date(data.birthday)
+          dateOfBirth: data.dateOfBirth
         }
       });
       return user;
     } catch (e) {
       throw new ApiError('Error: User registration failed', 422);
     }
+  }
+  static async oauthLogin(data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+  }) {
+    let user = await prisma.user.findFirst({
+      where: { email: data.email }
+    });
+
+    if (user) throw new ApiError('Error: User already exist', 409);
+
+    const hash = await bcrypt.hash(data.password, 10);
+
+    try {
+      user = await prisma.user.create({
+        data: {
+          email: data.email,
+          password: hash,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          dateOfBirth: data.dateOfBirth
+        }
+      });
+      return user;
+    } catch (e) {
+      console.log(e);
+      throw new ApiError('Error: User registration failed', 422);
+    }
+
+    return await JWTService.signWrapper(user);
   }
 
   static async login(data: any) {

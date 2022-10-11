@@ -4,6 +4,8 @@ import { errorWrapper } from '../Utils/errorWrapper';
 import Validator from 'validatorjs';
 import { ApiError } from '../Errors/ApiError';
 import axios from 'axios';
+import { getGithubOAuthToken, getGithubUser } from '../Services/Auth/oauth.service';
+import { getGoogleOauthToken, getGoogleUser } from '../Services/Auth/oauth.service';
 
 class AuthController {
   static async register(req: express.Request, res: express.Response) {
@@ -29,6 +31,102 @@ class AuthController {
       });
     } catch (e) {
       return errorWrapper(e, res);
+    }
+  }
+
+  static async googleOAuthHandler(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      // Get the code from the query
+      const code = req.body.code as string;
+
+      if (req.query.error) {
+        throw new ApiError('Error: Github login failed', 401);
+      }
+
+      if (!code) {
+        throw new ApiError('Authorization code not provided!', 401);
+      }
+
+      // Get the user the access_token with the code
+      const { id_token, access_token } = await getGoogleOauthToken({ code });
+      console.log('accesstoken => ', access_token);
+      console.log('id_token => ', id_token);
+
+      // Get the user with the access_token
+      const { name, verified_email, email, picture } = await getGoogleUser({
+        id_token,
+        access_token
+      });
+      if (!verified_email) {
+        throw new ApiError('Google account not verified', 403);
+      }
+      const id = 12456;
+
+      let data: any = {};
+      data.email = email ?? 'test@test.fr';
+      data.password = id.toString();
+      data.firstName = name;
+      data.lastName = name;
+      data.dateOfBirth = new Date();
+
+      const accessToken = await AuthService.oauthLogin(data);
+      return res.json(accessToken);
+    } catch (err: any) {
+      return errorWrapper(err, res);
+    }
+  }
+
+  static async githubLogin(req: express.Request, res: express.Response) {
+    const accessToken = req.body.accessToken;
+    const { data } = await axios({
+      url: 'https://api.github.com/user',
+      method: 'get',
+      headers: {
+        Authorization: `token ${accessToken}`
+      }
+    });
+  }
+
+  static async githubOAuthHandler(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      // Get the code from the query
+      const code = req.body.code as string;
+
+      if (req.query.error) {
+        throw new ApiError('Error: Github login failed', 401);
+      }
+
+      if (!code) {
+        throw new ApiError('Authorization code not provided!', 401);
+      }
+
+      // Get the user the access_token with the code
+      const { access_token } = await getGithubOAuthToken({ code });
+
+      // Get the user with the access_token
+      const dataUser = await getGithubUser({ access_token });
+
+      const { email, id, name } = dataUser;
+
+      let data: any = {};
+      data.email = email ?? 'tes@test.fr';
+      data.password = id.toString();
+      data.firstName = name;
+      data.lastName = name;
+      data.dateOfBirth = new Date();
+
+      const UserData = await AuthService.oauthLogin(data);
+      return res.json(UserData);
+    } catch (err: any) {
+      return errorWrapper(err, res);
     }
   }
 

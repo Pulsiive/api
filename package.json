@@ -11,7 +11,7 @@
     "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
     "docker-generate-db-test-models": "dotenv -e .env.test -- prisma migrate deploy",
-    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest",
+    "test": "npx dotenv -v DATABASE_URL=postgresql://postgres:password@localhost:5432/postgres?schema=public  -- npx jest",
     "prepare": "husky install"
   },
   "repository": {
