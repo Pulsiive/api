@@ -64,44 +64,9 @@ class SlotController {
       if (new Date(data.opensAt) >= new Date(data.closesAt))
         throw new ApiError('Error: [Unprocessable entity]: opensAt dateTime needs to be before closesAt dateTime', 422);
 
-      let slot = await prisma.slot.findFirst({
-        where: {
-          id: slotId,
-          stationProperties: {
-            station: {
-              ownerId: userId
-            }
-          }
-        },
-      });
+      const slot = await SlotService.update(userId, slotId, data);
 
-      if (!slot)
-        throw new ApiError('Error: Slot not found', 404);
-
-      //Check if slot w/ same day & hours + actual owner exist
-      slot = await prisma.slot.findFirst({
-        where: {
-          stationProperties: {
-            station: {
-              ownerId: userId
-            }
-          },
-          day: data.day,
-          opensAt: {
-            gte: new Date(data.opensAt)
-          },
-          closesAt: {
-            lte: new Date(data.closesAt)
-          }
-        },
-      });
-
-      if (slot)
-        throw new ApiError('Error: Slot already exist', 409);
-
-      const state = await SlotService.update(slotId, data);
-
-      return res.json(state);
+      return res.json(slot);
     } catch (e: any) {
       console.log(e);
 
