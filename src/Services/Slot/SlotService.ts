@@ -21,8 +21,8 @@ class SlotService {
         }
       });
 
-      if (!station || !station.properties)
-        throw new ApiError('Error: Station with properties not found', 404);
+    if (!station || !station.properties)
+      throw new ApiError('Error: Station with properties not found', 404);
 
     for (const slot of station.properties.slots) {
       if (slot.day === data.day && ((new Date(slot.opensAt) <= new Date(data.closesAt)) && (new Date(slot.closesAt) >= new Date(data.opensAt)))) {
@@ -47,10 +47,39 @@ class SlotService {
   }
 
   static async update(
+      userId: string,
       slotId: string,
       data: {day: number, opensAt: string, closesAt: string},
   ): Promise<any> {
-    const slot = await prisma.slot.update({
+
+    const slotToUpdate = await prisma.slot.findFirst({
+      where: {
+        id: slotId,
+        stationProperties: {
+          station: {
+            ownerId: userId
+          }
+        }
+      },
+      include: {
+        stationProperties: {
+          include: {
+            slots: true
+          }
+        },
+      }
+    });
+
+    if (!slotToUpdate)
+      throw new ApiError('Error: Slot not found', 404);
+
+    for (const slot of slotToUpdate.stationProperties.slots) {
+      if (slot.day === data.day && ((new Date(slot.opensAt) <= new Date(data.closesAt)) && (new Date(slot.closesAt) >= new Date(data.opensAt)))) {
+        throw new ApiError('Error: A slot is already created at this time', 409);
+      }
+    }
+
+    const updatedSlot = await prisma.slot.update({
       where: { id: slotId },
       data: {
         ...(data.day && { day: data.day }),
@@ -59,7 +88,7 @@ class SlotService {
       }
     });
 
-    return slot;
+    return updatedSlot;
   }
 
   static async index(
