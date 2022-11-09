@@ -45,6 +45,12 @@ describe('UserService - Station', () => {
     expect(stationObject).toEqual(stationComparisonObject);
   });
 
+  test('should get all stations', async () => {
+    await PrivateStationService.create(station, userId);
+    const stations = await PrivateStationService.getAll(userId);
+    expect(stations.length).toBe(2);
+  });
+
   test('should throw because station does not exists', async () => {
     await expect(StationService.getFromId('666')).rejects.toThrow('Error: Invalid station ID');
   });

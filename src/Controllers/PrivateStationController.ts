@@ -3,6 +3,17 @@ import { errorWrapper } from '../Utils/errorWrapper';
 import PrivateStationService from '../Services/PrivateStation/PrivateStationService';
 
 class PrivateStationController {
+  static async getAll(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+
+      const stations = await PrivateStationService.getAll(userId);
+      return res.json({ stations });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async create(req: express.Request, res: express.Response) {
     try {
       const stationsProperties = req.body.station;
