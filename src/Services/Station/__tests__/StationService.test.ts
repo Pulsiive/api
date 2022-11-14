@@ -153,7 +153,6 @@ describe('Testing the rating of a public station', () => {
 
   test('should link the liked rating to the associated user', async () => {
     const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
-    console.log(fakeRate);
     await StationService.likeComment(fakeRate.id, userId);
     const user = await prisma.user.findUnique({
       where: {
@@ -163,7 +162,6 @@ describe('Testing the rating of a public station', () => {
         likedRatings: true
       }
     });
-    console.log(user);
     const likedRate = user?.likedRatings.find((rating) => rating.id === fakeRate.id);
     expect(likedRate).toBeDefined();
   });
@@ -218,14 +216,6 @@ describe('Testing the rating of a public station', () => {
     });
     expect(rating?.likes).toBe(0);
     expect(rating?.dislikes).toBe(1);
-  });
-
-  test('should throw because the rating is already liked', async () => {
-    const fakeRate = await StationService.rate(createFakeRate(stationId, userId));
-    await StationService.likeComment(fakeRate.id, userId);
-    await expect(StationService.likeComment(fakeRate.id, userId)).rejects.toThrow(
-      'Error: User already liked this comment'
-    );
   });
 
   test('should throw because the rating is already disliked', async () => {

@@ -7,10 +7,10 @@ import UserController from '../Controllers/UserController';
 import StationController from '../Controllers/StationController';
 import PrivateStationController from '../Controllers/PrivateStationController';
 import { AuthMiddleware } from '../Middlewares/AuthMiddleware';
-import EmailVerificationController from "../Controllers/EmailVerificationController";
-import SlotController from "../Controllers/SlotController";
-import ReservationController from "../Controllers/ReservationController";
-import PhoneNumberVerificationController from "../Controllers/PhoneNumberVerificationController";
+import EmailVerificationController from '../Controllers/EmailVerificationController';
+import SlotController from '../Controllers/SlotController';
+import ReservationController from '../Controllers/ReservationController';
+import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir() });
@@ -39,6 +39,7 @@ router.put('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.updateV
 router.delete('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.deleteVehicle);
 
 router.get('/api/v1/profile/station/:id', StationController.getFromId);
+router.get('/api/v1/profile/stations', AuthMiddleware, PrivateStationController.getAll);
 router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.create);
 router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);

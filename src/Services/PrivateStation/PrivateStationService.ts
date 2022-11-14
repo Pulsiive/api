@@ -207,6 +207,25 @@ class PrivateStationService {
       throw new ApiError('Error: Invalid station ID');
     }
   }
+
+  static async getAll(userId: string): Promise<Station[]> {
+    try {
+      const stations = await prisma.station.findMany({
+        where: {
+          ownerId: userId
+        },
+        include: {
+          properties: true,
+          coordinates: true,
+          rates: true,
+          orders: true
+        }
+      });
+      return stations;
+    } catch (e) {
+      throw new ApiError('Error: Failed to fetch stations');
+    }
+  }
 }
 
 export default PrivateStationService;
