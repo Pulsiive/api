@@ -19,7 +19,7 @@ class EmailVerificationService {
     if (emailVerification) await prisma.emailVerification.delete({ where: { email } });
 
     await prisma.emailVerification.create({ data: { token: hash, email } });
-    const link = `${process.env.CLIENT_URL}/email-verification/${token}?email=${email}`;
+    const link = `pulsiveapp://email-verification/${token}/${email}`;
     await MailService.send(
       Site.doNotReplyEmail,
       email,
