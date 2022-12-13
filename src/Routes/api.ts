@@ -34,6 +34,7 @@ router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
 
 router.get('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.getVehicle);
+router.get('/api/v1/profile/vehicle', AuthMiddleware, UserController.getVehicles);
 router.post('/api/v1/profile/vehicle', AuthMiddleware, UserController.createVehicle);
 router.put('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.updateVehicle);
 router.delete('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.deleteVehicle);

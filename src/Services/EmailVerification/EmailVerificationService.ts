@@ -27,6 +27,7 @@ class EmailVerificationService {
       { name: user.firstName, email, link },
       '../Resources/Mails/emailVerification.handlebars'
     );
+    console.log('send !');
 
     return true;
   }
