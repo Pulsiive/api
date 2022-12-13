@@ -21,6 +21,17 @@ class UserController {
     }
   }
 
+  static async getVehicles(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+
+      const vehicle = await UserService.getVehicles(userId);
+      return res.json({ vehicle });
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async createVehicle(req: express.Request, res: express.Response) {
     try {
       const vehicle: VehicleInput = req.body.vehicle;
@@ -75,7 +86,28 @@ class UserController {
         }
       });
 
-      return res.json(user);
+      const userVehicles = await prisma.vehicle.findMany({
+        where: {
+          ownerId: id
+        }
+      });
+
+      const userStations = await prisma.station.findMany({
+        where: {
+          ownerId: id
+        },
+        include: {
+          coordinates: true,
+          properties: {
+            include: {
+              slots: true
+            }
+          },
+          rates: true
+        }
+      });
+
+      return res.json({...user, vehicles: userVehicles, stations: userStations});
     } catch (e: any) {
       return res.status(422).json({
         message: 'Unprocessable entity'

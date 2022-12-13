@@ -53,6 +53,20 @@ class UserService {
     }
   }
 
+  static async getVehicles(userId: string) {
+    try {
+      const userVehicles = await prisma.vehicle.findMany({
+        where: {
+          ownerId: userId
+        }
+      });
+
+      return userVehicles;
+    } catch (e) {
+      throw new ApiError('Error: Get Vehicles failed');
+    }
+  }
+
   static async createVehicle(vehicle: VehicleInput, userId: string): Promise<Vehicle> {
     try {
       const plugTypes: Array<PlugType> = vehicle.plugTypes.map((plugId) => PlugTypes[plugId]);
