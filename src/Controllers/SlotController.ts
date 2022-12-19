@@ -13,12 +13,10 @@ class SlotController {
       const userId = req.body.user.payload.id;
       const {
         stationId,
-        day,
         opensAt,
         closesAt,
       } = req.body;
       const data = {
-        day,
         opensAt,
         closesAt
       };
@@ -45,13 +43,11 @@ class SlotController {
       const userId = req.body.user.payload.id;
       const slotId = req.params.id;
       const {
-        day,
         opensAt,
         closesAt,
       } = req.body;
 
       const data = {
-        day,
         opensAt,
         closesAt
       };
@@ -75,9 +71,15 @@ class SlotController {
   }
 
   static async index(req: express.Request, res: express.Response) {
+    let userId = null;
+    let stationId = null;
+
     try {
-      const userId = req.body.user.payload.id;
-      const slots = await SlotService.index(userId);
+        userId = req.body?.user?.payload?.id ?? null;
+        stationId = req.query.station_id ?? null;
+
+      const date = req.query.date ?? null;
+      const slots = await SlotService.index(stationId, userId, date);
 
       return res.json(slots);
     } catch (e: any) {

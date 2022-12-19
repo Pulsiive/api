@@ -11,6 +11,7 @@ import EmailVerificationController from '../Controllers/EmailVerificationControl
 import SlotController from '../Controllers/SlotController';
 import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
+import {AuthAndGuestMiddleware} from "../Middlewares/AuthAndGuestMiddleware";
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir() });
@@ -63,14 +64,14 @@ router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
 router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);
-router.get('/api/v1/slot', AuthMiddleware, SlotController.index);
+router.get('/api/v1/slot', AuthAndGuestMiddleware, SlotController.index);
 router.get('/api/v1/slot/:id', AuthMiddleware, SlotController.show);
 router.delete('/api/v1/slot/:id', AuthMiddleware, SlotController.delete);
 
-router.post('/api/v1/reservation', AuthMiddleware, ReservationController.create);
+router.post('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.create);
 router.get('/api/v1/reservation', AuthMiddleware, ReservationController.index);
-router.get('/api/v1/reservation/:id', AuthMiddleware, ReservationController.show);
-router.delete('/api/v1/reservation/:id', AuthMiddleware, ReservationController.delete);
+router.get('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.show);
+router.delete('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.delete);
 
 router.post(
   '/api/v1/picture',

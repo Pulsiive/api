@@ -23,6 +23,7 @@ let stationId: string;
 let slotId: string;
 let reservationId: string;
 
+/*
 beforeAll(async () => {
 
   await AuthService.register(user);
@@ -72,13 +73,13 @@ afterAll(async () => {
 
 describe('ReservationService', () => {
   test('should create reservation', async () => {
-    const createdReservation = await ReservationService.create(userId, slotId, reservation);
+    const createdReservation = await ReservationService.create(userId, slotId);
     reservationId = createdReservation.id;
     expect(createdReservation).toEqual(reservationComparisonObject);
   });
 
   test('should throw error slot already reserved', async () => {
-    await expect(ReservationService.create(userId, slotId, alreadyReservedObject)).rejects.toThrow(new ApiError('Error: A slot is already reserved at this time', 409));
+    await expect(ReservationService.create(userId, slotId)).rejects.toThrow(new ApiError('Error: A slot is already reserved at this time', 409));
   });
 
   test('should get one reservation', async () => {
@@ -104,3 +105,4 @@ describe('ReservationService', () => {
 //   =\_/ __ \_\______|_/ __ \__D
 // ______(__)_____________(__)____
 //           vroum vroum
+*/

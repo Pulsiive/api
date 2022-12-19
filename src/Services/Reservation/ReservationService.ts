@@ -1,70 +1,74 @@
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
+import moment from "moment";
 
 class ReservationService {
   static async create(
       userId: string,
-      slotId: string,
-      data: {from: string, to: string},
+      slotId: string
   ): Promise<any> {
       const slot = await prisma.slot.findFirst({
         where: {
           id: slotId,
-        },
-        include: {
-          reservations: true
         }
       });
 
       if (!slot)
         throw new ApiError('Error: reservation not found', 404);
 
-      if ((new Date(data.from) < new Date(slot.opensAt)) || (new Date(data.to) > new Date(slot.closesAt)))
-        throw new ApiError('Error: Reservation not in range of the selected slot', 422);
-      for (const reservation of slot.reservations) {
-        if ((new Date(reservation.from) <= new Date(data.to)) && (new Date(reservation.to) >= new Date(data.from))) {
-          throw new ApiError('Error: A slot is already reserved at this time', 409);
+    const reservations = await prisma.slot.findMany({
+      where: {
+        driverId: userId,
+      }
+    });
+      for (const reservation of reservations) {
+        if ((new Date(reservation.opensAt) <= new Date(slot.closesAt)) && (new Date(reservation.closesAt) >= new Date(slot.opensAt))) {
+          throw new ApiError('Error: A slot is already booked at this time', 409);
         }
       }
 
-      const createdReservation = await prisma.reservation.create({
-        data: {
-          slot: {
-            connect: {
-              id: slotId
-            }
-          },
-          user: {
-            connect: {
-              id: userId
-            }
-          },
-          from: data.from,
-          to: data.to
-        }
-      });
+    const createdReservation = await prisma.slot.update({
+      where: { id: slotId },
+      data: {
+        driver: {
+          connect: {
+            id: userId
+          }
+        },
+        isBooked: true
+      }
+    });
 
-      return createdReservation;
+    return createdReservation;
   }
 
-  static async index(
-      userId: string
-  ) {
-    const reservations = await prisma.reservation.findMany({
-      where: { userId }
+  static async index(stationId: any, userId: any, date: any) {
+    if (!userId && !stationId && !date)
+      throw new ApiError('Error: Provide at least one param in query', 422);
+
+    const reservations = await prisma.slot.findMany({
+      where: {
+        driverId: userId,
+        ...(stationId && { stationProperties: {
+            station: {
+              ...(stationId && {id: stationId})
+            }
+          }}),
+        ...(date && { opensAt: {
+            gte: moment(date).toDate(),
+            lt:  moment(date).add(1, 'day').toDate()
+          } }),
+      }
     });
 
     return reservations;
   }
 
   static async show(id: string, userId: string) {
-    const reservation = await prisma.reservation.findFirst({
+    const reservation = await prisma.slot.findFirst({
       where: {
         id,
-        userId
-      },
-      include: {
-        slot: true
+        driverId: userId
       }
     });
     if (!reservation)
@@ -73,24 +77,24 @@ class ReservationService {
     return reservation;
   }
 
-  static async delete(id: string, userId: string) {
-    const reservation = await prisma.reservation.findFirst({
+  static async delete(slotId: string, userId: string) {
+    const reservation = await prisma.slot.findFirst({
       where: {
-        id,
-        userId
-      },
-      include: {
-        slot: true
+        id: slotId,
+        driverId: userId
       }
     });
 
-    if (!reservation) {
-      throw new ApiError('Error: reservation ID not found', 404);
-    }
+    if (!reservation)
+      throw new ApiError('Error: reservation not found', 404);
 
-    const deletedReservation = await prisma.reservation.delete({
-      where: {
-        id: reservation.id
+    const deletedReservation = await prisma.slot.update({
+      where: { id: slotId },
+      data: {
+        driver: {
+          disconnect: true
+        },
+        isBooked: false
       }
     });
 

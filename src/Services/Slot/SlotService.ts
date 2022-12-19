@@ -1,11 +1,12 @@
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
+import moment from "moment";
 
 class SlotService {
   static async create(
       userId: string,
       stationId: string,
-      data: {day: number, opensAt: string, closesAt: string},
+      data: {opensAt: string, closesAt: string},
   ): Promise<any> {
       const station = await prisma.station.findFirst({
         where: {
@@ -25,7 +26,7 @@ class SlotService {
       throw new ApiError('Error: Station with properties not found', 404);
 
     for (const slot of station.properties.slots) {
-      if (slot.day === data.day && ((new Date(slot.opensAt) <= new Date(data.closesAt)) && (new Date(slot.closesAt) >= new Date(data.opensAt)))) {
+      if (new Date(slot.opensAt) <= new Date(data.closesAt) && new Date(slot.closesAt) >= new Date(data.opensAt)) {
         throw new ApiError('Error: A slot is already created at this time', 409);
       }
     }
@@ -37,7 +38,6 @@ class SlotService {
               id: station.properties.id
             }
           },
-          day: data.day,
           opensAt: data.opensAt,
           closesAt: data.closesAt
         }
@@ -49,7 +49,7 @@ class SlotService {
   static async update(
       userId: string,
       slotId: string,
-      data: {day: number, opensAt: string, closesAt: string},
+      data: {opensAt: string, closesAt: string},
   ): Promise<any> {
 
     const slotToUpdate = await prisma.slot.findFirst({
@@ -74,7 +74,7 @@ class SlotService {
       throw new ApiError('Error: Slot not found', 404);
 
     for (const slot of slotToUpdate.stationProperties.slots) {
-      if (slot.day === data.day && ((new Date(slot.opensAt) <= new Date(data.closesAt)) && (new Date(slot.closesAt) >= new Date(data.opensAt)))) {
+      if (new Date(slot.opensAt) <= new Date(data.closesAt) && new Date(slot.closesAt) >= new Date(data.opensAt)) {
         throw new ApiError('Error: A slot is already created at this time', 409);
       }
     }
@@ -82,7 +82,6 @@ class SlotService {
     const updatedSlot = await prisma.slot.update({
       where: { id: slotId },
       data: {
-        ...(data.day && { day: data.day }),
         ...(data.opensAt && { opensAt: new Date(data.opensAt) }),
         ...(data.closesAt && { closesAt: new Date(data.closesAt) }),
       }
@@ -91,16 +90,22 @@ class SlotService {
     return updatedSlot;
   }
 
-  static async index(
-      userId: string
-  ) {
+  static async index(stationId: any, userId: any, date: any) {
+    if (!userId && !stationId && !date)
+      throw new ApiError('Error: Provide at least one param in query', 422);
+
     const slots = await prisma.slot.findMany({
       where: {
-        stationProperties: {
-          station: {
-            ownerId: userId
-          }
-        },
+        ...((userId || stationId) && { stationProperties: {
+            station: {
+              ...(userId && {ownerId: userId}),
+              ...(stationId && {id: stationId})
+            }
+          }}),
+        ...(date && { opensAt: {
+            gte: moment(date).toDate(),
+            lt:  moment(date).add(1, 'day').toDate()
+          } }),
       }
     });
 
