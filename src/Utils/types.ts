@@ -44,7 +44,6 @@ export const VehicleElectricalTypes = [
 ];
 
 export interface Slot {
-  day: number;
   opensAt: string;
   closesAt: string;
 }

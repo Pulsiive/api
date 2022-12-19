@@ -14,6 +14,8 @@ export const slot = {
 export const slotComparisonObject = {
   id: expect.any(String),
   stationPropertiesId: expect.any(String),
+  isBooked: expect.any(Boolean),
+  driverId: null,
   opensAt: expect.any(Date),
   closesAt: expect.any(Date)
 };

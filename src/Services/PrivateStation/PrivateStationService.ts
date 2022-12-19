@@ -37,8 +37,7 @@ class PrivateStationService {
       };
 
       const slots = props.properties.slots.map(
-        (slot: { day: number; opensAt: string; closesAt: string }) => ({
-          day: slot.day,
+        (slot: { opensAt: string; closesAt: string }) => ({
           opensAt: slot.opensAt,
           closesAt: slot.closesAt
         })
@@ -102,8 +101,7 @@ class PrivateStationService {
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
       const slots = props.properties.slots.map(
-        (slot: { day: number; opensAt: string; closesAt: string }) => ({
-          day: slot.day,
+        (slot: { opensAt: string; closesAt: string }) => ({
           opensAt: slot.opensAt,
           closesAt: slot.closesAt
         })

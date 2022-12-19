@@ -16,6 +16,9 @@ class ReservationService {
       if (!slot)
         throw new ApiError('Error: reservation not found', 404);
 
+      if (slot.isBooked)
+        throw new ApiError('Error: This slot is already booked', 409);
+
     const reservations = await prisma.slot.findMany({
       where: {
         driverId: userId,
