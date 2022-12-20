@@ -35,6 +35,7 @@ model User {
   sentMessages     Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
   reservations     Slot[]
+  isFromOAuth      Boolean   @default(false)
 }
 
 model PasswordReset {

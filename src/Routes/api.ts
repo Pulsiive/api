@@ -12,6 +12,7 @@ import SlotController from '../Controllers/SlotController';
 import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
 import {AuthAndGuestMiddleware} from "../Middlewares/AuthAndGuestMiddleware";
+import OAuthController from "../Controllers/OAuthController";
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir() });
@@ -23,7 +24,8 @@ router.get('/api/v1/status', (req, res) => {
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
 
-router.post('/api/v1/auth/google', AuthController.googleLogin);
+router.post('/api/v1/oauth/google/register', OAuthController.register);
+router.post('/api/v1/oauth/google/login', OAuthController.login);
 
 router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);
