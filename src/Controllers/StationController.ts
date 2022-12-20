@@ -41,6 +41,15 @@ class StationController {
     }
   }
 
+  static async getAll(req: express.Request, res: express.Response) {
+    try {
+      const stations = await StationService.getAll();
+      return res.json({ stations });
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async rate(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
