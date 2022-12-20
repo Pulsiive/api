@@ -92,6 +92,17 @@ class StationService {
     return inRangeStations;
   }
 
+  static async getAll(): Promise<Station[]> {
+    return await prisma.station.findMany({
+      include: {
+        coordinates: true,
+        properties: true,
+        rates: true,
+        orders: true
+      }
+    });
+  }
+
   static async rate({ stationId, userId, rate, creationDate, comment }: StationRatingInput) {
     const station = await prisma.station.findUnique({
       where: {
