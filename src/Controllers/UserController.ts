@@ -107,7 +107,7 @@ class UserController {
         }
       });
 
-      return res.json({...user, vehicles: userVehicles, stations: userStations});
+      return res.json({ ...user, vehicles: userVehicles, stations: userStations });
     } catch (e: any) {
       return res.status(422).json({
         message: 'Unprocessable entity'
@@ -174,6 +174,17 @@ class UserController {
 
       const message = await UserService.getMessage(messageId, userId);
       return res.json(message);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async getLastMessageFromUsers(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+
+      const messages = await UserService.getLastMessageFromUsers(userId);
+      return res.json(messages);
     } catch (e: any) {
       return errorWrapper(e, res);
     }

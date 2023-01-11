@@ -8,7 +8,7 @@ import {
   MessageInput,
   UserRatingInput
 } from '../../Utils/types';
-import {PlugType, Vehicle, Message, Rating} from '@prisma/client';
+import { PlugType, Vehicle, Message, Rating } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
@@ -166,6 +166,69 @@ class UserService {
         receivedMessages: true
       }
     });
+  }
+
+  static async getLastMessageFromUsers(userId: string): Promise<any> {
+    const allMessages = await prisma.message.findMany({
+      where: {
+        OR: [
+          {
+            authorId: userId
+          },
+          {
+            receiverId: userId
+          }
+        ]
+      },
+      distinct: ['receiverId', 'authorId'],
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    let lastMessages: Message[] = [];
+    // get most recent sent / received message by user and add user name + id
+    allMessages.forEach((message) => {
+      if (message.authorId === userId) {
+        const messageIndex = lastMessages.map((message) => message.receiverId).indexOf(userId);
+        if (messageIndex > -1) {
+          if (lastMessages[messageIndex].createdAt < message.createdAt) {
+            //replace current message if it more recent than the last received one
+            lastMessages[messageIndex] = message;
+          }
+        } else {
+          lastMessages.push(message);
+        }
+      } else {
+        const messageIndex = lastMessages.map((message) => message.authorId).indexOf(userId);
+        if (messageIndex > -1) {
+          if (lastMessages[messageIndex].createdAt < message.createdAt) {
+            //replace current message if it more recent than the last sent one
+            lastMessages[messageIndex] = message;
+          }
+        } else {
+          lastMessages.push(message);
+        }
+      }
+    });
+
+    const messagesAndUser = [];
+    for (let i = 0; i < lastMessages.length; i++) {
+      const userToFetchId =
+        lastMessages[i].authorId === userId ? lastMessages[i].receiverId : lastMessages[i].authorId;
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userToFetchId
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true
+        }
+      });
+      messagesAndUser.push({ message: lastMessages[i], user });
+    }
+    return messagesAndUser;
   }
 
   static async deleteMessage(messageId: string, userId: string): Promise<Message> {

@@ -13,7 +13,7 @@ import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
 
 const router = express.Router();
-const upload = multer({ dest: os.tmpdir() });
+const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
 
 router.get('/api/v1/status', (req, res) => {
   res.status(200).json({ message: 'Service is up and running' });
@@ -53,6 +53,11 @@ router.post('/api/v1/requestEmailVerification/:token', EmailVerificationControll
 
 router.get('/api/v1/profile/message/:id', AuthMiddleware, UserController.getMessage);
 router.get('/api/v1/profile/messages', AuthMiddleware, UserController.getMessages);
+router.get(
+  '/api/v1/profile/messages/last-by-user',
+  AuthMiddleware,
+  UserController.getLastMessageFromUsers
+);
 router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.deleteMessage);
 router.post('/api/v1/profile/message', AuthMiddleware, UserController.createMessage);
 
