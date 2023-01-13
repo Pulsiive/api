@@ -45,7 +45,7 @@ router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.
 router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);
 
-router.get('/api/v1/stations', AuthMiddleware, StationController.getFromParams);
+router.post('/api/v1/stations', AuthMiddleware, StationController.getFromParams);
 router.get('/api/v1/stations/all', StationController.getAll);
 
 router.post('/api/v1/emailVerification', EmailVerificationController.request);
