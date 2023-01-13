@@ -242,6 +242,17 @@ class UserController {
       return errorWrapper(e, res);
     }
   }
+
+  static async getRatings(req: express.Request, res: express.Response) {
+    try {
+      const requestedUserId = req.params.id;
+
+      const ratings = await UserService.getRatings(requestedUserId);
+      res.json({ ratings });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
 }
 
 export default UserController;

@@ -66,6 +66,7 @@ router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.l
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
 
 router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
+router.get('/api/v1/user/:id/rate', AuthMiddleware, UserController.getRatings);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
 router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);

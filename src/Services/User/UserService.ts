@@ -298,6 +298,18 @@ class UserService {
       }
     });
   }
+
+  static async getRatings(userId: string): Promise<Rating[]> {
+    const ratings = await prisma.rating.findMany({
+      where: {
+        recipientId: userId
+      },
+      include: {
+        author: true
+      }
+    });
+    return ratings;
+  }
 }
 
 export default UserService;
