@@ -9,7 +9,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
-      - '5432'
+      - '5432:5432'
   postgres_test:
     image: postgres:10.3
     restart: always
