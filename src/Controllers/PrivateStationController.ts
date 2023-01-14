@@ -14,6 +14,17 @@ class PrivateStationController {
     }
   }
 
+  static async getAllFromUser(req: express.Request, res: express.Response) {
+    try {
+      const requestedUserId = req.params.id;
+
+      const stations = await PrivateStationService.getAll(requestedUserId);
+      return res.json({ stations });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async create(req: express.Request, res: express.Response) {
     try {
       const stationsProperties = req.body.station;
