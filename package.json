@@ -11,7 +11,7 @@
     "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
     "docker-generate-db-test-models": "dotenv -e .env.test -- prisma migrate deploy",
-    "test": "npx dotenv -v DATABASE_URL=postgresql://postgres:password@localhost:5432/postgres?schema=public  -- npx jest",
+    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest",
     "prepare": "husky install"
   },
   "repository": {
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/Pulsiive/api#readme",
   "dependencies": {
-    "@prisma/client": "^4.4.0",
+    "@prisma/client": "^3.12.0",
     "@types/validatorjs": "^3.15.0",
     "axios": "^1.1.2",
     "bcryptjs": "^2.4.3",
@@ -39,7 +39,6 @@
     "moment": "^2.29.3",
     "node-fetch": "^3.2.10",
     "nodemailer": "^6.7.5",
-    "prisma": "^4.4.0",
     "querystring-ts": "^1.0.1",
     "validatorjs": "^3.22.1"
   },
@@ -56,6 +55,7 @@
     "jest": "^28.1.0",
     "nodemon": "^2.0.15",
     "prettier": "2.6.1",
+    "prisma": "^3.12.0",
     "ts-jest": "^28.0.3",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
