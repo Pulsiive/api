@@ -11,6 +11,8 @@ import EmailVerificationController from '../Controllers/EmailVerificationControl
 import SlotController from '../Controllers/SlotController';
 import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
+import {AuthAndGuestMiddleware} from "../Middlewares/AuthAndGuestMiddleware";
+import OAuthController from "../Controllers/OAuthController";
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -22,7 +24,8 @@ router.get('/api/v1/status', (req, res) => {
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
 
-router.post('/api/v1/auth/google', AuthController.googleLogin);
+router.post('/api/v1/oauth/google/register', OAuthController.register);
+router.post('/api/v1/oauth/google/login', OAuthController.login);
 
 router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);
@@ -71,14 +74,14 @@ router.get('/api/v1/user/:id/rate', AuthMiddleware, UserController.getRatings);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
 router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);
-router.get('/api/v1/slot', AuthMiddleware, SlotController.index);
+router.get('/api/v1/slot', AuthAndGuestMiddleware, SlotController.index);
 router.get('/api/v1/slot/:id', AuthMiddleware, SlotController.show);
 router.delete('/api/v1/slot/:id', AuthMiddleware, SlotController.delete);
 
-router.post('/api/v1/reservation', AuthMiddleware, ReservationController.create);
+router.post('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.create);
 router.get('/api/v1/reservation', AuthMiddleware, ReservationController.index);
-router.get('/api/v1/reservation/:id', AuthMiddleware, ReservationController.show);
-router.delete('/api/v1/reservation/:id', AuthMiddleware, ReservationController.delete);
+router.get('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.show);
+router.delete('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.delete);
 
 router.post(
   '/api/v1/picture',

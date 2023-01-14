@@ -10,5 +10,6 @@ export function errorWrapper(e: any, res: express.Response) {
     statusCode = e.statusCode;
   }
 
+  console.log(e.message);
   return res.status(statusCode).json({ message });
 }

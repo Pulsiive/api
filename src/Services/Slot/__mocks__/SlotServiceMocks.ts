@@ -7,15 +7,15 @@ export const user = {
 };
 
 export const slot = {
-    day: 3,
-    opensAt: "1970-03-02T08:00:00.003Z",
-    closesAt: "1970-03-02T10:00:00.003Z"
+    opensAt: "2022-11-02T08:00:00.003Z",
+    closesAt: "2022-11-02T10:00:00.003Z"
 };
 
 export const slotComparisonObject = {
   id: expect.any(String),
   stationPropertiesId: expect.any(String),
-  day: expect.any(Number),
+  isBooked: expect.any(Boolean),
+  driverId: null,
   opensAt: expect.any(Date),
   closesAt: expect.any(Date)
 };
@@ -23,9 +23,10 @@ export const slotComparisonObject = {
 export const slotShowComparisonObject = {
     id: expect.any(String),
     stationPropertiesId: expect.any(String),
-    day: expect.any(Number),
     opensAt: expect.any(Date),
     closesAt: expect.any(Date),
+    isBooked: expect.any(Boolean),
+    driverId: null,
     stationProperties: {
         maxPower: expect.any(Object),
         id: expect.any(String),
@@ -41,7 +42,8 @@ export const slotShowComparisonObject = {
 export const slotDeletedComparisonObject = {
     id: expect.any(String),
     stationPropertiesId: expect.any(String),
-    day: expect.any(Number),
     opensAt: expect.any(Date),
-    closesAt: expect.any(Date)
+    closesAt: expect.any(Date),
+    isBooked: expect.any(Boolean),
+    driverId: null,
 };

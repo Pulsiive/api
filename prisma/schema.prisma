@@ -17,24 +17,25 @@ model Admin {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  firstName       String
-  lastName        String
-  email           String           @unique
-  password        String
-  dateOfBirth     DateTime
-  emailVerifiedAt DateTime?
-  balance         Int              @default(0)
-  vehicles        Vehicle[]
-  privateStations Station[]
-  wroteRatings Rating[]
-  receivedRatings Rating[] @relation(name: "Recipient")
-  likedRatings Rating[] @relation(name: "likedRatings")
-  dislikedRatings Rating[] @relation(name: "dislikedRatings")
-  orders          Order[]
-  sentMessages Message[] @relation(name: "Author")
+  id               String    @id @default(uuid())
+  firstName        String
+  lastName         String
+  email            String    @unique
+  password         String
+  dateOfBirth      DateTime
+  emailVerifiedAt  DateTime?
+  balance          Int       @default(0)
+  vehicles         Vehicle[]
+  privateStations  Station[]
+  wroteRatings     Rating[]
+  receivedRatings  Rating[]  @relation(name: "Recipient")
+  likedRatings     Rating[]  @relation(name: "likedRatings")
+  dislikedRatings  Rating[]  @relation(name: "dislikedRatings")
+  orders           Order[]
+  sentMessages     Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
-  Reservation           Reservation[]
+  reservations     Slot[]
+  isFromOAuth      Boolean   @default(false)
 }
 
 model PasswordReset {
@@ -63,14 +64,14 @@ model Vehicle {
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner       User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String?
-  orders       Order[]
-  rate        Float @default(0)
-  rateNumber  Int @default(0)
+  orders      Order[]
+  rate        Float               @default(0)
+  rateNumber  Int                 @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
-  rates    Rating[]
+  rates       Rating[]
 }
 
 model StationCoordinates {
@@ -102,38 +103,29 @@ model Slot {
   id                  String            @id @default(uuid())
   stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
-  reservations        Reservation[]
-  day                 Int               @db.SmallInt
-  opensAt             DateTime          @db.Time(0)
-  closesAt            DateTime          @db.Time(0)
-}
-
-model Reservation {
-  id     String   @id @default(uuid())
-  slot   Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
-  slotId String
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  from   DateTime @db.Time(0)
-  to     DateTime @db.Time(0)
+  isBooked            Boolean           @default(false)
+  driver              User?             @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  driverId            String?
+  opensAt             DateTime
+  closesAt            DateTime
 }
 
 model Rating {
-  id        String   @id @default(uuid())
-  recipient User? @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
+  id          String   @id @default(uuid())
+  recipient   User?    @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
   recipientId String?
-  station   Station?  @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId String?
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String
-  likedBy User[] @relation(name: "likedRatings")
-  dislikedBy User[] @relation(name: "dislikedRatings")
-  rate      Int
-  comment String?
-  pictures  String[]
-  date     DateTime
-  likes     Int @default(0)
-  dislikes Int @default(0)
+  station     Station? @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId   String?
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  likedBy     User[]   @relation(name: "likedRatings")
+  dislikedBy  User[]   @relation(name: "dislikedRatings")
+  rate        Int
+  comment     String?
+  pictures    String[]
+  date        DateTime
+  likes       Int      @default(0)
+  dislikes    Int      @default(0)
 }
 
 model Order {
@@ -147,14 +139,14 @@ model Order {
 }
 
 model Message {
-  id String @id @default(uuid())
-  author User @relation(fields: [authorId], references: [id], name: "Author", onDelete: Cascade)
-  authorId String
-  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver", onDelete: Cascade)
+  id         String   @id @default(uuid())
+  author     User     @relation(fields: [authorId], references: [id], name: "Author", onDelete: Cascade)
+  authorId   String
+  receiver   User     @relation(fields: [receiverId], references: [id], name: "Receiver", onDelete: Cascade)
   receiverId String
-  body String
-  createdAt DateTime
-  read Boolean? @default(false)
+  body       String
+  createdAt  DateTime
+  read       Boolean? @default(false)
 }
 
 model EmailVerification {

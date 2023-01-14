@@ -1,4 +1,3 @@
-import UserService from '../../User/UserService';
 import SlotService from '../SlotService';
 import AuthService from '../../Auth/AuthService';
 import prisma from '../../../../prisma/client';
@@ -58,7 +57,7 @@ describe('SlotService - Show', () => {
 
 describe('SlotService - Index', () => {
   test('should get all slots', async () => {
-    const slots = await SlotService.index(userId);
+    const slots = await SlotService.index(stationId, userId, '2022-11-02');
     expect(slots).toEqual(expect.any(Array));
   });
 });

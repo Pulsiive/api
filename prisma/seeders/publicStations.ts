@@ -45,19 +45,16 @@ import { PlugType } from '@prisma/client';
             slots: {
               create: [
                 {
-                  day: 1,
-                  opensAt: '1970-03-02T10:00:00.003Z',
-                  closesAt: '1970-03-02T12:00:00.003Z'
+                  opensAt: '2022-03-02T10:00:00.003Z',
+                  closesAt: '2022-03-02T12:00:00.003Z'
                 },
                 {
-                  day: 2,
-                  opensAt: '1970-03-02T17:00:00.003Z',
-                  closesAt: '1970-03-02T19:00:00.003Z'
+                  opensAt: '2022-03-02T17:00:00.003Z',
+                  closesAt: '2022-03-02T19:00:00.003Z'
                 },
                 {
-                  day: 3,
-                  opensAt: '1970-03-02T22:00:00.003Z',
-                  closesAt: '1970-03-02T00:00:00.003Z'
+                  opensAt: '2022-03-02T22:00:00.003Z',
+                  closesAt: '2022-03-02T00:00:00.003Z'
                 }
               ]
             }

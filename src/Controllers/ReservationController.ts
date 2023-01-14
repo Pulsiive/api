@@ -9,25 +9,9 @@ class ReservationController {
   static async create(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const {
-        slotId,
-        from,
-        to
-      } = req.body;
-      const data = {
-        from,
-        to,
-      };
-      const validator = new Validator(data, reservationRules);
+      const slotId = req.params.slotId;
 
-      if (validator.fails()) {
-        throw new ApiError('Error: Unprocessable entity', 422);
-      }
-
-      if (new Date(data.from) >= new Date(data.to))
-        throw new ApiError('Error: [Unprocessable entity]: "from" dateTime needs to be before "to" dateTime', 422);
-
-      const reservation = await ReservationService.create(userId, slotId, data);
+      const reservation = await ReservationService.create(userId, slotId);
 
       return res.json(reservation);
     } catch (e: any) {
@@ -40,7 +24,10 @@ class ReservationController {
   static async index(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const slots = await ReservationService.index(userId);
+      const stationId = req.query.station_id ?? null;
+
+      const date = req.query.date ?? null;
+      const slots = await ReservationService.index(stationId, userId, date);
 
       return res.json(slots);
     } catch (e: any) {
@@ -51,7 +38,7 @@ class ReservationController {
   static async show(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const reservationId = req.params.id;
+      const reservationId = req.params.slotId;
       const reservation = await ReservationService.show(reservationId, userId);
 
       return res.json(reservation);
@@ -63,7 +50,7 @@ class ReservationController {
   static async delete(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const reservationId = req.params.id;
+      const reservationId = req.params.slotId;
 
       const deletedReservation = await ReservationService.delete(reservationId, userId);
       return res.json(deletedReservation);
