@@ -11,7 +11,6 @@ import EmailVerificationController from '../Controllers/EmailVerificationControl
 import SlotController from '../Controllers/SlotController';
 import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
-import { TaskRouterGrant } from 'twilio/lib/jwt/AccessToken';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir() });
