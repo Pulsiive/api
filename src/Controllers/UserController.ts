@@ -256,7 +256,7 @@ class UserController {
 
   static async createContact(req: express.Request, res: express.Response) {
     try {
-      const userId = req.body.userId;
+      const userId = req.body.user.payload.id;
       const contactName = req.body.contactName;
 
       const newContact = await UserService.createContact(userId, contactName);
@@ -268,7 +268,7 @@ class UserController {
   }
   static async updateContact(req: express.Request, res: express.Response) {
     try {
-      const userId = req.body.userId;
+      const userId = req.body.user.payload.id;
       const contactName = req.body.contactName;
       const newName = req.body.newName;
 
@@ -281,7 +281,7 @@ class UserController {
 
   static async removeContact(req: express.Request, res: express.Response) {
     try {
-      const userId = req.body.userId;
+      const userId = req.body.user.payload.id;
       const contactDeleted = await UserService.deleteContactById(userId);
       return res.json(contactDeleted);
     } catch (e: any) {
