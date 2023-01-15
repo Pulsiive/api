@@ -291,7 +291,7 @@ class UserController {
 
   static async getContacts(req: express.Request, res: express.Response) {
     try {
-      const userId = req.body.userId;
+      const userId = req.body.user.payload.id;
 
       const contacts = await UserService.getContactsById(userId);
       return res.json(contacts);
