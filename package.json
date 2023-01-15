@@ -11,7 +11,9 @@
     "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
     "docker-generate-db-test-models": "dotenv -e .env.test -- prisma migrate deploy",
-    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest",
+    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest ./src",
+    "test-production": "npx dotenv -e .env.production -- npx jest ./prod_testing/",
+    "seed": "prisma db seed && npx dotenv -e .env.test -- npx prisma db seed",
     "prepare": "husky install"
   },
   "repository": {
@@ -28,14 +30,21 @@
   "dependencies": {
     "@prisma/client": "^3.12.0",
     "@types/validatorjs": "^3.15.0",
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "form-data": "^4.0.0",
+    "geolib": "^3.3.3",
+    "google-auth-library": "^8.5.2",
     "handlebars": "^4.7.7",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
+    "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.7.5",
+    "otp-generator": "^4.0.0",
+    "twilio": "^3.82.0",
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {
@@ -44,8 +53,10 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.5.1",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/multer": "^1.4.7",
     "@types/node": "^17.0.23",
     "@types/nodemailer": "^6.4.4",
+    "@types/otp-generator": "^4.0.0",
     "dotenv-cli": "^5.1.0",
     "husky": "^8.0.1",
     "jest": "^28.1.0",
@@ -62,5 +73,8 @@
     "modulePathIgnorePatterns": [
       ".*__mocks__.*"
     ]
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seeders/publicStations.ts"
   }
 }

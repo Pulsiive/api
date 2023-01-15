@@ -5,15 +5,11 @@ import {
   VehicleTypes,
   PlugTypes,
   VehicleElectricalTypes,
-  PrivateStationProperties,
-  StationAndPayload,
-  MessageInput
+  MessageInput,
+  UserRatingInput
 } from '../../Utils/types';
-import { PlugType, Vehicle, Station, Message } from '@prisma/client';
-import { PrismaClientValidationError } from '@prisma/client/runtime';
+import { PlugType, Vehicle, Message, Rating } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { connect } from 'http2';
-import { userInfo } from 'os';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -22,27 +18,6 @@ const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefi
     }
   });
   return userVehicles.find((vehicle: Vehicle) => vehicle.id === vehicleId);
-};
-
-const getUserStation = async (
-  userId: string,
-  stationId: string
-): Promise<undefined | StationAndPayload> => {
-  const userStations = await prisma.station.findMany({
-    where: {
-      ownerId: userId
-    },
-    include: {
-      properties: {
-        include: {
-          hours: true
-        }
-      },
-      comments: true,
-      coordinates: true
-    }
-  });
-  return userStations.find((station: Station) => station.id === stationId);
 };
 
 class UserService {
@@ -75,6 +50,20 @@ class UserService {
         throw e;
       }
       throw new ApiError('Error: Vehicle deletion failed');
+    }
+  }
+
+  static async getVehicles(userId: string) {
+    try {
+      const userVehicles = await prisma.vehicle.findMany({
+        where: {
+          ownerId: userId
+        }
+      });
+
+      return userVehicles;
+    } catch (e) {
+      throw new ApiError('Error: Get Vehicles failed');
     }
   }
 
@@ -153,186 +142,6 @@ class UserService {
     }
   }
 
-  static async getStation(stationId: string): Promise<Station> {
-    try {
-      const station = await prisma.station.findUnique({
-        where: {
-          id: stationId
-        },
-        include: {
-          coordinates: true,
-          properties: {
-            include: {
-              hours: true
-            }
-          },
-          comments: true
-        }
-      });
-      if (station) {
-        return station;
-      }
-      throw new ApiError('Error: Invalid station ID', 400);
-    } catch (e) {
-      if (e instanceof ApiError) {
-        throw e;
-      }
-      throw new ApiError('Error: Invalid station ID');
-    }
-  }
-
-  static async createStation(
-    props: PrivateStationProperties,
-    userId: string
-  ): Promise<StationAndPayload> {
-    try {
-      const stationsPropertiesWithoutHours = {
-        ...props.properties,
-        isPublic: false,
-        nbChargingPoints: 1,
-        plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
-      };
-      const stationHours = props.properties.hours.map(
-        (hour: { day: number; openTime: number; closeTime: number }) => ({
-          ...hour,
-          openTime: new Date(hour.openTime),
-          closeTime: new Date(hour.closeTime)
-        })
-      );
-
-      const createdStation = await prisma.station.create({
-        data: {
-          owner: {
-            connect: {
-              id: userId
-            }
-          },
-          coordinates: {
-            create: props.coordinates
-          },
-          properties: {
-            create: {
-              ...stationsPropertiesWithoutHours,
-              hours: {
-                create: stationHours
-              }
-            }
-          }
-        },
-        include: {
-          coordinates: true,
-          properties: {
-            include: {
-              hours: true
-            }
-          },
-          comments: true
-        }
-      });
-      return createdStation;
-    } catch (e) {
-      if (e instanceof PrismaClientValidationError) {
-        throw new ApiError('Error: Invalid properties');
-      }
-      throw new ApiError('Error: Failed to create a private station');
-    }
-  }
-
-  static async updateStation(
-    props: PrivateStationProperties,
-    userId: string,
-    stationId: string
-  ): Promise<StationAndPayload> {
-    try {
-      //TODO: improve this - don't delete current hours
-
-      const station = await getUserStation(userId, stationId);
-
-      if (!station) throw new ApiError('Error: Invalid station ID');
-
-      const stationsPropertiesWithoutHours = {
-        ...props.properties,
-        plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
-      };
-      const stationHours = props.properties.hours.map(
-        (hour: { day: number; openTime: number; closeTime: number }) => ({
-          ...hour,
-          openTime: new Date(hour.openTime),
-          closeTime: new Date(hour.closeTime)
-        })
-      );
-      if (station.properties) {
-        await prisma.stationHours.deleteMany({
-          where: {
-            stationPropertiesId: station.properties.id
-          }
-        });
-      }
-      const updatedStation = await prisma.station.update({
-        where: {
-          id: stationId
-        },
-        data: {
-          coordinates: {
-            update: props.coordinates
-          },
-          properties: {
-            update: {
-              ...stationsPropertiesWithoutHours,
-              hours: {
-                create: stationHours
-              }
-            }
-          }
-        },
-        include: {
-          coordinates: true,
-          properties: {
-            include: {
-              hours: true
-            }
-          },
-          comments: true
-        }
-      });
-      return updatedStation;
-    } catch (e) {
-      if (e instanceof ApiError) {
-        throw e;
-      }
-      throw new ApiError('Error: Failed to create a private station');
-    }
-  }
-
-  static async deleteStation(stationId: string, userId: string): Promise<StationAndPayload> {
-    try {
-      const station = await getUserStation(userId, stationId);
-      if (station) {
-        const deletedStation = await prisma.station.delete({
-          where: {
-            id: stationId
-          },
-          include: {
-            coordinates: true,
-            properties: {
-              include: {
-                hours: true
-              }
-            },
-            comments: true
-          }
-        });
-        return deletedStation;
-      }
-      throw new ApiError('Error: Invalid station ID', 400);
-    } catch (e) {
-      if (e instanceof ApiError) {
-        throw e;
-      }
-      throw new ApiError('Error: Station deletion failed');
-    }
-  }
-
   static async getMessage(messageId: string, userId: string): Promise<Message> {
     const message = await prisma.message.findUnique({
       where: {
@@ -357,6 +166,69 @@ class UserService {
         receivedMessages: true
       }
     });
+  }
+
+  static async getLastMessageFromUsers(userId: string): Promise<any> {
+    const allMessages = await prisma.message.findMany({
+      where: {
+        OR: [
+          {
+            authorId: userId
+          },
+          {
+            receiverId: userId
+          }
+        ]
+      },
+      distinct: ['receiverId', 'authorId'],
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    let lastMessages: Message[] = [];
+    // get most recent sent / received message by user and add user name + id
+    allMessages.forEach((message) => {
+      if (message.authorId === userId) {
+        const messageIndex = lastMessages.map((message) => message.receiverId).indexOf(userId);
+        if (messageIndex > -1) {
+          if (lastMessages[messageIndex].createdAt < message.createdAt) {
+            //replace current message if it more recent than the last received one
+            lastMessages[messageIndex] = message;
+          }
+        } else {
+          lastMessages.push(message);
+        }
+      } else {
+        const messageIndex = lastMessages.map((message) => message.authorId).indexOf(userId);
+        if (messageIndex > -1) {
+          if (lastMessages[messageIndex].createdAt < message.createdAt) {
+            //replace current message if it more recent than the last sent one
+            lastMessages[messageIndex] = message;
+          }
+        } else {
+          lastMessages.push(message);
+        }
+      }
+    });
+
+    const messagesAndUser = [];
+    for (let i = 0; i < lastMessages.length; i++) {
+      const userToFetchId =
+        lastMessages[i].authorId === userId ? lastMessages[i].receiverId : lastMessages[i].authorId;
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userToFetchId
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true
+        }
+      });
+      messagesAndUser.push({ message: lastMessages[i], user });
+    }
+    return messagesAndUser;
   }
 
   static async deleteMessage(messageId: string, userId: string): Promise<Message> {
@@ -394,6 +266,49 @@ class UserService {
         createdAt
       }
     });
+  }
+
+  static async rate(input: UserRatingInput, userId: string): Promise<Rating> {
+    if (input.userId === userId) {
+      throw new ApiError('Error: Invalid user ID', 400);
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        id: input.userId
+      }
+    });
+    if (!user) {
+      throw new ApiError('Error: Invalid user ID', 400);
+    }
+    return await prisma.rating.create({
+      data: {
+        recipient: {
+          connect: {
+            id: input.userId
+          }
+        },
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        rate: input.rate,
+        comment: input.comment,
+        date: input.creationDate
+      }
+    });
+  }
+
+  static async getRatings(userId: string): Promise<Rating[]> {
+    const ratings = await prisma.rating.findMany({
+      where: {
+        recipientId: userId
+      },
+      include: {
+        author: true
+      }
+    });
+    return ratings;
   }
 
   static async createContact(userId: any, contactName: any) {

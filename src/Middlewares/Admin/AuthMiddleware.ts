@@ -21,9 +21,10 @@ export async function AuthMiddleware(req: express.Request, res: express.Response
 
     try {
         req.body.admin = await JWTService.verifyWrapper(bearerToken);
-        await AuthService.checkAdminExist(req.body.user.payload.id);
+        await AuthService.checkAdminExist(req.body.admin.payload.id);
         next();
     } catch (e: any) {
+        console.log("error token")
         return errorWrapper(e, res);
     }
 }

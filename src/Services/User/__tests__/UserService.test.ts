@@ -8,15 +8,12 @@ import {
   vehicleNumeroDos,
   vehicleDBFormat,
   vehicleNumeroDosDBFormat,
-  station,
-  stationComparisonObject,
-  stationNumeroDos
+  createUserRating
 } from '../__mocks__/UserServiceMocks';
 
 let userId: string;
 let secondUserId: string;
 let vehicleId: string;
-let stationId: string;
 
 beforeAll(async () => {
   await AuthService.register(user);
@@ -41,6 +38,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await prisma.message.deleteMany();
+  await prisma.rating.deleteMany();
   await prisma.user.delete({
     where: {
       email: user.email
@@ -111,51 +109,6 @@ describe('UserService - Vehicle', () => {
   test('should throw because vehicle does not exists', async () => {
     await expect(UserService.deleteVehicle('666', userId)).rejects.toThrow(
       'Error: Invalid vehicle ID'
-    );
-  });
-});
-
-describe('UserService - Station', () => {
-  test('sould create station', async () => {
-    const createdStation = await UserService.createStation(station, userId);
-    stationId = createdStation.id;
-    expect(createdStation).toEqual(stationComparisonObject);
-  });
-
-  test('sould get station', async () => {
-    const stationObject = await UserService.getStation(stationId);
-    expect(stationObject).toEqual(stationComparisonObject);
-  });
-
-  test('should throw because station does not exists', async () => {
-    await expect(UserService.getStation('666')).rejects.toThrow('Error: Invalid station ID');
-  });
-
-  test('should update station', async () => {
-    const update = await UserService.updateStation(stationNumeroDos, userId, stationId);
-    expect(update.id).toEqual(stationId);
-    expect(update.coordinates?.address).toEqual(stationNumeroDos.coordinates.address);
-  });
-
-  test('should throw because station does not exists', async () => {
-    await expect(UserService.updateStation(stationNumeroDos, userId, '666')).rejects.toThrow(
-      'Error: Invalid station ID'
-    );
-  });
-
-  test('should delete station', async () => {
-    await UserService.deleteStation(stationId, userId);
-    const oldStation = await prisma.station.findUnique({
-      where: {
-        id: stationId
-      }
-    });
-    expect(oldStation).toBeNull();
-  });
-
-  test('should throw because station does not exists', async () => {
-    await expect(UserService.deleteStation('666', userId)).rejects.toThrow(
-      'Error: Invalid station ID'
     );
   });
 });
@@ -237,5 +190,42 @@ describe('UserService - Messages', () => {
     await expect(UserService.deleteMessage('666', userId)).rejects.toThrow(
       'Error: Invalid message ID'
     );
+  });
+});
+
+describe('UserService - rate user', () => {
+  test("should throw because user can't rate himself", async () => {
+    await expect(UserService.rate(createUserRating(userId), userId)).rejects.toThrow(
+      'Error: Invalid user ID'
+    );
+  });
+
+  test('should rate user', async () => {
+    const rating = await UserService.rate(createUserRating(secondUserId), userId);
+    expect(rating).toBeDefined();
+  });
+
+  test('should link received rate to user', async () => {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: secondUserId
+      },
+      select: {
+        receivedRatings: true
+      }
+    });
+    expect(user?.receivedRatings.length).toBe(1);
+  });
+
+  test('should link written rate to user', async () => {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        wroteRatings: true
+      }
+    });
+    expect(user?.wroteRatings.length).toBe(1);
   });
 });

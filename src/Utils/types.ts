@@ -4,10 +4,10 @@ export type StationAndPayload = Prisma.StationGetPayload<{
   include: {
     properties: {
       include: {
-        hours: true;
+        slots: true;
       };
     };
-    comments: true;
+    rates: true;
     coordinates: true;
   };
 }>;
@@ -33,7 +33,8 @@ export const PlugTypes = [
   PlugType.TYPE3,
   PlugType.CCS,
   PlugType.CHADEMO,
-  PlugType.GREENUP
+  PlugType.GREENUP,
+  PlugType.EF
 ];
 
 export const VehicleElectricalTypes = [
@@ -42,10 +43,9 @@ export const VehicleElectricalTypes = [
   VehicleElectricalType.PHEV
 ];
 
-export interface OpeningHours {
-  day: number;
-  openTime: number;
-  closeTime: number;
+export interface Slot {
+  opensAt: string;
+  closesAt: string;
 }
 
 export interface PublicStationProperties {
@@ -62,7 +62,7 @@ export interface PublicStationProperties {
     price: number;
     isGreenEnergy: boolean;
     plugTypes: number[];
-    hours: OpeningHours[];
+    slots: Slot[];
     nbChargingPoints: number;
   };
 }
@@ -73,7 +73,7 @@ export interface PrivateStationProperties extends Omit<PublicStationProperties, 
     price: number;
     isGreenEnergy: boolean;
     plugTypes: number[];
-    hours: OpeningHours[];
+    slots: Slot[];
   };
 }
 
@@ -81,4 +81,35 @@ export interface MessageInput {
   receiverId: string;
   createdAt: string;
   body: string;
+}
+
+export interface GetStationFromParams {
+  minPrice: number;
+  maxPrice: number;
+  plugTypes?: number[];
+  range?: number;
+  type?: number;
+  userLat: number;
+  userLong: number;
+}
+
+export interface StationRatingInput {
+  stationId: string;
+  userId: string;
+  rate: number;
+  creationDate: string;
+  comment?: string;
+}
+
+export type UserRatingInput = Omit<StationRatingInput, 'stationId'>;
+
+export interface UploadedPicture {
+  fieldName: string;
+  originalName: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
 }

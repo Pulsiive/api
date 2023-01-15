@@ -17,20 +17,26 @@ model Admin {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  firstName       String
-  lastName        String
-  email           String           @unique
-  password        String
-  dateOfBirth     DateTime
-  balance         Int              @default(0)
-  contacts        Contacts[]
-  vehicles        Vehicle[]
-  privateStations Station[]
-  comments        StationComment[]
-  orders          Order[]
-  sentMessages Message[] @relation(name: "Author")
+  id               String    @id @default(uuid())
+  firstName        String
+  lastName         String
+  email            String    @unique
+  password         String
+  dateOfBirth      DateTime
+  emailVerifiedAt  DateTime?
+  balance          Int       @default(0)
+  contacts         Contacts[]
+  vehicles         Vehicle[]
+  privateStations  Station[]
+  wroteRatings     Rating[]
+  receivedRatings  Rating[]  @relation(name: "Recipient")
+  likedRatings     Rating[]  @relation(name: "likedRatings")
+  dislikedRatings  Rating[]  @relation(name: "dislikedRatings")
+  orders           Order[]
+  sentMessages     Message[] @relation(name: "Author")
   receivedMessages Message[] @relation(name: "Receiver")
+  reservations     Slot[]
+  isFromOAuth      Boolean   @default(false)
 }
 
 model PasswordReset {
@@ -40,32 +46,40 @@ model PasswordReset {
   createdAt DateTime @default(now())
 }
 
+model PhoneNumberVerification {
+  id          String   @id @default(uuid())
+  otp         String
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+}
+
 model Contacts {
   id              String       @id @default(uuid())
   contactName     String       @unique
   author          User         @relation(fields: [authorId], references: [id])
-  authorId        String      
+  authorId        String
 }
 
 model Vehicle {
-  id        String      @id @default(uuid())
-  owner     User        @relation(fields: [ownerId], references: [id])
-  ownerId   String
-  type      VehicleType @default(CAR)
-  plugTypes PlugType[]
+  id             String                @id @default(uuid())
+  owner          User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        String
+  type           VehicleType           @default(CAR)
+  plugTypes      PlugType[]
   electricalType VehicleElectricalType
-  maxPower  Decimal
+  maxPower       Decimal
 }
 
 model Station {
   id          String              @id @default(uuid())
-  owner       User                @relation(fields: [ownerId], references: [id])
-  ownerId     String
-  orders       Order[]
-  rate        Int @default(0)
+  owner       User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String?
+  orders      Order[]
+  rate        Float               @default(0)
+  rateNumber  Int                 @default(0)
   coordinates StationCoordinates?
   properties  StationProperties?
-  comments    StationComment[]
+  rates       Rating[]
 }
 
 model StationCoordinates {
@@ -81,59 +95,73 @@ model StationCoordinates {
 }
 
 model StationProperties {
-  id               String         @id @default(uuid())
-  station          Station        @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId        String         @unique
+  id               String     @id @default(uuid())
+  station          Station    @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId        String     @unique
   isPublic         Boolean
   maxPower         Decimal
   price            Int
   nbChargingPoints Int
   isGreenEnergy    Boolean
   plugTypes        PlugType[]
-  hours            StationHours[]
+  slots            Slot[]
 }
 
-model StationHours {
+model Slot {
   id                  String            @id @default(uuid())
   stationProperties   StationProperties @relation(fields: [stationPropertiesId], references: [id], onDelete: Cascade)
   stationPropertiesId String
-  day                 Int
-  openTime            DateTime
-  closeTime           DateTime
+  isBooked            Boolean           @default(false)
+  driver              User?             @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  driverId            String?
+  opensAt             DateTime
+  closesAt            DateTime
 }
 
-model StationComment {
-  id        String   @id @default(uuid())
-  station   Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  rate      Int
-  body      String
-  pictures  String[]
-  dates     DateTime
-  likes     Int
+model Rating {
+  id          String   @id @default(uuid())
+  recipient   User?    @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
+  recipientId String?
+  station     Station? @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId   String?
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  likedBy     User[]   @relation(name: "likedRatings")
+  dislikedBy  User[]   @relation(name: "dislikedRatings")
+  rate        Int
+  comment     String?
+  pictures    String[]
+  date        DateTime
+  likes       Int      @default(0)
+  dislikes    Int      @default(0)
 }
 
 model Order {
   id         String   @id @default(uuid())
-  customer   User     @relation(fields: [customerId], references: [id])
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
-  station    Station  @relation(fields: [stationId], references: [id])
+  station    Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId  String
   date       DateTime
   price      Int
 }
 
 model Message {
-  id String @id @default(uuid())
-  author User @relation(fields: [authorId], references: [id], name: "Author")
-  authorId String
-  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+  id         String   @id @default(uuid())
+  author     User     @relation(fields: [authorId], references: [id], name: "Author", onDelete: Cascade)
+  authorId   String
+  receiver   User     @relation(fields: [receiverId], references: [id], name: "Receiver", onDelete: Cascade)
   receiverId String
-  body String
-  createdAt DateTime
-  read Boolean? @default(false)
+  body       String
+  createdAt  DateTime
+  read       Boolean? @default(false)
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  token     String
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 enum VehicleType {
@@ -156,4 +184,5 @@ enum PlugType {
   CCS
   CHADEMO
   GREENUP
+  EF
 }

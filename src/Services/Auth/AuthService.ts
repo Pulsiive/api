@@ -6,6 +6,9 @@ import crypto from 'crypto';
 import MailService from '../MailService';
 import moment from 'moment';
 import Site from '../Site';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`);
 
 class AuthService {
   static loginURL = `${process.env.CLIENT_URL}/login`;
@@ -55,6 +58,33 @@ class AuthService {
     if (isValid) return await JWTService.signWrapper(user);
     throw new ApiError('Error: Email address or password invalid', 401);
   }
+
+  static async googleLogin(tokenId: any) {
+    const response = await client.verifyIdToken({idToken: tokenId, audience: `${process.env.GOOGLE_CLIENT_ID}`});
+    const email = response.getPayload()?.email ?? '';
+    const firstName = response.getPayload()?.name ?? '';
+    const lastName = response.getPayload()?.family_name ?? '';
+
+    let user = await prisma.user.findUnique({
+        where: {
+            email: email,
+        }
+    })
+
+    if (!user) {
+        user = await prisma.user.create({
+            data: {
+                firstName: firstName, 
+                lastName: lastName,
+                email: email,
+                password: `${email}${process.env.ACCESS_TOKEN_SECRET}`,
+                dateOfBirth: new Date(),
+            },
+        });
+    }
+
+    return {...user, accessToken: await JWTService.signWrapper(user)}
+}
 
   static async checkUserExist(userId: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
