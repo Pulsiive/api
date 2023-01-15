@@ -65,6 +65,11 @@ router.get(
 router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.deleteMessage);
 router.post('/api/v1/profile/message', AuthMiddleware, UserController.createMessage);
 
+router.post('/api/v1/profile/contact/', AuthMiddleware, UserController.createContact);
+router.put('/api/v1/profile/contact/', AuthMiddleware, UserController.updateContact);
+router.delete('/api/v1/profile/contact/', AuthMiddleware, UserController.removeContact);
+router.get('/api/v1/profile/contacts/', AuthMiddleware, UserController.getContacts);
+
 router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
 router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);

@@ -310,6 +310,63 @@ class UserService {
     });
     return ratings;
   }
+
+  static async createContact(userId: any, contactName: any) {
+    const res = await prisma.contacts.create({
+      data: {
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        contactName
+      }
+    });
+    return res;
+  }
+
+  static async updateContact(userId: any, contactName: any, newName: any) {
+    const res = await prisma.contacts.update({
+      where: {
+        contactName: contactName
+      },
+      data: {
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        contactName: newName
+      }
+    });
+    console.log('res --> ', res);
+    return res;
+  }
+  static async deleteContactById(userId: any) {
+    const contactDeleted = await prisma.contacts.delete({
+      where: {
+        id: userId
+      }
+    });
+    console.log('contact deleted => ', contactDeleted);
+    return contactDeleted;
+  }
+
+  static async getContactsById(userId: any) {
+    const getContacts = await prisma.user.findMany({
+      where: {
+        id: userId
+      },
+      select: {
+        contacts: {
+          select: {
+            contactName: true
+          }
+        }
+      }
+    });
+    return getContacts;
+  }
 }
 
 export default UserService;
