@@ -16,6 +16,7 @@ class OAuthService {
       });
       return { payload: ticket.getPayload() };
     } catch (error) {
+      console.log(error);
       throw new ApiError("Error: User not found", 422);
     }
   }
