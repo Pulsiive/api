@@ -257,23 +257,11 @@ class UserController {
   static async createContact(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const contactName = req.body.contactName;
+      const contactId = req.params.id;
 
-      const newContact = await UserService.createContact(userId, contactName);
+      const newContact = await UserService.createContact(userId, contactId);
 
       return res.json(newContact);
-    } catch (e: any) {
-      return errorWrapper(e, res);
-    }
-  }
-  static async updateContact(req: express.Request, res: express.Response) {
-    try {
-      const userId = req.body.user.payload.id;
-      const contactName = req.body.contactName;
-      const newName = req.body.newName;
-
-      const updateContact = await UserService.updateContact(userId, contactName, newName);
-      return res.json(updateContact);
     } catch (e: any) {
       return errorWrapper(e, res);
     }
@@ -282,7 +270,9 @@ class UserController {
   static async removeContact(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const contactDeleted = await UserService.deleteContactById(userId);
+      const contactId = req.params.id;
+
+      const contactDeleted = await UserService.deleteContactById(userId, contactId);
       return res.json(contactDeleted);
     } catch (e: any) {
       return errorWrapper(e, res);
@@ -293,7 +283,7 @@ class UserController {
     try {
       const userId = req.body.user.payload.id;
 
-      const contacts = await UserService.getContactsById(userId);
+      const contacts = await UserService.getContacts(userId);
       return res.json(contacts);
     } catch (e: any) {
       return errorWrapper(e, res);

@@ -25,7 +25,8 @@ model User {
   dateOfBirth      DateTime
   emailVerifiedAt  DateTime?
   balance          Int       @default(0)
-  contacts         Contacts[]
+  contacts         Contact[] @relation(name: "UserContactList")
+  contactOf        Contact[] @relation(name: "ContactOf")
   vehicles         Vehicle[]
   privateStations  Station[]
   wroteRatings     Rating[]
@@ -53,10 +54,11 @@ model PhoneNumberVerification {
   createdAt   DateTime @default(now())
 }
 
-model Contacts {
+model Contact {
   id              String       @id @default(uuid())
-  contactName     String       @unique
-  author          User         @relation(fields: [authorId], references: [id])
+  user            User         @relation(fields: [userId], references: [id], name: "ContactOf")
+  userId          String
+  author          User         @relation(fields: [authorId], references: [id], onDelete: Cascade, name: "UserContactList")
   authorId        String
 }
 
