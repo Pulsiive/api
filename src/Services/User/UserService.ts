@@ -8,7 +8,7 @@ import {
   MessageInput,
   UserRatingInput
 } from '../../Utils/types';
-import { PlugType, Vehicle, Message, Rating } from '@prisma/client';
+import { PlugType, Vehicle, Message, Rating, PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
@@ -342,61 +342,63 @@ class UserService {
     return ratings;
   }
 
-  static async createContact(userId: any, contactName: any) {
-    const res = await prisma.contacts.create({
+  static async createContact(userId: string, contactId: string) {
+    const contactExists = await prisma.contact.findFirst({
+      where: {
+        authorId: userId,
+        userId: contactId
+      }
+    });
+    if (contactExists) {
+      throw new ApiError('Error: this user is already in your contact list', 500);
+    }
+    const newContact = await prisma.contact.create({
       data: {
         author: {
           connect: {
             id: userId
           }
         },
-        contactName
-      }
-    });
-    return res;
-  }
-
-  static async updateContact(userId: any, contactName: any, newName: any) {
-    const res = await prisma.contacts.update({
-      where: {
-        contactName: contactName
-      },
-      data: {
-        author: {
+        user: {
           connect: {
-            id: userId
-          }
-        },
-        contactName: newName
-      }
-    });
-    console.log('res --> ', res);
-    return res;
-  }
-  static async deleteContactById(userId: any) {
-    const contactDeleted = await prisma.contacts.delete({
-      where: {
-        id: userId
-      }
-    });
-    console.log('contact deleted => ', contactDeleted);
-    return contactDeleted;
-  }
-
-  static async getContactsById(userId: any) {
-    const getContacts = await prisma.user.findMany({
-      where: {
-        id: userId
-      },
-      select: {
-        contacts: {
-          select: {
-            contactName: true
+            id: contactId
           }
         }
       }
     });
-    return getContacts;
+    return newContact;
+  }
+
+  static async deleteContactById(userId: string, contactId: string) {
+    const contact = await prisma.contact.deleteMany({
+      where: {
+        authorId: userId,
+        userId: contactId
+      }
+    });
+    if (contact.count > 0) {
+      return { message: 'success' };
+    } else {
+      throw new ApiError('Error: contact not found', 404);
+    }
+  }
+
+  static async getContacts(userId: any) {
+    const contacts = await prisma.contact.findMany({
+      where: {
+        authorId: userId
+      },
+      select: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            id: true
+          }
+        }
+      }
+    });
+    return contacts;
   }
 }
 

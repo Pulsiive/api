@@ -229,3 +229,36 @@ describe('UserService - rate user', () => {
     expect(user?.wroteRatings.length).toBe(1);
   });
 });
+
+describe('UserService - Contacts', () => {
+  test('should create contact', async () => {
+    const contact = await UserService.createContact(userId, secondUserId);
+    expect(contact).toBeDefined();
+  });
+
+  test('should delete contact', async () => {
+    const contact = await UserService.deleteContactById(userId, secondUserId);
+    expect(contact).toBeDefined();
+    const contacts = await UserService.getContacts(userId);
+    expect(contacts.length).toEqual(0);
+  });
+
+  test('should get all contacts', async () => {
+    const contact = await UserService.createContact(userId, secondUserId);
+    expect(contact).toBeDefined();
+    const contacts = await UserService.getContacts(userId);
+    expect(contacts.length).toEqual(1);
+  });
+
+  test('should throw at creation because user is already a contact', async () => {
+    await expect(UserService.createContact(userId, secondUserId)).rejects.toThrow(
+      'Error: this user is already in your contact list'
+    );
+  });
+
+  test('should throw at delete because the contact was not found', async () => {
+    await expect(UserService.deleteContactById(userId, '123')).rejects.toThrow(
+      'Error: contact not found'
+    );
+  });
+});
