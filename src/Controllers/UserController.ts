@@ -9,6 +9,28 @@ import updateProfileRules from '../Rules/updateProfileRules';
 import { ApiError } from '../Errors/ApiError';
 
 class UserController {
+  static async findUsers(req: express.Request, res: express.Response) {
+    try {
+      const searchBy = req.query.searchBy;
+      if (
+        !searchBy ||
+        (searchBy !== 'first_name' && searchBy !== 'last_name' && searchBy !== 'email')
+      ) {
+        throw new ApiError(
+          "Query parameter 'searchBy' is expected. Value must be set to 'first_name', 'last_name', or 'email "
+        );
+      }
+      const key = req.query.key as string;
+      if (!key) {
+        throw new ApiError("Expected 'key' query parameter");
+      }
+      const users = await UserService.findUsers(searchBy, key);
+      return res.json({ users });
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async getVehicle(req: express.Request, res: express.Response) {
     try {
       const vehicleId = req.params.id;

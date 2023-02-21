@@ -36,6 +36,37 @@ class UserService {
     return true;
   }
 
+  static async findUsers(searchBy: string, data: string) {
+    let where;
+    if (searchBy === 'first_name') {
+      where = {
+        firstName: {
+          startsWith: data
+        }
+      };
+    } else if (searchBy === 'last_name') {
+      where = {
+        lastName: {
+          startsWith: data
+        }
+      };
+    } else {
+      where = {
+        email: {
+          startsWith: data
+        }
+      };
+    }
+    return await prisma.user.findMany({
+      where,
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        id: true
+      }
+    });
+  }
   //TODO: remove useless try catch
 
   static async getVehicle(vehicleId: string, userId: string): Promise<Vehicle> {

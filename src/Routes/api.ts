@@ -11,8 +11,8 @@ import EmailVerificationController from '../Controllers/EmailVerificationControl
 import SlotController from '../Controllers/SlotController';
 import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
-import {AuthAndGuestMiddleware} from "../Middlewares/AuthAndGuestMiddleware";
-import OAuthController from "../Controllers/OAuthController";
+import { AuthAndGuestMiddleware } from '../Middlewares/AuthAndGuestMiddleware';
+import OAuthController from '../Controllers/OAuthController';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -33,6 +33,7 @@ router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset
 router.post('/api/v1/phone-number/request', PhoneNumberVerificationController.request);
 router.post('/api/v1/phone-number/verify', PhoneNumberVerificationController.verify);
 
+router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
 
