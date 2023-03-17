@@ -400,6 +400,40 @@ class UserService {
     });
     return contacts;
   }
+
+  static async addFavoriteStation(userId: string, stationId: string) {
+    await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        favoriteStations: {
+          connect: {
+            id: stationId
+          }
+        }
+      }
+    });
+    return { message: 'success' };
+  }
+
+  static async getFavoriteStations(userId: string) {
+    const userObject = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        favoriteStations: {
+          include: {
+            coordinates: true,
+            properties: true
+          }
+        }
+      }
+    });
+
+    return userObject?.favoriteStations;
+  }
 }
 
 export default UserService;

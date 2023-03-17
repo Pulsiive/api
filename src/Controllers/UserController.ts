@@ -311,6 +311,29 @@ class UserController {
       return errorWrapper(e, res);
     }
   }
+
+  static async addFavoriteStation(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const stationId = req.params.id;
+
+      const newFavoriteStation = await UserService.addFavoriteStation(userId, stationId);
+      return res.json(newFavoriteStation);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async getFavoriteStations(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const favoriteStations = await UserService.getFavoriteStations(userId);
+
+      return res.json(favoriteStations);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
 }
 
 export default UserController;

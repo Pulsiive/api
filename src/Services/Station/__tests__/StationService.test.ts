@@ -238,3 +238,18 @@ describe('Testing the rating of a public station', () => {
     );
   });
 });
+
+describe('Testing the favorite stations of the user', () => {
+  test('should add the station to the user favorites', async () => {
+    const favorite = await UserService.addFavoriteStation(userId, stationId);
+    expect(favorite).toBeDefined();
+  });
+
+  test('favorite station should be linked to the user', async () => {
+    const favoriteStations = await UserService.getFavoriteStations(userId);
+    expect(favoriteStations).toBeDefined();
+    if (favoriteStations) {
+      expect(favoriteStations[0].id).toBe(stationId);
+    }
+  });
+});

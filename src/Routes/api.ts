@@ -73,6 +73,8 @@ router.get('/api/v1/profile/contacts', AuthMiddleware, UserController.getContact
 router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
 router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
+router.post('/api/v1/station/favorite/:id', AuthMiddleware, UserController.addFavoriteStation);
+router.get('/api/v1/station/favorites', AuthMiddleware, UserController.getFavoriteStations);
 
 router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
 router.get('/api/v1/user/:id/rate', AuthMiddleware, UserController.getRatings);
