@@ -97,7 +97,16 @@ class StationService {
       include: {
         coordinates: true,
         properties: true,
-        rates: true,
+        rates: {
+          include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        },
         orders: true
       }
     });

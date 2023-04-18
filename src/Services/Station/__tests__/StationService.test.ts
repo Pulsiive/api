@@ -252,4 +252,10 @@ describe('Testing the favorite stations of the user', () => {
       expect(favoriteStations[0].id).toBe(stationId);
     }
   });
+
+  test('should throw because station does not exists', async () => {
+    await expect(UserService.addFavoriteStation(userId, '123')).rejects.toThrow(
+      'Error: Invalid station ID'
+    );
+  });
 });

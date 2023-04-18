@@ -48,6 +48,11 @@ router.get('/api/v1/profile/stations', AuthMiddleware, PrivateStationController.
 router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.create);
 router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);
+router.get(
+  '/api/v1/profile/comments/stations',
+  AuthMiddleware,
+  UserController.getUserStationsComments
+);
 
 router.get('/api/v1/stations/private/user/:id', PrivateStationController.getAllFromUser);
 router.post('/api/v1/stations', AuthMiddleware, StationController.getFromParams);

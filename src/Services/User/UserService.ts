@@ -342,6 +342,23 @@ class UserService {
     return ratings;
   }
 
+  static async getUserStationsComments(userId: string): Promise<Rating[]> {
+    const comments = await prisma.rating.findMany({
+      where: {
+        authorId: userId
+      },
+      include: {
+        station: {
+          include: {
+            properties: true,
+            coordinates: true
+          }
+        }
+      }
+    });
+    return comments.filter((comment) => (comment.stationId ? true : false));
+  }
+
   static async createContact(userId: string, contactId: string) {
     const contactExists = await prisma.contact.findFirst({
       where: {
@@ -402,6 +419,14 @@ class UserService {
   }
 
   static async addFavoriteStation(userId: string, stationId: string) {
+    const station = await prisma.station.findUnique({
+      where: {
+        id: stationId
+      }
+    });
+    if (!station) {
+      throw new ApiError('Error: Invalid station ID', 500);
+    }
     await prisma.user.update({
       where: {
         id: userId

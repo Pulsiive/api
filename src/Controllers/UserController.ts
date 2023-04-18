@@ -276,6 +276,17 @@ class UserController {
     }
   }
 
+  static async getUserStationsComments(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const comments = await UserService.getUserStationsComments(userId);
+
+      res.json(comments);
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async createContact(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
@@ -316,7 +327,7 @@ class UserController {
     try {
       const userId = req.body.user.payload.id;
       const stationId = req.params.id;
-
+      console.log(stationId);
       const newFavoriteStation = await UserService.addFavoriteStation(userId, stationId);
       return res.json(newFavoriteStation);
     } catch (e: any) {
