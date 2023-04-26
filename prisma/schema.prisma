@@ -38,6 +38,21 @@ model User {
   receivedMessages Message[] @relation(name: "Receiver")
   reservations     Slot[]
   isFromOAuth      Boolean   @default(false)
+  Payment          Payment[]
+}
+
+model Payment {
+  id           String    @id @default(uuid())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  amount       Int
+  date         DateTime
+  provider     String    @default("stripe")
+  providerId   String?
+  refundAmount Int       @default(0)
+  refundDate   DateTime?
+  ip           String?
+  last4        Int?       @db.SmallInt
 }
 
 model PasswordReset {
@@ -55,11 +70,11 @@ model PhoneNumberVerification {
 }
 
 model Contact {
-  id              String       @id @default(uuid())
-  user            User         @relation(fields: [userId], references: [id], name: "ContactOf")
-  userId          String
-  author          User         @relation(fields: [authorId], references: [id], onDelete: Cascade, name: "UserContactList")
-  authorId        String
+  id       String @id @default(uuid())
+  user     User   @relation(fields: [userId], references: [id], name: "ContactOf")
+  userId   String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade, name: "UserContactList")
+  authorId String
 }
 
 model Vehicle {
