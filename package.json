@@ -45,6 +45,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.7.5",
     "otp-generator": "^4.0.0",
+    "stripe": "^11.11.0",
     "twilio": "^3.82.0",
     "validatorjs": "^3.22.1"
   },
@@ -58,6 +59,7 @@
     "@types/node": "^17.0.23",
     "@types/nodemailer": "^6.4.4",
     "@types/otp-generator": "^4.0.0",
+    "@types/stripe": "^8.0.417",
     "dotenv-cli": "^5.1.0",
     "husky": "^8.0.1",
     "jest": "^28.1.0",

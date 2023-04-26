@@ -13,6 +13,7 @@ import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
 import { AuthAndGuestMiddleware } from '../Middlewares/AuthAndGuestMiddleware';
 import OAuthController from '../Controllers/OAuthController';
+import PaymentController from "../Controllers/PaymentController";
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -23,6 +24,10 @@ router.get('/api/v1/status', (req, res) => {
 
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
+
+router.post('/api/v1/payment', AuthMiddleware, PaymentController.store);
+router.post('/api/v1/payment-request', AuthMiddleware, PaymentController.createPaymentIntent);
+router.get('/api/v1/payments', AuthMiddleware, PaymentController.index);
 
 router.post('/api/v1/oauth/google/register', OAuthController.register);
 router.post('/api/v1/oauth/google/login', OAuthController.login);
