@@ -83,6 +83,11 @@ router.get('/api/v1/station/favorites', AuthMiddleware, UserController.getFavori
 
 router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
 router.get('/api/v1/user/:id/rate', AuthMiddleware, UserController.getRatings);
+router.get(
+  '/api/v1/user/:id/comments/stations',
+  AuthMiddleware,
+  UserController.getUserStationsComments
+);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
 router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);

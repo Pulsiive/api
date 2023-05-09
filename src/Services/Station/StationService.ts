@@ -68,7 +68,30 @@ class StationService {
       include: {
         coordinates: true,
         properties: true,
-        rates: true
+        rates: {
+          include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true
+              }
+            },
+            likedBy: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
+              }
+            },
+            dislikedBy: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        }
       }
     });
 
@@ -101,6 +124,20 @@ class StationService {
           include: {
             author: {
               select: {
+                firstName: true,
+                lastName: true
+              }
+            },
+            likedBy: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
+              }
+            },
+            dislikedBy: {
+              select: {
+                id: true,
                 firstName: true,
                 lastName: true
               }

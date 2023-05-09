@@ -99,6 +99,7 @@ class UserController {
           id: id
         },
         select: {
+          id: true,
           firstName: true,
           lastName: true,
           email: true,
@@ -278,7 +279,7 @@ class UserController {
 
   static async getUserStationsComments(req: express.Request, res: express.Response) {
     try {
-      const userId = req.body.user.payload.id;
+      const userId = req.params.id ? req.params.id : req.body.user.payload.id;
       const comments = await UserService.getUserStationsComments(userId);
 
       res.json(comments);
