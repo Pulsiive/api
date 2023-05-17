@@ -51,7 +51,7 @@ class PaymentService {
   static async createPaymentIntent() {
     try {
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: 1000,
+        amount: 300,
         currency: 'eur',
         setup_future_usage: "on_session"
       });
@@ -74,6 +74,72 @@ class PaymentService {
     });
 
     return payments;
+  }
+
+  static async storeFromBalance(userId: string) {
+    try {
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userId
+        }
+      });
+
+      if (!user || user?.balance < 300)
+        throw new ApiError('Error: Insufficient balance', 422);
+
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          balance: user?.balance - 300
+        }
+      });
+
+      await prisma.payment.create({
+        data: {
+          user: {
+            connect: {
+              id: userId
+            }
+          },
+          amount: 300,
+          date: new Date(),
+          provider: 'balance',
+        },
+      });
+
+      return updatedUser.balance;
+    } catch (e) {
+      throw new ApiError('Error: Payment failed', 422);
+    }
+
+    return true;
+  }
+
+  static async topUpBalance(userId: string) {
+    try {
+      const userToTopUp = await prisma.user.findUnique({where: {id: userId}});
+
+      if (!userToTopUp)
+        throw new ApiError('Error: User not found', 404);
+
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            balance: userToTopUp?.balance + 300
+          }
+        });
+
+      return updatedUser.balance;
+    } catch (e) {
+      throw new ApiError('Error: Payment failed', 422);
+    }
+
+    return true;
   }
 }
 
