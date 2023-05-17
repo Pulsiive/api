@@ -2,9 +2,7 @@ import express from 'express';
 import AuthService from '../Services/Auth/AuthService';
 import { errorWrapper } from '../Utils/errorWrapper';
 import Validator from 'validatorjs';
-import { ApiError } from '../Errors/ApiError';
 import PaymentService from "../Services/PaymentService";
-import SlotService from "../Services/Slot/SlotService";
 
 class PaymentController {
   static async store(req: express.Request, res: express.Response) {
@@ -24,6 +22,34 @@ class PaymentController {
 
       return res.json({
         success: true
+      });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async storeFromBalance(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+
+      const balance = await PaymentService.storeFromBalance(userId);
+
+      return res.json({
+        balance
+      });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async topUpBalance(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+
+      const balance = await PaymentService.topUpBalance(userId);
+
+      return res.json({
+        balance
       });
     } catch (e) {
       return errorWrapper(e, res);
