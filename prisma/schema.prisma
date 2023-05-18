@@ -29,6 +29,7 @@ model User {
   contactOf        Contact[] @relation(name: "ContactOf")
   vehicles         Vehicle[]
   privateStations  Station[]
+  favoriteStations Station[] @relation(name: "Favorite")
   wroteRatings     Rating[]
   receivedRatings  Rating[]  @relation(name: "Recipient")
   likedRatings     Rating[]  @relation(name: "likedRatings")
@@ -97,6 +98,7 @@ model Station {
   coordinates StationCoordinates?
   properties  StationProperties?
   rates       Rating[]
+  favoriteOf  User[] @relation(name: "Favorite")
 }
 
 model StationCoordinates {

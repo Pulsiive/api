@@ -41,6 +41,7 @@ router.post('/api/v1/phone-number/request', PhoneNumberVerificationController.re
 router.post('/api/v1/phone-number/verify', PhoneNumberVerificationController.verify);
 
 router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
+router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
 
@@ -55,6 +56,11 @@ router.get('/api/v1/profile/stations', AuthMiddleware, PrivateStationController.
 router.post('/api/v1/profile/station', AuthMiddleware, PrivateStationController.create);
 router.put('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.update);
 router.delete('/api/v1/profile/station/:id', AuthMiddleware, PrivateStationController.delete);
+router.get(
+  '/api/v1/profile/comments/stations',
+  AuthMiddleware,
+  UserController.getUserStationsComments
+);
 
 router.get('/api/v1/stations/private/user/:id', PrivateStationController.getAllFromUser);
 router.post('/api/v1/stations', AuthMiddleware, StationController.getFromParams);
@@ -80,9 +86,16 @@ router.get('/api/v1/profile/contacts', AuthMiddleware, UserController.getContact
 router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
 router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
+router.post('/api/v1/station/favorite/:id', AuthMiddleware, UserController.addFavoriteStation);
+router.get('/api/v1/station/favorites', AuthMiddleware, UserController.getFavoriteStations);
 
 router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);
 router.get('/api/v1/user/:id/rate', AuthMiddleware, UserController.getRatings);
+router.get(
+  '/api/v1/user/:id/comments/stations',
+  AuthMiddleware,
+  UserController.getUserStationsComments
+);
 
 router.post('/api/v1/slot', AuthMiddleware, SlotController.create);
 router.patch('/api/v1/slot/:id', AuthMiddleware, SlotController.update);
