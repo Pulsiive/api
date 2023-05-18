@@ -36,6 +36,36 @@ class UserService {
     return true;
   }
 
+  static async getUserFromId(userId: string) {
+    let user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        emailVerifiedAt: true,
+        privateStations: {
+          include: {
+            properties: true,
+            coordinates: true
+          }
+        },
+        wroteRatings: {
+          include: {
+            author: true
+          }
+        },
+        receivedRatings: {
+          include: {
+            author: true
+          }
+        }
+      }
+    });
+    return user;
+  }
+
   static async findUsers(searchBy: string, data: string) {
     let where;
     if (searchBy === 'first_name') {

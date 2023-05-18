@@ -9,6 +9,15 @@ import updateProfileRules from '../Rules/updateProfileRules';
 import { ApiError } from '../Errors/ApiError';
 
 class UserController {
+  static async getUserFromId(req: express.Request, res: express.Response) {
+    try {
+      const user = await UserService.getUserFromId(req.params.id);
+      return res.json(user);
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async findUsers(req: express.Request, res: express.Response) {
     try {
       const searchBy = req.query.searchBy;

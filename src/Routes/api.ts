@@ -34,6 +34,7 @@ router.post('/api/v1/phone-number/request', PhoneNumberVerificationController.re
 router.post('/api/v1/phone-number/verify', PhoneNumberVerificationController.verify);
 
 router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
+router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
 
