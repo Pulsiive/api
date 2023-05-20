@@ -11,6 +11,15 @@ import MailService from "../Services/MailService";
 import Site from "../Services/Site";
 
 class UserController {
+  static async getUserFromId(req: express.Request, res: express.Response) {
+    try {
+      const user = await UserService.getUserFromId(req.params.id);
+      return res.json(user);
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async findUsers(req: express.Request, res: express.Response) {
     try {
       const searchBy = req.query.searchBy;
@@ -101,6 +110,7 @@ class UserController {
           id: id
         },
         select: {
+          id: true,
           firstName: true,
           lastName: true,
           email: true,
@@ -296,6 +306,17 @@ class UserController {
     }
   }
 
+  static async getUserStationsComments(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.params.id ? req.params.id : req.body.user.payload.id;
+      const comments = await UserService.getUserStationsComments(userId);
+
+      res.json(comments);
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
   static async createContact(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
@@ -327,6 +348,29 @@ class UserController {
 
       const contacts = await UserService.getContacts(userId);
       return res.json(contacts);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async addFavoriteStation(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const stationId = req.params.id;
+      console.log(stationId);
+      const newFavoriteStation = await UserService.addFavoriteStation(userId, stationId);
+      return res.json(newFavoriteStation);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async getFavoriteStations(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const favoriteStations = await UserService.getFavoriteStations(userId);
+
+      return res.json(favoriteStations);
     } catch (e: any) {
       return errorWrapper(e, res);
     }

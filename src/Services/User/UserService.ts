@@ -75,6 +75,36 @@ class UserService {
     return true;
   }
 
+  static async getUserFromId(userId: string) {
+    let user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        emailVerifiedAt: true,
+        privateStations: {
+          include: {
+            properties: true,
+            coordinates: true
+          }
+        },
+        wroteRatings: {
+          include: {
+            author: true
+          }
+        },
+        receivedRatings: {
+          include: {
+            author: true
+          }
+        }
+      }
+    });
+    return user;
+  }
+
   static async getProfile(userId: string) {
     const user = await prisma.user.findUnique({
       where: {
@@ -396,6 +426,23 @@ class UserService {
     return ratings;
   }
 
+  static async getUserStationsComments(userId: string): Promise<Rating[]> {
+    const comments = await prisma.rating.findMany({
+      where: {
+        authorId: userId
+      },
+      include: {
+        station: {
+          include: {
+            properties: true,
+            coordinates: true
+          }
+        }
+      }
+    });
+    return comments.filter((comment) => (comment.stationId ? true : false));
+  }
+
   static async createContact(userId: string, contactId: string) {
     const contactExists = await prisma.contact.findFirst({
       where: {
@@ -453,6 +500,48 @@ class UserService {
       }
     });
     return contacts;
+  }
+
+  static async addFavoriteStation(userId: string, stationId: string) {
+    const station = await prisma.station.findUnique({
+      where: {
+        id: stationId
+      }
+    });
+    if (!station) {
+      throw new ApiError('Error: Invalid station ID', 500);
+    }
+    await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        favoriteStations: {
+          connect: {
+            id: stationId
+          }
+        }
+      }
+    });
+    return { message: 'success' };
+  }
+
+  static async getFavoriteStations(userId: string) {
+    const userObject = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        favoriteStations: {
+          include: {
+            coordinates: true,
+            properties: true
+          }
+        }
+      }
+    });
+
+    return userObject?.favoriteStations;
   }
 }
 
