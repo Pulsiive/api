@@ -24,6 +24,8 @@ model User {
   password         String
   dateOfBirth      DateTime
   emailVerifiedAt  DateTime?
+  isAlertOn        Boolean   @default(false)
+  isNotificationOn Boolean   @default(false)
   balance          Int       @default(0)
   contacts         Contact[] @relation(name: "UserContactList")
   contactOf        Contact[] @relation(name: "ContactOf")

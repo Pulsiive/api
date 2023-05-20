@@ -10,6 +10,8 @@ import {
 } from '../../Utils/types';
 import { PlugType, Vehicle, Message, Rating, PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import MailService from "../MailService";
+import Site from "../Site";
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -22,18 +24,70 @@ const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefi
 
 class UserService {
   static async update(userId: string, data: any) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        isNotificationOn: true,
+        isAlertOn: true,
+        email: true
+      }
+    });
+
     await prisma.user.update({
       where: { id: userId },
       data: {
         ...(data.email && { email: data.email }),
         ...(data.firstName && { firstName: data.firstName }),
         ...(data.lastName && { lastName: data.lastName }),
-        ...(data.new_password && { password: await bcrypt.hash(data.new_password, 10) })
+        ...(data.new_password && { password: await bcrypt.hash(data.new_password, 10) }),
+        ...(data.isNotificationOn !== undefined && { isNotificationOn: data.isNotificationOn }),
+        ...(data.isAlertOn !== undefined && { isAlertOn: data.isAlertOn }),
       },
       select: { email: true, firstName: true, lastName: true }
     });
 
+    if (user?.isNotificationOn) {}
+
+    if (user?.isAlertOn) {
+      if (data.email) {
+        await MailService.send(
+            Site.doNotReplyEmail,
+            data.email,
+            'Email Updated Successfully',
+            { email: user.email },
+            '../Resources/Mails/emailUpdatedConfirmation.handlebars'
+        );
+      }
+
+      if (data.new_password) {
+        await MailService.send(
+            Site.doNotReplyEmail,
+            user.email,
+            'Password Updated Successfully',
+            { email: user.email },
+            '../Resources/Mails/passwordUpdatedConfirmation.handlebars'
+        );
+      }
+    }
+
     return true;
+  }
+
+  static async getProfile(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        isNotificationOn: true,
+        isAlertOn: true,
+        email: true
+      }
+    });
+
+    return user;
   }
 
   static async findUsers(searchBy: string, data: string) {
