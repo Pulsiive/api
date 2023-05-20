@@ -7,6 +7,8 @@ import Validator from 'validatorjs';
 import AuthService from '../Services/Auth/AuthService';
 import updateProfileRules from '../Rules/updateProfileRules';
 import { ApiError } from '../Errors/ApiError';
+import MailService from "../Services/MailService";
+import Site from "../Services/Site";
 
 class UserController {
   static async getUserFromId(req: express.Request, res: express.Response) {
@@ -114,7 +116,9 @@ class UserController {
           email: true,
           emailVerifiedAt: true,
           dateOfBirth: true,
-          balance: true
+          balance: true,
+          isNotificationOn: true,
+          isAlertOn: true
         }
       });
 
@@ -154,6 +158,8 @@ class UserController {
         firstName,
         lastName,
         dateOfBirth,
+        isNotificationOn,
+        isAlertOn,
         email,
         password,
         new_password,
@@ -163,6 +169,8 @@ class UserController {
         firstName,
         lastName,
         dateOfBirth,
+        isNotificationOn,
+        isAlertOn,
         email,
         password,
         new_password,
@@ -245,6 +253,18 @@ class UserController {
       });
       if (validator.passes() && req.body.user.payload.id !== message.receiverId) {
         const newMessage = await UserService.createMessage(message, userId);
+        const sender = await UserService.getProfile(message.userId);
+        const receiver = await UserService.getProfile(message.receiverId);
+
+        if (receiver?.isAlertOn) {
+            await MailService.send(
+                Site.doNotReplyEmail,
+                receiver?.email,
+                'Message received',
+                { content: newMessage.body, email: sender?.email },
+                '../Resources/Mails/messageReceived.handlebars'
+            );
+        }
         return res.json(newMessage);
       }
       throw new ApiError('Invalid input', 400);

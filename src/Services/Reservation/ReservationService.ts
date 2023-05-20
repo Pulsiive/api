@@ -1,6 +1,9 @@
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
 import moment from "moment";
+import MailService from "../MailService";
+import Site from "../Site";
+import UserService from "../User/UserService";
 
 class ReservationService {
   static async create(
@@ -38,9 +41,24 @@ class ReservationService {
             id: userId
           }
         },
-        isBooked: true
+        isBooked: true,
+      },
+      include: {
+        driver: true
       }
     });
+
+    const user = await UserService.getProfile(userId);
+
+    if (user?.isAlertOn) {
+        await MailService.send(
+            Site.doNotReplyEmail,
+            user?.email,
+            'Your booking is confirmed',
+            { reservation: createdReservation },
+            '../Resources/Mails/reservationConfirmation.handlebars'
+        );
+    }
 
     return createdReservation;
   }
@@ -98,8 +116,23 @@ class ReservationService {
           disconnect: true
         },
         isBooked: false
+      },
+      include: {
+        driver: true
       }
     });
+
+    const user = await UserService.getProfile(userId);
+
+    if (user?.isAlertOn) {
+      await MailService.send(
+          Site.doNotReplyEmail,
+          user?.email,
+          'Your booking is cancelled',
+          { reservation: deletedReservation },
+          '../Resources/Mails/cancelReservationConfirmation.handlebars'
+      );
+    }
 
     return deletedReservation;
   }
