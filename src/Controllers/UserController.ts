@@ -253,7 +253,7 @@ class UserController {
       });
       if (validator.passes() && req.body.user.payload.id !== message.receiverId) {
         const newMessage = await UserService.createMessage(message, userId);
-        const sender = await UserService.getProfile(message.userId);
+        const sender = await UserService.getProfile(userId);
         const receiver = await UserService.getProfile(message.receiverId);
 
         if (receiver?.isAlertOn) {
@@ -261,7 +261,7 @@ class UserController {
                 Site.doNotReplyEmail,
                 receiver?.email,
                 'Message received',
-                { content: newMessage.body, email: sender?.email },
+                { content: newMessage?.body, email: sender?.email },
                 '../Resources/Mails/messageReceived.handlebars'
             );
         }
