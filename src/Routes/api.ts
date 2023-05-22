@@ -14,6 +14,7 @@ import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerific
 import { AuthAndGuestMiddleware } from '../Middlewares/AuthAndGuestMiddleware';
 import OAuthController from '../Controllers/OAuthController';
 import PaymentController from "../Controllers/PaymentController";
+import CodePromoController from '../Controllers/CodePromoController';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -24,6 +25,11 @@ router.get('/api/v1/status', (req, res) => {
 
 router.post('/api/v1/auth/register', AuthController.register);
 router.post('/api/v1/auth/login', AuthController.login);
+
+//Malik route
+router.post('/api/v1/codepromo', CodePromoController.create);
+router.get('/api/v1/codepromo/list', CodePromoController.getCodePromos);
+
 
 router.post('/api/v1/payment', AuthMiddleware, PaymentController.store);
 router.post('/api/v1/payment/balance', AuthMiddleware, PaymentController.storeFromBalance);

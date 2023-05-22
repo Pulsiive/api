@@ -44,6 +44,13 @@ model User {
   Payment          Payment[]
 }
 
+model Codepromo {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  discount        Float
+  expiration_date DateTime
+}
+
 model Payment {
   id           String    @id @default(uuid())
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
