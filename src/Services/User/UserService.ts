@@ -8,10 +8,11 @@ import {
   MessageInput,
   UserRatingInput
 } from '../../Utils/types';
-import { PlugType, Vehicle, Message, Rating, PrismaClient } from '@prisma/client';
+import { PlugType, Vehicle, Message, Rating } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import MailService from "../MailService";
-import Site from "../Site";
+import MailService from '../MailService';
+import Site from '../Site';
+import UploadCareService from '../UploadCareService';
 
 const getUserVehicle = async (userId: string, vehicleId: string): Promise<undefined | Vehicle> => {
   const userVehicles = await prisma.vehicle.findMany({
@@ -43,36 +44,64 @@ class UserService {
         ...(data.lastName && { lastName: data.lastName }),
         ...(data.new_password && { password: await bcrypt.hash(data.new_password, 10) }),
         ...(data.isNotificationOn !== undefined && { isNotificationOn: data.isNotificationOn }),
-        ...(data.isAlertOn !== undefined && { isAlertOn: data.isAlertOn }),
+        ...(data.isAlertOn !== undefined && { isAlertOn: data.isAlertOn })
       },
       select: { email: true, firstName: true, lastName: true }
     });
 
-    if (user?.isNotificationOn) {}
+    if (user?.isNotificationOn) {
+    }
 
     if (user?.isAlertOn) {
       if (data.email) {
         await MailService.send(
-            Site.doNotReplyEmail,
-            data.email,
-            'Email Updated Successfully',
-            { email: user.email },
-            '../Resources/Mails/emailUpdatedConfirmation.handlebars'
+          Site.doNotReplyEmail,
+          data.email,
+          'Email Updated Successfully',
+          { email: user.email },
+          '../Resources/Mails/emailUpdatedConfirmation.handlebars'
         );
       }
 
       if (data.new_password) {
         await MailService.send(
-            Site.doNotReplyEmail,
-            user.email,
-            'Password Updated Successfully',
-            { email: user.email },
-            '../Resources/Mails/passwordUpdatedConfirmation.handlebars'
+          Site.doNotReplyEmail,
+          user.email,
+          'Password Updated Successfully',
+          { email: user.email },
+          '../Resources/Mails/passwordUpdatedConfirmation.handlebars'
         );
       }
     }
 
     return true;
+  }
+
+  static async updateProfilePicture(userId: string, picture: { path: string; filename: string }) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        profilePictureId: true
+      }
+    });
+    if (!user) {
+      throw new ApiError('Error: Invalid user ID', 400);
+    }
+    if (user.profilePictureId !== process.env.DEFAULT_PROFILE_PICTURE_ID) {
+      await UploadCareService.deleteFileFromId(user?.profilePictureId);
+    }
+    const upload = await UploadCareService.uploadFile(picture.filename, picture.path);
+    await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        profilePictureId: upload.file
+      }
+    });
+    return upload;
   }
 
   static async getUserFromId(userId: string) {
@@ -84,6 +113,7 @@ class UserService {
         firstName: true,
         lastName: true,
         emailVerifiedAt: true,
+        profilePictureId: true,
         privateStations: {
           include: {
             properties: true,
@@ -147,7 +177,8 @@ class UserService {
         firstName: true,
         lastName: true,
         email: true,
-        id: true
+        id: true,
+        profilePictureId: true
       }
     });
   }
@@ -338,7 +369,8 @@ class UserService {
         select: {
           id: true,
           firstName: true,
-          lastName: true
+          lastName: true,
+          profilePictureId: true
         }
       });
       messagesAndUser.push({ message: lastMessages[i], user });
@@ -470,6 +502,41 @@ class UserService {
     return newContact;
   }
 
+  static async updateContact(
+    userId: string,
+    update: { contactId: string; customName: string | undefined; description: string | undefined }
+  ) {
+    if (!update.customName && !update.description) {
+      throw new ApiError('Error: Please provide a customName or description', 400);
+    }
+    const contactExists = await prisma.contact.findFirst({
+      where: {
+        authorId: userId,
+        userId: update.contactId
+      }
+    });
+    if (!contactExists) {
+      throw new ApiError('Error: this user is not in your contact list', 500);
+    }
+    const query = {
+      where: {
+        id: contactExists.id
+      },
+      data: {}
+    };
+    if (update.customName) {
+      query.data = {
+        customName: update.customName
+      };
+    }
+    if (update.description) {
+      query.data = { ...query.data, description: update.description };
+    }
+
+    const updatedContact = await prisma.contact.update(query);
+    return updatedContact;
+  }
+
   static async deleteContactById(userId: string, contactId: string) {
     const contact = await prisma.contact.deleteMany({
       where: {
@@ -494,9 +561,12 @@ class UserService {
           select: {
             firstName: true,
             lastName: true,
-            id: true
+            id: true,
+            profilePictureId: true
           }
-        }
+        },
+        customName: true,
+        description: true
       }
     });
     return contacts;
@@ -518,6 +588,30 @@ class UserService {
       data: {
         favoriteStations: {
           connect: {
+            id: stationId
+          }
+        }
+      }
+    });
+    return { message: 'success' };
+  }
+
+  static async removeFavoriteStation(userId: string, stationId: string) {
+    const station = await prisma.station.findUnique({
+      where: {
+        id: stationId
+      }
+    });
+    if (!station) {
+      throw new ApiError('Error: Invalid station ID', 500);
+    }
+    await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        favoriteStations: {
+          disconnect: {
             id: stationId
           }
         }

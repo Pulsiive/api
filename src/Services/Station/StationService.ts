@@ -7,6 +7,7 @@ import { Station, PlugType } from '@prisma/client';
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
 import { GetStationFromParams, PlugTypes, StationRatingInput } from '../../Utils/types';
+import UploadCareService from '../UploadCareService';
 
 class StationService {
   // will fetch public OR private station from given ID
@@ -73,23 +74,36 @@ class StationService {
             author: {
               select: {
                 firstName: true,
-                lastName: true
+                lastName: true,
+                profilePictureId: true
               }
             },
             likedBy: {
               select: {
                 id: true,
                 firstName: true,
-                lastName: true
+                lastName: true,
+                profilePictureId: true
               }
             },
             dislikedBy: {
               select: {
                 id: true,
                 firstName: true,
-                lastName: true
+                lastName: true,
+                profilePictureId: true
               }
             }
+          }
+        },
+        owner: {
+          select: {
+            id: true,
+            lastName: true,
+            firstName: true,
+            receivedRatings: true,
+            emailVerifiedAt: true,
+            profilePictureId: true
           }
         }
       }
@@ -212,21 +226,14 @@ class StationService {
 
     for (const picture of pictures) {
       try {
-        const formData = new FormData();
-        formData.append('UPLOADCARE_PUB_KEY', process.env.UPLOADCARE_PUBLIC_KEY);
-        formData.append('file', fs.readFileSync(picture.path), picture.filename);
-        const uploadResult = await axios.post('https://upload.uploadcare.com/base/', formData, {
-          headers: {
-            ...formData.getHeaders()
-          }
-        });
-        successResponses.push(uploadResult.data);
+        const uploadResult = await UploadCareService.uploadFile(picture.filename, picture.path);
+        successResponses.push(uploadResult);
         rating = await prisma.rating.update({
           where: {
             id: commentId
           },
           data: {
-            pictures: [...rating.pictures, uploadResult.data.file]
+            pictures: [...rating.pictures, uploadResult.file]
           }
         });
       } catch (e) {

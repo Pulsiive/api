@@ -250,6 +250,28 @@ describe('UserService - Contacts', () => {
     expect(contacts.length).toEqual(1);
   });
 
+  test('should update the custom name of the contact', async () => {
+    const customName = 'Monsieur Olivier';
+    const updatedContact = await UserService.updateContact(userId, {
+      contactId: secondUserId,
+      customName,
+      description: undefined
+    });
+    expect(updatedContact).toBeDefined();
+    expect(updatedContact.customName).toBe(customName);
+  });
+
+  test('should update the description of the contact', async () => {
+    const description = 'Olivier de Carglass';
+    const updatedContact = await UserService.updateContact(userId, {
+      contactId: secondUserId,
+      customName: undefined,
+      description
+    });
+    expect(updatedContact).toBeDefined();
+    expect(updatedContact.description).toBe(description);
+  });
+
   test('should throw at creation because user is already a contact', async () => {
     await expect(UserService.createContact(userId, secondUserId)).rejects.toThrow(
       'Error: this user is already in your contact list'

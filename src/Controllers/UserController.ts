@@ -7,14 +7,29 @@ import Validator from 'validatorjs';
 import AuthService from '../Services/Auth/AuthService';
 import updateProfileRules from '../Rules/updateProfileRules';
 import { ApiError } from '../Errors/ApiError';
-import MailService from "../Services/MailService";
-import Site from "../Services/Site";
+import MailService from '../Services/MailService';
+import Site from '../Services/Site';
 
 class UserController {
   static async getUserFromId(req: express.Request, res: express.Response) {
     try {
       const user = await UserService.getUserFromId(req.params.id);
       return res.json(user);
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async updateProfilePicture(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const picture = req.file;
+
+      if (!picture) {
+        throw new ApiError('Error: Please provide a picture', 400);
+      }
+      const uploadResponse = await UserService.updateProfilePicture(userId, picture);
+      return res.json(uploadResponse);
     } catch (e) {
       return errorWrapper(e, res);
     }
@@ -257,13 +272,13 @@ class UserController {
         const receiver = await UserService.getProfile(message.receiverId);
 
         if (receiver?.isAlertOn) {
-            await MailService.send(
-                Site.doNotReplyEmail,
-                receiver?.email,
-                'Message received',
-                { content: newMessage?.body, email: sender?.email },
-                '../Resources/Mails/messageReceived.handlebars'
-            );
+          await MailService.send(
+            Site.doNotReplyEmail,
+            receiver?.email,
+            'Message received',
+            { content: newMessage?.body, email: sender?.email },
+            '../Resources/Mails/messageReceived.handlebars'
+          );
         }
         return res.json(newMessage);
       }
@@ -342,6 +357,23 @@ class UserController {
     }
   }
 
+  static async updateContact(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const update = {
+        contactId: req.body.contactId,
+        customName: req.body.customName,
+        description: req.body.description
+      };
+      if (!update.customName && !update.description) {
+        throw new ApiError('Error: Please provide a customName or description', 400);
+      }
+      const updatedContact = await UserService.updateContact(userId, update);
+      return res.json(updatedContact);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
   static async getContacts(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
@@ -357,9 +389,19 @@ class UserController {
     try {
       const userId = req.body.user.payload.id;
       const stationId = req.params.id;
-      console.log(stationId);
       const newFavoriteStation = await UserService.addFavoriteStation(userId, stationId);
       return res.json(newFavoriteStation);
+    } catch (e: any) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async removeFavoriteStation(req: express.Request, res: express.Response) {
+    try {
+      const userId = req.body.user.payload.id;
+      const stationId = req.params.id;
+      const removedStation = await UserService.removeFavoriteStation(userId, stationId);
+      return res.json(removedStation);
     } catch (e: any) {
       return errorWrapper(e, res);
     }

@@ -13,7 +13,7 @@ import ReservationController from '../Controllers/ReservationController';
 import PhoneNumberVerificationController from '../Controllers/PhoneNumberVerificationController';
 import { AuthAndGuestMiddleware } from '../Middlewares/AuthAndGuestMiddleware';
 import OAuthController from '../Controllers/OAuthController';
-import PaymentController from "../Controllers/PaymentController";
+import PaymentController from '../Controllers/PaymentController';
 import CodePromoController from '../Controllers/CodePromoController';
 
 const router = express.Router();
@@ -29,7 +29,6 @@ router.post('/api/v1/auth/login', AuthController.login);
 //Malik route
 router.post('/api/v1/codepromo', CodePromoController.create);
 router.get('/api/v1/codepromo/list', CodePromoController.getCodePromos);
-
 
 router.post('/api/v1/payment', AuthMiddleware, PaymentController.store);
 router.post('/api/v1/payment/balance', AuthMiddleware, PaymentController.storeFromBalance);
@@ -50,6 +49,12 @@ router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
+router.post(
+  '/api/v1/profile/picture',
+  upload.single('file'),
+  AuthMiddleware,
+  UserController.updateProfilePicture
+);
 
 router.get('/api/v1/profile/vehicle/:id', AuthMiddleware, UserController.getVehicle);
 router.get('/api/v1/profile/vehicle', AuthMiddleware, UserController.getVehicles);
@@ -86,6 +91,7 @@ router.delete('/api/v1/profile/message/:id', AuthMiddleware, UserController.dele
 router.post('/api/v1/profile/message', AuthMiddleware, UserController.createMessage);
 
 router.post('/api/v1/profile/contact/:id', AuthMiddleware, UserController.createContact);
+router.put('/api/v1/profile/contact/update', AuthMiddleware, UserController.updateContact);
 router.delete('/api/v1/profile/contact/:id', AuthMiddleware, UserController.removeContact);
 router.get('/api/v1/profile/contacts', AuthMiddleware, UserController.getContacts);
 
@@ -93,6 +99,7 @@ router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
 router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);
 router.post('/api/v1/station/favorite/:id', AuthMiddleware, UserController.addFavoriteStation);
+router.delete('/api/v1/station/favorite/:id', AuthMiddleware, UserController.removeFavoriteStation);
 router.get('/api/v1/station/favorites', AuthMiddleware, UserController.getFavoriteStations);
 
 router.post('/api/v1/user/rate', AuthMiddleware, UserController.rate);

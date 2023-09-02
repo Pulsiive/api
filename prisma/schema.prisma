@@ -23,6 +23,7 @@ model User {
   email            String    @unique
   password         String
   dateOfBirth      DateTime
+  profilePictureId String    @default("c582e63c-d24e-42cc-ae9d-0f0750fad5c0")
   emailVerifiedAt  DateTime?
   isAlertOn        Boolean   @default(false)
   isNotificationOn Boolean   @default(false)
@@ -85,6 +86,8 @@ model Contact {
   userId   String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade, name: "UserContactList")
   authorId String
+  description String?
+  customName  String?
 }
 
 model Vehicle {
@@ -120,6 +123,7 @@ model StationCoordinates {
   city        String
   country     String
   countryCode String
+  postalCode  Int
 }
 
 model StationProperties {

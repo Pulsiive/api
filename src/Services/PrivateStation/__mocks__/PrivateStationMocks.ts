@@ -13,7 +13,8 @@ export const station = {
     address: '34 rue de la Paix',
     city: 'Paris',
     country: 'France',
-    countryCode: '123'
+    countryCode: '123',
+    postalCode: 75001
   },
   properties: {
     maxPower: 23,
@@ -59,7 +60,7 @@ export const stationComparisonObject = {
     slots: expect.any(Array)
   },
   rateNumber: expect.any(Number),
-  rates: expect.any(Array),
+  rates: expect.any(Array)
 };
 
 export const stationNumeroDos = {
@@ -70,6 +71,7 @@ export const stationNumeroDos = {
     address: 'Rue de la patate',
     city: 'Paris',
     country: 'France',
-    countryCode: '123'
+    countryCode: '123',
+    postalCode: 75001
   }
 };
