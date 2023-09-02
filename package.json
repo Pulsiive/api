@@ -11,7 +11,7 @@
     "docker": "docker-compose up",
     "docker-generate-db-models": "prisma migrate dev",
     "docker-generate-db-test-models": "dotenv -e .env.test -- prisma migrate deploy",
-    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest ./src",
+    "test": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest ./src --coverage",
     "test-coverage": "npx dotenv -v DATABASE_URL=postgresql://test:test@localhost:5433/db_test?schema=public  -- npx jest --coverage ./src",
     "test-production": "npx dotenv -e .env.production -- npx jest ./prod_testing/",
     "seed": "prisma db seed && npx dotenv -e .env.test -- npx prisma db seed",
@@ -31,6 +31,7 @@
   "dependencies": {
     "@prisma/client": "^3.12.0",
     "@types/validatorjs": "^3.15.0",
+    "@uploadcare/rest-client": "^6.6.1",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

@@ -33,7 +33,10 @@ import { PlugType } from '@prisma/client';
               address: station.adresse_station,
               city: station.consolidated_commune,
               country: 'France',
-              countryCode: 'FR'
+              countryCode: 'FR',
+              postalCode: Math.trunc(
+                station.consolidated_code_postal ? station.consolidated_code_postal : 75000
+              )
             }
           },
           properties: {

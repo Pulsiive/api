@@ -56,6 +56,7 @@ export interface PublicStationProperties {
     city: string;
     country: string;
     countryCode: string;
+    postalCode: number;
   };
   properties: {
     maxPower: number;
