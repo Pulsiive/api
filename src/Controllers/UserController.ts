@@ -133,7 +133,48 @@ class UserController {
           dateOfBirth: true,
           balance: true,
           isNotificationOn: true,
-          isAlertOn: true
+          isAlertOn: true,
+          profilePictureId: true,
+          favoriteStations: {
+            include: {
+              coordinates: true,
+              properties: true,
+              rates: {
+                where: {
+                  responseToRatingId: null
+                },
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true,
+                      profilePictureId: true
+                    }
+                  },
+                  responses: {
+                    include: {
+                      author: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          profilePictureId: true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              owner: {
+                include: {
+                  receivedRatings: true
+                }
+              }
+            }
+          },
+          likedRatings: true,
+          dislikedRatings: true
         }
       });
 

@@ -1,6 +1,3 @@
-import fs from 'fs';
-import axios from 'axios';
-import FormData from 'form-data';
 import { getDistance } from 'geolib';
 import { Station, PlugType } from '@prisma/client';
 
@@ -70,6 +67,9 @@ class StationService {
         coordinates: true,
         properties: true,
         rates: {
+          where: {
+            responseToRatingId: null
+          },
           include: {
             author: {
               select: {
@@ -93,6 +93,17 @@ class StationService {
                 lastName: true,
                 profilePictureId: true
               }
+            },
+            responses: {
+              include: {
+                author: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    profilePictureId: true
+                  }
+                }
+              }
             }
           }
         },
@@ -109,7 +120,7 @@ class StationService {
       }
     });
 
-    const inRangeStations: Station[] = [];
+    const inRangeStations = [];
     const range = params.range ?? 2000; //2km by default
     for (const station of stations) {
       if (station.coordinates) {
@@ -176,7 +187,11 @@ class StationService {
       throw new ApiError('Error: Invalid station ID', 404);
     }
     const newStationScore =
-      (station.rates.reduce((previous, current) => previous + current.rate, 0) + rate) /
+      (station.rates.reduce((previous, current) => {
+        const currentRate = current.rate ? current.rate : 0;
+        return previous + currentRate;
+      }, 0) +
+        rate) /
       (station.rateNumber + 1);
     const rating = await prisma.rating.create({
       data: {
