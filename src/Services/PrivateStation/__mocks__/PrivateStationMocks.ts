@@ -6,6 +6,14 @@ export const user = {
   dateOfBirth: '2022-03-02T18:11:29.003Z'
 };
 
+export const secondUser = {
+  email: 'privatestationservice2@test.com',
+  password: '123',
+  firstName: 'PrivateStationService2',
+  lastName: 'Test2',
+  dateOfBirth: '2022-03-02T18:11:29.003Z'
+};
+
 export const station = {
   coordinates: {
     lat: 34.56,

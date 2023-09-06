@@ -95,6 +95,7 @@ router.put('/api/v1/profile/contact/update', AuthMiddleware, UserController.upda
 router.delete('/api/v1/profile/contact/:id', AuthMiddleware, UserController.removeContact);
 router.get('/api/v1/profile/contacts', AuthMiddleware, UserController.getContacts);
 
+router.post('/api/v1/station/respond', AuthMiddleware, PrivateStationController.respondToRating);
 router.post('/api/v1/station/rate', AuthMiddleware, StationController.rate);
 router.post('/api/v1/station/rate/like/:id', AuthMiddleware, StationController.likeComment);
 router.post('/api/v1/station/rate/dislike/:id', AuthMiddleware, StationController.dislikeComment);

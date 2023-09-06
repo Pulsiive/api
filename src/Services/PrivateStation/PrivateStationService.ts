@@ -1,7 +1,7 @@
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
 import { PlugTypes, PrivateStationProperties, StationAndPayload } from '../../Utils/types';
-import { Station } from '@prisma/client';
+import { Rating, Station } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime';
 
 const getUserStation = async (
@@ -36,12 +36,10 @@ class PrivateStationService {
         slots: null
       };
 
-      const slots = props.properties.slots.map(
-        (slot: { opensAt: string; closesAt: string }) => ({
-          opensAt: slot.opensAt,
-          closesAt: slot.closesAt
-        })
-      );
+      const slots = props.properties.slots.map((slot: { opensAt: string; closesAt: string }) => ({
+        opensAt: slot.opensAt,
+        closesAt: slot.closesAt
+      }));
 
       const createdStation = await prisma.station.create({
         data: {
@@ -100,12 +98,10 @@ class PrivateStationService {
         nbChargingPoints: 1,
         plugTypes: props.properties.plugTypes.map((plugId: number) => PlugTypes[plugId])
       };
-      const slots = props.properties.slots.map(
-        (slot: { opensAt: string; closesAt: string }) => ({
-          opensAt: slot.opensAt,
-          closesAt: slot.closesAt
-        })
-      );
+      const slots = props.properties.slots.map((slot: { opensAt: string; closesAt: string }) => ({
+        opensAt: slot.opensAt,
+        closesAt: slot.closesAt
+      }));
       if (station.properties) {
         await prisma.slot.deleteMany({
           where: {
@@ -223,6 +219,49 @@ class PrivateStationService {
     } catch (e) {
       throw new ApiError('Error: Failed to fetch stations');
     }
+  }
+
+  static async respondToRating(
+    userId: string,
+    { ratingId, comment, creationDate }: { ratingId: string; comment: string; creationDate: Date }
+  ): Promise<Rating> {
+    const initialRating = await prisma.rating.findUnique({
+      where: {
+        id: ratingId
+      }
+    });
+    if (!initialRating) {
+      throw new ApiError('Error: Rating not found', 404);
+    }
+    if (!initialRating.stationId) {
+      throw new ApiError('Error: Initial rating is not attached to a station', 500);
+    }
+    const station = await getUserStation(userId, initialRating.stationId);
+    if (!station) {
+      throw new ApiError('Error: Invalid station ID', 500);
+    }
+    const newResponse = await prisma.rating.create({
+      data: {
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        comment,
+        date: creationDate,
+        responseToRating: {
+          connect: {
+            id: ratingId
+          }
+        },
+        station: {
+          connect: {
+            id: initialRating.stationId
+          }
+        }
+      }
+    });
+    return newResponse;
   }
 }
 

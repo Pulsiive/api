@@ -629,7 +629,44 @@ class UserService {
         favoriteStations: {
           include: {
             coordinates: true,
-            properties: true
+            properties: true,
+            rates: {
+              include: {
+                author: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    profilePictureId: true
+                  }
+                },
+                likedBy: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    profilePictureId: true
+                  }
+                },
+                dislikedBy: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    profilePictureId: true
+                  }
+                }
+              }
+            },
+            owner: {
+              select: {
+                id: true,
+                lastName: true,
+                firstName: true,
+                receivedRatings: true,
+                emailVerifiedAt: true,
+                profilePictureId: true
+              }
+            }
           }
         }
       }

@@ -156,11 +156,14 @@ model Rating {
   recipientId String?
   station     Station? @relation(fields: [stationId], references: [id], onDelete: Cascade)
   stationId   String?
+  responseToRating Rating? @relation(fields: [responseToRatingId], references: [id], onDelete: Cascade, name: "Responses")
+  responseToRatingId String? 
+  responses Rating[] @relation(name: "Responses")
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
   likedBy     User[]   @relation(name: "likedRatings")
   dislikedBy  User[]   @relation(name: "dislikedRatings")
-  rate        Int
+  rate        Int?
   comment     String?
   pictures    String[]
   date        DateTime
