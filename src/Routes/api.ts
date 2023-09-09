@@ -48,6 +48,10 @@ router.post('/api/v1/phone-number/verify', PhoneNumberVerificationController.ver
 router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
+router.get('/api/v1/admin', (req: any, res: any) => {
+  return res.redirect('http://localhost:5555');
+});
+
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
 router.post(
   '/api/v1/profile/picture',
