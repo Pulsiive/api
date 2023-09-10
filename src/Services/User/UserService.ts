@@ -497,6 +497,18 @@ class UserService {
             id: contactId
           }
         }
+      },
+      select: {
+        customName: true,
+        description: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            profilePictureId: true
+          }
+        }
       }
     });
     return newContact;
@@ -522,7 +534,19 @@ class UserService {
       where: {
         id: contactExists.id
       },
-      data: {}
+      data: {},
+      select: {
+        customName: true,
+        description: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            profilePictureId: true
+          }
+        }
+      }
     };
     if (update.customName) {
       query.data = {

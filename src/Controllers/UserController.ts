@@ -173,6 +173,20 @@ class UserController {
               }
             }
           },
+          contacts: {
+            select: {
+              customName: true,
+              description: true,
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  profilePictureId: true
+                }
+              }
+            }
+          },
           likedRatings: true,
           dislikedRatings: true
         }
