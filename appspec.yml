@@ -4,3 +4,10 @@ files:
   - source: /
     destination: /home/ubuntu/api
 file_exists_behavior: OVERWRITE
+hooks:
+  BeforeInstall:
+    - location: /home/ubuntu/api/scripts/before_install.sh
+      runas: ubuntu
+  AfterInstall:
+    - location: /home/ubuntu/api/scripts/after_install.sh
+      runas: ubuntu
