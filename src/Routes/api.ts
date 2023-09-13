@@ -1,4 +1,5 @@
 import express from 'express';
+require('dotenv').config();
 import multer from 'multer';
 import os from 'os';
 
@@ -49,7 +50,8 @@ router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.get('/api/v1/admin', (req: any, res: any) => {
-  return res.redirect('http://localhost:5555');
+  const redirection = process.env.NODE_ENV === 'production' ? 'https://cloud.prisma.io' : 'http://localhost:5555';
+  return res.redirect(redirection);
 });
 
 router.patch('/api/v1/profile', AuthMiddleware, UserController.update);
