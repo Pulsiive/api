@@ -43,6 +43,7 @@ model User {
   reservations     Slot[]
   isFromOAuth      Boolean   @default(false)
   Payment          Payment[]
+  fcmToken         String?
 }
 
 model Codepromo {

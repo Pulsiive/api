@@ -16,6 +16,7 @@ import { AuthAndGuestMiddleware } from '../Middlewares/AuthAndGuestMiddleware';
 import OAuthController from '../Controllers/OAuthController';
 import PaymentController from '../Controllers/PaymentController';
 import CodePromoController from '../Controllers/CodePromoController';
+import NotificationController from '../Controllers/NotificationController';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -50,7 +51,8 @@ router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.get('/api/v1/admin', (req: any, res: any) => {
-  const redirection = process.env.NODE_ENV === 'production' ? 'https://cloud.prisma.io' : 'http://localhost:5555';
+  const redirection =
+    process.env.NODE_ENV === 'production' ? 'https://cloud.prisma.io' : 'http://localhost:5555';
   return res.redirect(redirection);
 });
 
@@ -134,5 +136,7 @@ router.post(
   AuthMiddleware,
   StationController.attachPicturesToRating
 );
+
+router.post('/api/v1/notification', AuthMiddleware, NotificationController.send); // not secure, semone could spam notifications
 
 export = router;
