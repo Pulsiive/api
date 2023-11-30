@@ -19,6 +19,7 @@ class AuthService {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
+    fcmToken?: string;
   }) {
     let user = await prisma.user.findFirst({
       where: { email: data.email }
@@ -35,7 +36,8 @@ class AuthService {
           password: hash,
           firstName: data.firstName,
           lastName: data.lastName,
-          dateOfBirth: data.dateOfBirth
+          dateOfBirth: data.dateOfBirth,
+          fcmToken: data.fcmToken
         }
       });
     } catch (e) {
@@ -60,31 +62,34 @@ class AuthService {
   }
 
   static async googleLogin(tokenId: any) {
-    const response = await client.verifyIdToken({idToken: tokenId, audience: `${process.env.GOOGLE_CLIENT_ID}`});
+    const response = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: `${process.env.GOOGLE_CLIENT_ID}`
+    });
     const email = response.getPayload()?.email ?? '';
     const firstName = response.getPayload()?.name ?? '';
     const lastName = response.getPayload()?.family_name ?? '';
 
     let user = await prisma.user.findUnique({
-        where: {
-            email: email,
-        }
-    })
+      where: {
+        email: email
+      }
+    });
 
     if (!user) {
-        user = await prisma.user.create({
-            data: {
-                firstName: firstName, 
-                lastName: lastName,
-                email: email,
-                password: `${email}${process.env.ACCESS_TOKEN_SECRET}`,
-                dateOfBirth: new Date(),
-            },
-        });
+      user = await prisma.user.create({
+        data: {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: `${email}${process.env.ACCESS_TOKEN_SECRET}`,
+          dateOfBirth: new Date()
+        }
+      });
     }
 
-    return {...user, accessToken: await JWTService.signWrapper(user)}
-}
+    return { ...user, accessToken: await JWTService.signWrapper(user) };
+  }
 
   static async checkUserExist(userId: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });

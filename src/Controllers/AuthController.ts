@@ -3,27 +3,26 @@ import AuthService from '../Services/Auth/AuthService';
 import { errorWrapper } from '../Utils/errorWrapper';
 import Validator from 'validatorjs';
 import { ApiError } from '../Errors/ApiError';
-import EmailVerificationService from "../Services/EmailVerification/EmailVerificationService";
+import EmailVerificationService from '../Services/EmailVerification/EmailVerificationService';
 
 class AuthController {
   static async register(req: express.Request, res: express.Response) {
     try {
-      const { email, password, firstName, lastName, dateOfBirth } = req.body;
-      const data = { email, password, firstName, lastName, dateOfBirth };
-      const validator = new Validator(data, {
+      const validator = new Validator(req.body, {
         email: `required|email`,
         password: 'required|string|min:8',
         firstName: 'required|string|max:300',
         lastName: 'required|string|max:300',
-        dateOfBirth: 'required|date'
+        dateOfBirth: 'required|date',
+        fcmToken: 'string'
       });
 
       if (validator.fails()) {
         return res.status(422).json({ message: 'Error: User registration failed' });
       }
 
-      const accessToken = await AuthService.register(data);
-      await EmailVerificationService.request(data.email);
+      const accessToken = await AuthService.register(req.body);
+      await EmailVerificationService.request(req.body.email);
 
       return res.json({
         accessToken
@@ -49,13 +48,13 @@ class AuthController {
     const { tokenId } = req.body;
 
     try {
-        const user = await AuthService.googleLogin(tokenId);
+      const user = await AuthService.googleLogin(tokenId);
 
-        return res.json(user)
+      return res.json(user);
     } catch (e: any) {
-        return errorWrapper(e, res)
+      return errorWrapper(e, res);
     }
-}
+  }
 
   static async reqPasswordReset(req: express.Request, res: express.Response) {
     try {
