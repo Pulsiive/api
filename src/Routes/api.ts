@@ -165,6 +165,4 @@ router.post(
   StationController.attachPicturesToRating
 );
 
-router.post('/api/v1/notification', AuthMiddleware, NotificationController.send); // not secure, semone could spam notifications
-
 export = router;
