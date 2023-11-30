@@ -17,6 +17,7 @@ import OAuthController from '../Controllers/OAuthController';
 import PaymentController from '../Controllers/PaymentController';
 import CodePromoController from '../Controllers/CodePromoController';
 import NotificationController from '../Controllers/NotificationController';
+import ReservationRequestController from '../Controllers/ReservationRequestController';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -130,13 +131,38 @@ router.get('/api/v1/reservation', AuthMiddleware, ReservationController.index);
 router.get('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.show);
 router.delete('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.delete);
 
+router.get(
+  '/api/v1/owner/reservations/requests',
+  AuthMiddleware,
+  ReservationRequestController.getAllAsOwner
+);
+router.put(
+  '/api/v1/owner/reservations/requests/:id',
+  AuthMiddleware,
+  ReservationRequestController.updateStatus
+);
+
+router.get(
+  '/api/v1/driver/reservations/requests',
+  AuthMiddleware,
+  ReservationRequestController.getAllAsDriver
+);
+router.delete(
+  '/api/v1/driver/reservations/requests/:id',
+  AuthMiddleware,
+  ReservationRequestController.delete
+);
+router.post(
+  '/api/v1/driver/reservations/requests/',
+  AuthMiddleware,
+  ReservationRequestController.create
+);
+
 router.post(
   '/api/v1/picture',
   upload.array('file', 3),
   AuthMiddleware,
   StationController.attachPicturesToRating
 );
-
-router.post('/api/v1/notification', AuthMiddleware, NotificationController.send); // not secure, semone could spam notifications
 
 export = router;
