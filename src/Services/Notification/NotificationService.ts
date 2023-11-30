@@ -8,7 +8,11 @@ admin.initializeApp({
 });
 
 class NotificationService {
-  static async sendNotification(userId: string, data: { title: string; body?: string }) {
+  static async sendNotification(
+    userId: string,
+    notificationData: { title: string; body?: string },
+    data?: { [key: string]: string }
+  ) {
     const userObject = await prisma.user.findUnique({
       where: {
         id: userId
@@ -25,9 +29,10 @@ class NotificationService {
     }
     const message = {
       notification: {
-        ...data
+        ...notificationData
         // imageUrl: 'https://ucarecdn.com/46b04164-ec37-4ef3-a46e-0acfbef28f68/'
       },
+      data,
       token: userObject.fcmToken
     };
     return await admin.messaging().send(message);

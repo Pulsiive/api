@@ -79,6 +79,17 @@ class ReservationService {
             gte: moment(date).toDate(),
             lt:  moment(date).add(1, 'day').toDate()
           } }),
+      },
+      include: {
+        stationProperties: {
+          include: {
+            station: {
+              include: {
+                coordinates: true
+              }
+            }
+          }
+        }
       }
     });
 
