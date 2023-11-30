@@ -23,7 +23,7 @@ model User {
   email            String    @unique
   password         String
   dateOfBirth      DateTime
-  profilePictureId String    @default("c582e63c-d24e-42cc-ae9d-0f0750fad5c0")
+  profilePictureId String    @default("149c05a9-7985-4b8e-8c81-956826888b53")
   emailVerifiedAt  DateTime?
   isAlertOn        Boolean   @default(false)
   isNotificationOn Boolean   @default(false)
