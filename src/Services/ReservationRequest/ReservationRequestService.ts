@@ -44,6 +44,21 @@ class ReservationRequestService {
       where: {
         driverId: userId,
         isPending: true
+      },
+      include: {
+        slot: {
+          include: {
+            stationProperties: {
+              include: {
+                station: {
+                  include: {
+                    coordinates: true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     });
   }
