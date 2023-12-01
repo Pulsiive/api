@@ -6,6 +6,7 @@ import slotRules from "../Rules/slotRules";
 import {ApiError} from "../Errors/ApiError";
 import SlotService from "../Services/Slot/SlotService";
 import updateSlotRules from "../Rules/updateSlotRules";
+import moment from "moment";
 
 class SlotController {
   static async create(req: express.Request, res: express.Response) {
@@ -79,7 +80,17 @@ class SlotController {
         stationId = req.query.station_id ?? null;
 
       const date = req.query.date ?? null;
-      const slots = await SlotService.index(stationId, userId, date);
+      const slots = await SlotService.index(stationId, userId, date) as any;
+      for (const slot of slots) {
+        slot.price_per_minute = (slot.stationProperties.price/100).toFixed(2);
+        const diffInMiliseconds = moment(slot.closesAt).diff(slot.opensAt);
+        slot.nb_mins = diffInMiliseconds/60000;
+        slot.brut_price = slot.stationProperties.price * slot.nb_mins;
+        const price = slot.nb_mins * slot.price_per_minute;
+        slot.price = price.toFixed(2);
+      }
+
+      console.log(slots);
 
       return res.json(slots);
     } catch (e: any) {

@@ -31,8 +31,10 @@ class PaymentController {
   static async storeFromBalance(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
+      const brutPrice = req.body.brut_price;
+      const slotId = req.body.slot_id as any;
 
-      const balance = await PaymentService.storeFromBalance(userId);
+      const balance = await PaymentService.storeFromBalance(userId, slotId, brutPrice);
 
       return res.json({
         balance
@@ -45,8 +47,9 @@ class PaymentController {
   static async topUpBalance(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
+      const brutPrice = req.body.brut_price;
 
-      const balance = await PaymentService.topUpBalance(userId);
+      const balance = await PaymentService.topUpBalance(userId, brutPrice);
 
       return res.json({
         balance
@@ -58,10 +61,22 @@ class PaymentController {
 
   static async createPaymentIntent(req: express.Request, res: express.Response) {
     try {
-      const data = await PaymentService.createPaymentIntent();
+      const data = await PaymentService.createPaymentIntent(req.body.brut_price);
 
       return res.json({
         client_secret: data.client_secret,
+        id: data.id
+      });
+    } catch (e) {
+      return errorWrapper(e, res);
+    }
+  }
+
+  static async updatePaymentIntent(req: express.Request, res: express.Response) {
+    try {
+      const data = await PaymentService.updatePaymentIntent(req.body.payment_intent_id, req.body.brut_price);
+
+      return res.json({
         id: data.id
       });
     } catch (e) {

@@ -314,6 +314,7 @@ class UserController {
 
   static async createMessage(req: express.Request, res: express.Response) {
     try {
+      const wss = req.app.get("wss")
       const message = req.body.message;
       const userId = req.body.user.payload.id;
       const validator = new Validator(message, {
@@ -335,6 +336,13 @@ class UserController {
             '../Resources/Mails/messageReceived.handlebars'
           );
         }
+
+        wss.clients.forEach((client: any) => {
+          if (client.id === message.receiverId) {
+            client.send(JSON.stringify(newMessage));
+          }
+        });
+
         return res.json(newMessage);
       }
       throw new ApiError('Invalid input', 400);
