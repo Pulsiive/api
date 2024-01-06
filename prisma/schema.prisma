@@ -55,17 +55,20 @@ model Codepromo {
 }
 
 model Payment {
-  id           String    @id @default(uuid())
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
-  amount       Int
-  date         DateTime
-  provider     String    @default("stripe")
-  providerId   String?
-  refundAmount Int       @default(0)
-  refundDate   DateTime?
-  ip           String?
-  last4        Int?       @db.SmallInt
+  id               String    @id @default(uuid())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  slot             Slot?     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId           String?
+  amount           Int
+  date             DateTime
+  provider         String    @default("stripe")
+  transaction_type String    @default("debit")
+  providerId       String?
+  refundAmount     Int       @default(0)
+  refundDate       DateTime?
+  ip               String?
+  last4            Int?      @db.SmallInt
 }
 
 model PasswordReset {
@@ -83,11 +86,11 @@ model PhoneNumberVerification {
 }
 
 model Contact {
-  id       String @id @default(uuid())
-  user     User   @relation(fields: [userId], references: [id], name: "ContactOf")
-  userId   String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade, name: "UserContactList")
-  authorId String
+  id          String  @id @default(uuid())
+  user        User    @relation(fields: [userId], references: [id], name: "ContactOf")
+  userId      String
+  author      User    @relation(fields: [authorId], references: [id], onDelete: Cascade, name: "UserContactList")
+  authorId    String
   description String?
   customName  String?
 }
@@ -112,7 +115,7 @@ model Station {
   coordinates StationCoordinates?
   properties  StationProperties?
   rates       Rating[]
-  favoriteOf  User[] @relation(name: "Favorite")
+  favoriteOf  User[]              @relation(name: "Favorite")
 }
 
 model StationCoordinates {
@@ -150,28 +153,29 @@ model Slot {
   driverId            String?
   opensAt             DateTime
   closesAt            DateTime
+  Payment             Payment[]
   reservationRequests ReservationRequest[]
 }
 
 model Rating {
-  id          String   @id @default(uuid())
-  recipient   User?    @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
-  recipientId String?
-  station     Station? @relation(fields: [stationId], references: [id], onDelete: Cascade)
-  stationId   String?
-  responseToRating Rating? @relation(fields: [responseToRatingId], references: [id], onDelete: Cascade, name: "Responses")
-  responseToRatingId String? 
-  responses Rating[] @relation(name: "Responses")
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    String
-  likedBy     User[]   @relation(name: "likedRatings")
-  dislikedBy  User[]   @relation(name: "dislikedRatings")
-  rate        Int?
-  comment     String?
-  pictures    String[]
-  date        DateTime
-  likes       Int      @default(0)
-  dislikes    Int      @default(0)
+  id                 String   @id @default(uuid())
+  recipient          User?    @relation(fields: [recipientId], references: [id], name: "Recipient", onDelete: Cascade)
+  recipientId        String?
+  station            Station? @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  stationId          String?
+  responseToRating   Rating?  @relation(fields: [responseToRatingId], references: [id], onDelete: Cascade, name: "Responses")
+  responseToRatingId String?
+  responses          Rating[] @relation(name: "Responses")
+  author             User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId           String
+  likedBy            User[]   @relation(name: "likedRatings")
+  dislikedBy         User[]   @relation(name: "dislikedRatings")
+  rate               Int?
+  comment            String?
+  pictures           String[]
+  date               DateTime
+  likes              Int      @default(0)
+  dislikes           Int      @default(0)
 }
 
 model ReservationRequest {

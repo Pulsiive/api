@@ -37,6 +37,7 @@ router.post('/api/v1/payment', AuthMiddleware, PaymentController.store);
 router.post('/api/v1/payment/balance', AuthMiddleware, PaymentController.storeFromBalance);
 router.post('/api/v1/payment/top-up-balance', AuthMiddleware, PaymentController.topUpBalance);
 router.post('/api/v1/payment-request', AuthMiddleware, PaymentController.createPaymentIntent);
+router.patch('/api/v1/payment-request', AuthMiddleware, PaymentController.updatePaymentIntent);
 router.get('/api/v1/payments', AuthMiddleware, PaymentController.index);
 
 router.post('/api/v1/oauth/google/register', OAuthController.register);

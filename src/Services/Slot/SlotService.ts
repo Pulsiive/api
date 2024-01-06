@@ -106,6 +106,9 @@ class SlotService {
             gte: moment(date).toDate(),
             lt:  moment(date).add(1, 'day').toDate()
           } }),
+      },
+      include: {
+        stationProperties: true
       }
     });
 
@@ -118,7 +121,7 @@ class SlotService {
         id,
         stationProperties: {
           station: {
-            ownerId: userId
+            ownerId: userId,
           }
         },
       },

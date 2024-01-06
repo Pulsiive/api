@@ -58,9 +58,9 @@ class StationService {
             lt: params.maxPrice
           },
           isPublic: params.type ? params.type === 0 : undefined,
-          plugTypes: {
+          ...(plugTypes.length && {plugTypes: {
             hasSome: plugTypes
-          }
+          }})
         }
       },
       include: {
