@@ -16,6 +16,8 @@ import { AuthAndGuestMiddleware } from '../Middlewares/AuthAndGuestMiddleware';
 import OAuthController from '../Controllers/OAuthController';
 import PaymentController from '../Controllers/PaymentController';
 import CodePromoController from '../Controllers/CodePromoController';
+import NotificationController from '../Controllers/NotificationController';
+import ReservationRequestController from '../Controllers/ReservationRequestController';
 
 const router = express.Router();
 const upload = multer({ dest: os.tmpdir(), limits: { fieldSize: 25 * 1024 * 1024 } });
@@ -51,7 +53,8 @@ router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);
 router.get('/api/v1/profile', AuthMiddleware, UserController.index);
 router.get('/api/v1/admin', (req: any, res: any) => {
-  const redirection = process.env.NODE_ENV === 'production' ? 'https://cloud.prisma.io' : 'http://localhost:5555';
+  const redirection =
+    process.env.NODE_ENV === 'production' ? 'https://cloud.prisma.io' : 'http://localhost:5555';
   return res.redirect(redirection);
 });
 
@@ -128,6 +131,33 @@ router.post('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController
 router.get('/api/v1/reservation', AuthMiddleware, ReservationController.index);
 router.get('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.show);
 router.delete('/api/v1/reservation/:slotId', AuthMiddleware, ReservationController.delete);
+
+router.get(
+  '/api/v1/owner/reservations/requests',
+  AuthMiddleware,
+  ReservationRequestController.getAllAsOwner
+);
+router.put(
+  '/api/v1/owner/reservations/requests/:id',
+  AuthMiddleware,
+  ReservationRequestController.updateStatus
+);
+
+router.get(
+  '/api/v1/driver/reservations/requests',
+  AuthMiddleware,
+  ReservationRequestController.getAllAsDriver
+);
+router.delete(
+  '/api/v1/driver/reservations/requests/:id',
+  AuthMiddleware,
+  ReservationRequestController.delete
+);
+router.post(
+  '/api/v1/driver/reservations/requests/',
+  AuthMiddleware,
+  ReservationRequestController.create
+);
 
 router.post(
   '/api/v1/picture',

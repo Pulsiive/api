@@ -23,7 +23,7 @@ model User {
   email            String    @unique
   password         String
   dateOfBirth      DateTime
-  profilePictureId String    @default("c582e63c-d24e-42cc-ae9d-0f0750fad5c0")
+  profilePictureId String    @default("149c05a9-7985-4b8e-8c81-956826888b53")
   emailVerifiedAt  DateTime?
   isAlertOn        Boolean   @default(false)
   isNotificationOn Boolean   @default(false)
@@ -43,6 +43,8 @@ model User {
   reservations     Slot[]
   isFromOAuth      Boolean   @default(false)
   Payment          Payment[]
+  fcmToken         String?
+  reservationRequests ReservationRequest[]
 }
 
 model Codepromo {
@@ -152,6 +154,7 @@ model Slot {
   opensAt             DateTime
   closesAt            DateTime
   Payment             Payment[]
+  reservationRequests ReservationRequest[]
 }
 
 model Rating {
@@ -173,6 +176,18 @@ model Rating {
   date               DateTime
   likes              Int      @default(0)
   dislikes           Int      @default(0)
+}
+
+model ReservationRequest {
+  id         String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  isAccepted  Boolean @default(false)
+  isPending Boolean @default(true)
+  driver  User  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  driverId String
+  slot Slot @relation(fields: [slotId], references: [id])
+  slotId  String
+  price Int
 }
 
 model Order {
