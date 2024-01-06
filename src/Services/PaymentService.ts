@@ -143,8 +143,33 @@ class PaymentService {
               id: userId
             }
           },
+          slot: {
+            connect: {
+              id: slot?.id
+            }
+          },
           amount: brutPrice,
           date: new Date(),
+          transaction_type: 'debit',
+          provider: 'balance',
+        },
+      });
+
+      await prisma.payment.create({
+        data: {
+          user: {
+            connect: {
+              id: owner?.id
+            }
+          },
+          slot: {
+            connect: {
+              id: slot?.id
+            }
+          },
+          amount: brutPrice,
+          date: new Date(),
+          transaction_type: 'credit',
           provider: 'balance',
         },
       });
