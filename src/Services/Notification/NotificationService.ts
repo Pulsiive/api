@@ -1,10 +1,14 @@
 import admin from 'firebase-admin';
-import * as firebaseEnv from '../../../pulsive-85ebf-firebase-adminsdk-1xr4d-be899a8443.json';
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
 
 admin.initializeApp({
-  credential: admin.credential.cert(firebaseEnv)
+  credential: admin.credential.cert({
+    type: process.env.FIREBASE_TYPE,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  } as any)
 });
 
 class NotificationService {
