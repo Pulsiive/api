@@ -46,7 +46,7 @@ class ReservationRequestController {
         if (stationOwnerId) {
           const notificationData = {
             title: 'New reservation request !',
-            body: `${r.driver.firstName} ${r.driver.lastName} wants to rent your station. You will earn ${r.price} €`
+            body: `${r.driver.firstName} ${r.driver.lastName} wants to rent your station. You will earn ${r.price / 100} €`
           };
           await NotificationService.sendNotification(stationOwnerId, notificationData, {
             redirect: 'ReservationRequests'
