@@ -1,6 +1,7 @@
 import prisma from '../../../prisma/client';
 import { ApiError } from '../../Errors/ApiError';
 import ReservationService from '../Reservation/ReservationService';
+import PaymentService from "../PaymentService";
 
 interface CreateReservationRequest {
   driverId: string;
@@ -79,6 +80,9 @@ class ReservationRequestService {
     if (slot.isBooked) {
       throw new ApiError('Error: Slot is already booked', 404);
     }
+
+    await PaymentService.storeFromBalance(data.driverId, data.slotId);
+
     return await prisma.reservationRequest.create({
       data: {
         driver: {
@@ -152,7 +156,10 @@ class ReservationRequestService {
     });
     if (isAccepted) {
       return await ReservationService.create(r.driverId, r.slotId);
-    } else return updatedRequest;
+    } else {
+      await PaymentService.revertBalance(r.driverId, r.slotId);
+      return updatedRequest;
+    }
   }
 
   static async delete(id: string, userId: string) {

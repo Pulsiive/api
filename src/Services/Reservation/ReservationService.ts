@@ -4,6 +4,7 @@ import moment from "moment";
 import MailService from "../MailService";
 import Site from "../Site";
 import UserService from "../User/UserService";
+import PaymentService from "../PaymentService";
 
 class ReservationService {
   static async create(
@@ -59,6 +60,8 @@ class ReservationService {
             '../Resources/Mails/reservationConfirmation.handlebars'
         );
     }
+
+    const balance = await PaymentService.storeFromBalance(userId, slotId);
 
     return createdReservation;
   }

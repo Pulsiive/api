@@ -10,6 +10,8 @@ Validator.register('phone_number', function(value: any) {
 
 class PhoneNumberVerificationController {
     static async request(req: express.Request, res: express.Response) {
+        const userId = req.body.user.payload.id;
+
         try {
             const { phoneNumber } = req.body;
             const data = { phoneNumber };
@@ -23,7 +25,7 @@ class PhoneNumberVerificationController {
                 throw new ApiError('Error: Unprocessable entity', 422);
             }
 
-            const state = await PhoneNumberVerificationService.request(phoneNumber);
+            const state = await PhoneNumberVerificationService.request(userId, phoneNumber);
 
             res.json({ success: state });
         } catch (e: any) {
@@ -32,6 +34,8 @@ class PhoneNumberVerificationController {
     }
 
     static async verify(req: express.Request, res: express.Response) {
+        const userId = req.body.user.payload.id;
+
         try {
             const otp = req.query.otp as any;
             console.log(otp);
@@ -47,7 +51,7 @@ class PhoneNumberVerificationController {
                 throw new ApiError('Error: Unprocessable entity', 422);
             }
 
-            const state = await PhoneNumberVerificationService.verify(data.phoneNumber, data.otp);
+            const state = await PhoneNumberVerificationService.verify(userId, data.phoneNumber, data.otp);
 
             res.json({ success: state });
         } catch (e: any) {

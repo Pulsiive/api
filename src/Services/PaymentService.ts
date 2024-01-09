@@ -4,6 +4,7 @@ import moment from 'moment';
 import {ApiError} from "../Errors/ApiError";
 import Stripe from 'stripe';
 import prisma from "../../prisma/client";
+import SlotService from "./Slot/SlotService";
 
 const stripe = new Stripe('sk_test_51JKmWpGB07Bddq7mX4TNUnRtPKvbE5oDS00NgpnVlYAm6W4mM8LwjWyvnhei9RfCaB1VEnQjzxtJTxLoNb3MuhwT00UZc5NodG', {
   apiVersion: '2022-11-15',
@@ -95,7 +96,7 @@ class PaymentService {
     return payments;
   }
 
-  static async storeFromBalance(userId: string, slotId: string, brutPrice: any) {
+  static async storeFromBalance(userId: string, slotId: string) {
     try {
       const user = await prisma.user.findUnique({
         where: {
@@ -118,10 +119,11 @@ class PaymentService {
             }
           }
         }
-      });
+      }) as any;
+
+      const brutPrice = SlotService.getBrutPrice(slot);
 
       const owner = slot?.stationProperties.station.owner;
-      console.log(owner, slot);
 
       if (!user || (user?.balance - brutPrice < 0))
         throw new ApiError('Error: Insufficient balance', 422);
@@ -135,6 +137,60 @@ class PaymentService {
         where: {id: owner?.id},
         data: {balance: owner?.balance + brutPrice}
       });
+
+      await prisma.payment.create({
+        data: {
+          user: {
+            connect: {
+              id: owner?.id
+            }
+          },
+          slot: {
+            connect: {
+              id: slot?.id
+            }
+          },
+          amount: brutPrice,
+          date: new Date(),
+          transaction_type: 'debit',
+          provider: 'balance',
+        },
+      });
+
+      return updatedUser.balance;
+    } catch (e) {
+      throw new ApiError('Error: Payment failed', 422);
+    }
+
+    return true;
+  }
+
+  static async revertBalance(userId: string, slotId: string) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userId
+        }
+      });
+
+      const slot = await prisma.slot.findUnique({
+        where: {
+          id: slotId
+        },
+        include: {
+          stationProperties: {
+            include: {
+              station: {
+                include: {
+                  owner: true
+                }
+              }
+            }
+          }
+        }
+      }) as any;
+
+      const brutPrice = SlotService.getBrutPrice(slot);
 
       await prisma.payment.create({
         data: {
@@ -155,28 +211,14 @@ class PaymentService {
         },
       });
 
-      await prisma.payment.create({
-        data: {
-          user: {
-            connect: {
-              id: owner?.id
-            }
-          },
-          slot: {
-            connect: {
-              id: slot?.id
-            }
-          },
-          amount: brutPrice,
-          date: new Date(),
-          transaction_type: 'credit',
-          provider: 'balance',
-        },
+      const updatedUser = await prisma.user.update({
+        where: {id: userId},
+        data: {balance: user?.balance + brutPrice}
       });
 
       return updatedUser.balance;
     } catch (e) {
-      throw new ApiError('Error: Payment failed', 422);
+      throw new ApiError('Error: Refund failed', 422);
     }
 
     return true;

@@ -21,10 +21,12 @@ model User {
   firstName        String
   lastName         String
   email            String    @unique
+  phoneNumber      String?
   password         String
   dateOfBirth      DateTime
   profilePictureId String    @default("149c05a9-7985-4b8e-8c81-956826888b53")
   emailVerifiedAt  DateTime?
+  phoneVerifiedAt  DateTime?
   isAlertOn        Boolean   @default(false)
   isNotificationOn Boolean   @default(false)
   balance          Int       @default(0)
