@@ -34,7 +34,7 @@ router.post('/api/v1/codepromo', CodePromoController.create);
 router.get('/api/v1/codepromo/list', CodePromoController.getCodePromos);
 
 router.post('/api/v1/payment', AuthMiddleware, PaymentController.store);
-router.post('/api/v1/payment/balance', AuthMiddleware, PaymentController.storeFromBalance);
+//router.post('/api/v1/payment/balance', AuthMiddleware, PaymentController.storeFromBalance);
 router.post('/api/v1/payment/top-up-balance', AuthMiddleware, PaymentController.topUpBalance);
 router.post('/api/v1/payment-request', AuthMiddleware, PaymentController.createPaymentIntent);
 router.patch('/api/v1/payment-request', AuthMiddleware, PaymentController.updatePaymentIntent);
@@ -46,8 +46,8 @@ router.post('/api/v1/oauth/google/login', OAuthController.login);
 router.post('/api/v1/auth/resetPassword/:token', AuthController.resetPassword);
 router.post('/api/v1/auth/requestPasswordReset', AuthController.reqPasswordReset);
 
-router.post('/api/v1/phone-number/request', PhoneNumberVerificationController.request);
-router.post('/api/v1/phone-number/verify', PhoneNumberVerificationController.verify);
+router.post('/api/v1/phone-number/request', AuthMiddleware, PhoneNumberVerificationController.request);
+router.post('/api/v1/phone-number/verify', AuthMiddleware, PhoneNumberVerificationController.verify);
 
 router.get('/api/v1/users/find', AuthMiddleware, UserController.findUsers);
 router.get('/api/v1/user/:id', AuthMiddleware, UserController.getUserFromId);

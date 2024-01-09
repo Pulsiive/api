@@ -31,10 +31,9 @@ class PaymentController {
   static async storeFromBalance(req: express.Request, res: express.Response) {
     try {
       const userId = req.body.user.payload.id;
-      const brutPrice = req.body.brut_price;
       const slotId = req.body.slot_id as any;
 
-      const balance = await PaymentService.storeFromBalance(userId, slotId, brutPrice);
+      const balance = await PaymentService.storeFromBalance(userId, slotId);
 
       return res.json({
         balance
