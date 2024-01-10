@@ -159,6 +159,7 @@ class PaymentService {
 
       return updatedUser.balance;
     } catch (e) {
+      console.log(e);
       throw new ApiError('Error: Payment failed', 422);
     }
 
@@ -171,7 +172,7 @@ class PaymentService {
         where: {
           id: userId
         }
-      });
+      }) as any;
 
       const slot = await prisma.slot.findUnique({
         where: {
@@ -242,6 +243,7 @@ class PaymentService {
 
       return updatedUser.balance;
     } catch (e) {
+      console.log(e);
       throw new ApiError('Error: Payment failed', 422);
     }
 

@@ -164,13 +164,12 @@ class SlotService {
     return deletedSlot;
   }
 
-  static getBrutPrice(slot: any): any {
-    const pricePerMin = (slot.stationProperties.price/100).toFixed(2) as any;
+  static getBrutPrice(slot: any): number {
+    const pricePerMin = slot.stationProperties.price;
     const diffInMiliseconds = moment(slot.closesAt).diff(slot.opensAt);
     const nbMins = diffInMiliseconds/60000;
-    slot.brut_price = slot.stationProperties.price * slot.NbMins;
     const price = nbMins * pricePerMin;
-    return price.toFixed(2);
+    return Number(price.toFixed(2));
   }
 }
 
