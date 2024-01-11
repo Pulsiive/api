@@ -46,6 +46,7 @@ class OAuthService {
           firstName: data.firstName,
           lastName: data.lastName,
           dateOfBirth: new Date(),
+          isFromOAuth: true,
           fcmToken: data.fcmToken
         }
       });
