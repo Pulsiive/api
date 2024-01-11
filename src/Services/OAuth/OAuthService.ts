@@ -12,20 +12,24 @@ class OAuthService {
     try {
       const ticket = await client.verifyIdToken({
         idToken: token,
-        audience: GOOGLE_CLIENT_ID,
+        audience: GOOGLE_CLIENT_ID
       });
       return { payload: ticket.getPayload() };
     } catch (error) {
       console.log(error);
-      throw new ApiError("Error: User not found", 422);
+      throw new ApiError('Error: User not found', 422);
     }
   }
 
-  static async register(token: string, data: {
-    email: any;
-    firstName: any;
-    lastName: any;
-  }) {
+  static async register(
+    token: string,
+    data: {
+      email: any;
+      firstName: any;
+      lastName: any;
+      fcmToken: any;
+    }
+  ) {
     let user = await prisma.user.findFirst({
       where: { email: data.email }
     });
@@ -42,7 +46,8 @@ class OAuthService {
           firstName: data.firstName,
           lastName: data.lastName,
           dateOfBirth: new Date(),
-          isFromOAuth: true
+          isFromOAuth: true,
+          fcmToken: data.fcmToken
         }
       });
     } catch (e) {
@@ -50,7 +55,7 @@ class OAuthService {
       throw new ApiError('Error: User registration failed', 422);
     }
 
-    return {user, accessToken: await JWTService.signWrapper(user)};
+    return { user, accessToken: await JWTService.signWrapper(user) };
   }
 
   static async login(email: any) {
@@ -61,7 +66,7 @@ class OAuthService {
     });
 
     if (!user) throw new ApiError('Error: User not registered', 404);
-      return {user, accessToken: await JWTService.signWrapper(user)};
+    return { user, accessToken: await JWTService.signWrapper(user) };
   }
 }
 
