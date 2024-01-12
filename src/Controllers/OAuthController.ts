@@ -15,7 +15,7 @@ class OAuthController {
       const userData = await OAuthService.register(req.body.credential, {
         email: profile?.email,
         firstName: profile?.given_name,
-        lastName: profile?.family_name,
+        lastName: profile?.family_name ?? '',
         fcmToken: req.body.fcmToken
       });
 
